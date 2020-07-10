@@ -56,7 +56,8 @@
 	"dependencies": {
 		"nativescript-context-apis": "^1.0.0",
 		"nativescript-local-notifications": "^4.2.1",
-		"nativescript-task-dispatcher": "^1.0.0"
+		"nativescript-task-dispatcher": "^1.0.0",
+		"rxjs": "^6.6.0"
 	},
 	"bootstrapper": "nativescript-plugin-seed"
 }
