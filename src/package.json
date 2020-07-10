@@ -1,7 +1,7 @@
 {
 	"name": "nativescript-emai-framework",
 	"version": "1.0.0",
-	"description": "Your awesome NativeScript plugin.",
+	"description": "Easy Ecological Momentary Assessment and Intervention applications development",
 	"main": "emai-framework",
 	"typings": "index.d.ts",
 	"nativescript": {
@@ -19,10 +19,12 @@
 		"build": "npm run tsc && npm run build.native",
 		"build.native": "node scripts/build-native.js",
 		"tslint": "cd .. && tslint \"**/*.ts\" --config tslint.json --exclude \"**/node_modules/**\"",
-		"ci.tslint": "npm i && tslint '**/*.ts' --config '../tslint.json' --exclude '**/node_modules/**' --exclude '**/platforms/**'",
+		"ci.tslint": "npm i && tslint '**/*.ts' --config ../tslint.json --exclude '**/node_modules/**' --exclude '**/platforms/**'",
 		"prepack": "npm run build.native",
 		"demo.ios": "npm i && cd ../demo && tns run ios",
 		"demo.android": "npm i && cd ../demo && tns run android",
+		"test.ios": "npm i && cd ../demo && tns test ios --watch",
+		"test.android": "npm i && cd ../demo && tns test android --watch",
 		"demo.reset": "cd ../demo && npx rimraf -- hooks node_modules platforms package-lock.json",
 		"plugin.prepare": "npm run build && cd ../demo && tns plugin remove nativescript-emai-framework && tns plugin add ../src",
 		"clean": "npm run demo.reset && npx rimraf -- node_modules package-lock.json && npm i"
@@ -34,8 +36,8 @@
 		"iOS"
 	],
 	"author": {
-		"name": "Your Name",
-		"email": "youremail@yourdomain.com"
+		"name": "Alberto González Pérez",
+		"email": "algonzal@uji.es"
 	},
 	"bugs": {
 		"url": "https://github.com/GeoTecINIT/nativescript-emai-framework/issues"
