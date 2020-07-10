@@ -79,6 +79,9 @@ describe("Geolocation provider", () => {
     });
 
     it("stops collecting locations if interrupted", async () => {
+        spyOn(nativeProvider, "acquireLocation").and.returnValue(
+            Promise.resolve(locations[4])
+        );
         let interrupted = false;
         spyOn(nativeProvider, "locationStream").and.returnValue(
             new Observable((subscriber) => {

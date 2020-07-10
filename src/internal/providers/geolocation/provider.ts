@@ -51,7 +51,10 @@ export class GeolocationProvider implements PullProvider {
     interrupter: ProviderInterrupter
   ): Promise<Geolocation> {
     const interrupted = new Subject();
-    interrupter.interruption = () => interrupted.complete();
+    interrupter.interruption = () => {
+      interrupted.next();
+      interrupted.complete();
+    };
 
     return this.nativeProvider
       .locationStream({
