@@ -26,7 +26,7 @@ describe("Geolocation provider", () => {
         provider = new GeolocationProvider(
             bestLocationOf,
             timeout,
-            nativeProvider
+            () => nativeProvider
         );
     });
 

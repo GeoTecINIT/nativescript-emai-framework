@@ -23,18 +23,18 @@ export class GeolocationProvider implements PullProvider {
   constructor(
     private bestOf: number,
     private timeout: number,
-    private nativeProvider: NativeProvider = getNativeProvider()
+    private nativeProvider: () => NativeProvider = getNativeProvider
   ) {}
 
   async checkIfIsReady(): Promise<void> {
-    const isReady = await this.nativeProvider.isReady();
+    const isReady = await this.nativeProvider().isReady();
     if (!isReady) {
       throw geolocationProviderNotReadyErr;
     }
   }
 
   prepare(): Promise<void> {
-    return this.nativeProvider.prepare(true, true);
+    return this.nativeProvider().prepare(true, true);
   }
 
   next(): [Promise<Geolocation>, ProviderInterruption] {
@@ -56,7 +56,7 @@ export class GeolocationProvider implements PullProvider {
       interrupted.complete();
     };
 
-    return this.nativeProvider
+    return this.nativeProvider()
       .locationStream({
         highAccuracy: true,
         stdInterval: 1000,
@@ -82,7 +82,7 @@ export class GeolocationProvider implements PullProvider {
   ): Observable<NativeGeolocation> {
     if (!location) {
       return from(
-        this.nativeProvider.acquireLocation({
+        this.nativeProvider().acquireLocation({
           highAccuracy: true,
           timeout: this.timeout,
           allowBackground: true,
