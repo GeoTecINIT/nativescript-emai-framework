@@ -15,7 +15,11 @@ describe("Single pull-based provider task", () => {
 
     beforeEach(() => {
         provider = createPullProviderMock();
-        task = new SinglePullProviderTask("acquireData", provider);
+        task = new SinglePullProviderTask(provider);
+    });
+
+    it("should have a predictable name", () => {
+        expect(task.name).toEqual("acquireGeolocation");
     });
 
     it("checks if the underlying provider is ready", async () => {

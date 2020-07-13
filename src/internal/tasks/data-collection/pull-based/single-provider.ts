@@ -7,14 +7,11 @@ import {
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 
 import { PullProvider } from "../../../providers";
+import { pascalCase } from "../../../utils/string";
 
 export class SinglePullProviderTask extends Task {
-  constructor(
-    name: string,
-    private provider: PullProvider,
-    taskConfig?: TaskConfig
-  ) {
-    super(name, {
+  constructor(private provider: PullProvider, taskConfig?: TaskConfig) {
+    super(`acquire${pascalCase(provider.provides)}`, {
       ...taskConfig,
       // Override declared output events with:
       // {recordType}Acquired
@@ -39,6 +36,6 @@ export class SinglePullProviderTask extends Task {
     this.setCancelFunction(() => stopCollecting());
     const record = await recordPromise;
 
-    return { eventName: this.outputEventNames[0], result: record };
+    return { result: record };
   }
 }

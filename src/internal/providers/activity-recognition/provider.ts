@@ -4,6 +4,8 @@ import {
   getActivityRecognizer,
   Resolution,
 } from "nativescript-context-apis/activity-recognition";
+
+import { RecordType } from "../base-record";
 import { getHumanActivityChangeReceiver } from "./receiver";
 
 const possibleResolutions: Array<Resolution> = [
@@ -12,6 +14,10 @@ const possibleResolutions: Array<Resolution> = [
 ];
 
 export class HumanActivityProvider implements PushProvider {
+  get provides() {
+    return RecordType.HumanActivity;
+  }
+
   static setup() {
     possibleResolutions.forEach((resolution) => {
       getActivityRecognizer(resolution).listenActivityChanges(
