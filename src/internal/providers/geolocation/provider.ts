@@ -1,5 +1,5 @@
 import { PullProvider } from "../pull-provider";
-import { RecordType } from "../record-type";
+import { RecordType } from "../base-record";
 import {
   ProviderInterrupter,
   ProviderInterruption,

@@ -7,7 +7,7 @@ import {
   Transition,
 } from "nativescript-context-apis/activity-recognition";
 import { HumanActivityChange } from "./human-activity-change";
-import { Change } from "../change";
+import { Change } from "../base-record";
 
 const DEFAULT_EVENT = "userActivityChanged";
 

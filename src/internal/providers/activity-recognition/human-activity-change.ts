@@ -1,7 +1,5 @@
-import { Record } from "../record";
+import { Record, RecordType, Change } from "../base-record";
 import { HumanActivity } from "nativescript-context-apis/activity-recognition";
-import { Change } from "../change";
-import { RecordType } from "../record-type";
 
 export class HumanActivityChange extends Record {
   constructor(

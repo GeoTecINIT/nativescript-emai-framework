@@ -6,8 +6,9 @@ import {
     HumanActivity,
     Transition,
 } from "nativescript-context-apis/internal/activity-recognition";
-import { HumanActivityChange } from "../../../../../../src/internal/providers/activity-recognition/human-activity-change";
-import { Change } from "../../../../../../src/internal/providers/change";
+import { HumanActivityChange } from "nativescript-emai-framework/internal/providers/activity-recognition/human-activity-change";
+
+import { Change } from "nativescript-emai-framework/internal/providers/base-record";
 
 describe("Human activity change receiver", () => {
     let eventEmitter: (eventName: string, eventData?: EventData) => void;

@@ -1,5 +1,4 @@
-import { RecordType } from "./record-type";
-import { Record } from "./record";
+import { Record, RecordType } from "./base-record";
 import { ProviderInterruption } from "./provider-interrupter";
 
 export interface PullProvider {

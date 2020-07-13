@@ -1,5 +1,4 @@
-import { Record } from "../record";
-import { RecordType } from "../record-type";
+import { Record, RecordType } from "../base-record";
 
 import {
   GeolocationLike,
