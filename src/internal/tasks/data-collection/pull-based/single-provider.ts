@@ -1,5 +1,6 @@
+import { ProviderTask } from "../provider-task";
+
 import {
-  Task,
   TaskConfig,
   TaskOutcome,
   TaskParams,
@@ -9,23 +10,15 @@ import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 import { PullProvider } from "../../../providers";
 import { pascalCase } from "../../../utils/string";
 
-export class SinglePullProviderTask extends Task {
-  constructor(private provider: PullProvider, taskConfig?: TaskConfig) {
-    super(`acquire${pascalCase(provider.provides)}`, {
+export class SinglePullProviderTask extends ProviderTask<PullProvider> {
+  constructor(provider: PullProvider, taskConfig?: TaskConfig) {
+    super(`acquire${pascalCase(provider.provides)}`, provider, {
       ...taskConfig,
       // Override declared output events with:
       // {recordType}Acquired
       // Where recordType is the provider output type
       outputEventNames: [`${provider.provides}Acquired`],
     });
-  }
-
-  async checkIfCanRun(): Promise<void> {
-    await this.provider.checkIfIsReady();
-  }
-
-  async prepare(): Promise<void> {
-    await this.provider.prepare();
   }
 
   protected async onRun(

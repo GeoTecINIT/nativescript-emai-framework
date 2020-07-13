@@ -22,24 +22,6 @@ describe("Single pull-based provider task", () => {
         expect(task.name).toEqual("acquireGeolocation");
     });
 
-    it("checks if the underlying provider is ready", async () => {
-        spyOn(provider, "checkIfIsReady").and.returnValue(Promise.resolve());
-        await task.checkIfCanRun();
-        expect(provider.checkIfIsReady).toHaveBeenCalled();
-    });
-
-    it("propagates the reason when the provider is not ready", async () => {
-        spyOn(provider, "checkIfIsReady").and.returnValue(
-            Promise.reject("Not yet")
-        );
-        await expectAsync(task.checkIfCanRun()).toBeRejectedWith("Not yet");
-    });
-
-    it("is able to prepare the underlying provider", async () => {
-        spyOn(provider, "prepare").and.returnValue(Promise.resolve());
-        await task.prepare();
-        expect(provider.prepare).toHaveBeenCalled();
-    });
     it("runs and generates an event with the collected data", async () => {
         const expectedData = new Geolocation(
             0.0,

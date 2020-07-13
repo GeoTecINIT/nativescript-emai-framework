@@ -1,9 +1,6 @@
-import { RecordType } from "./base-record";
+import { BaseProvider } from "./base-provider";
 
-export interface PushProvider {
-  provides: RecordType;
-  checkIfIsReady(): Promise<void>;
-  prepare(): Promise<void>;
+export interface PushProvider extends BaseProvider {
   startProviding(): Promise<void>;
   stopProviding(): Promise<void>;
 }
