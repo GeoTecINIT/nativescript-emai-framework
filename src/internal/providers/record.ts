@@ -1,9 +1,10 @@
 import { RecordType } from "./record-type";
+import { Change } from "./change";
 
 export abstract class Record {
   protected constructor(
     public type: RecordType,
-    public startsAt = new Date(),
-    public endsAt = new Date()
+    public timestamp = new Date(),
+    public change = Change.None
   ) {}
 }

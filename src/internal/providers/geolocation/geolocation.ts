@@ -17,7 +17,7 @@ export class Geolocation extends Record {
     public direction: number,
     capturedAt: Date
   ) {
-    super(RecordType.Geolocation, capturedAt, capturedAt);
+    super(RecordType.Geolocation, capturedAt);
   }
 
   distance(to: Geolocation | GeolocationLike) {
