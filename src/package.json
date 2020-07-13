@@ -1,7 +1,7 @@
 {
 	"name": "nativescript-emai-framework",
 	"version": "1.0.0",
-	"description": "Easy Ecological Momentary Assessment and Intervention application development",
+	"description": "Easing the development of Ecological Momentary Assessment and Intervention apps",
 	"main": "emai-framework",
 	"typings": "index.d.ts",
 	"nativescript": {
