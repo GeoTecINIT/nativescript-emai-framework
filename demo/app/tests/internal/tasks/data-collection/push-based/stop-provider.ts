@@ -9,11 +9,11 @@ describe("Stop push provider task", () => {
 
     beforeEach(() => {
         provider = createPushProviderMock();
-        task = new StopPushProviderTask(provider);
+        task = new StopPushProviderTask(provider, "Coarse");
     });
 
     it("should have a predictable name", () => {
-        expect(task.name).toEqual("stopDetectingHumanActivityChanges");
+        expect(task.name).toEqual("stopDetectingCoarseHumanActivityChanges");
     });
 
     it("should indicate the underlying provider to stop providing on task run", async () => {

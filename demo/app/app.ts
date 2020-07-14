@@ -1,4 +1,8 @@
 import * as app from "tns-core-modules/application";
+import { emaiFramework } from "nativescript-emai-framework";
+import { demoTaskGraph } from "~/tasks/graph";
+
+emaiFramework.init([], demoTaskGraph, { enableLogging: true });
 
 app.run({ moduleName: "app-root" });
 

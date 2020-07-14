@@ -30,7 +30,7 @@ export class HumanActivityProvider implements PushProvider {
 
   constructor(
     private resolution: Resolution,
-    private detectionInterval: number,
+    private detectionInterval: number = 0,
     private providerLoader: (
       resolution: Resolution
     ) => ActivityRecognizer = getActivityRecognizer

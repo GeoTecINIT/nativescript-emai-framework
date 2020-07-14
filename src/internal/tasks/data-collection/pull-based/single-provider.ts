@@ -11,8 +11,12 @@ import { PullProvider } from "../../../providers";
 import { pascalCase } from "../../../utils/string";
 
 export class SinglePullProviderTask extends ProviderTask<PullProvider> {
-  constructor(provider: PullProvider, taskConfig?: TaskConfig) {
-    super(`acquire${pascalCase(provider.provides)}`, provider, {
+  constructor(
+    provider: PullProvider,
+    recordPrefix = "",
+    taskConfig?: TaskConfig
+  ) {
+    super(`acquire${recordPrefix}${pascalCase(provider.provides)}`, provider, {
       ...taskConfig,
       // Override declared output events with:
       // {recordType}Acquired

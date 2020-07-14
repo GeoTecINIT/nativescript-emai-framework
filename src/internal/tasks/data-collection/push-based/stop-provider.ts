@@ -7,12 +7,20 @@ import { TaskConfig, TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 
 export class StopPushProviderTask extends ProviderTask<PushProvider> {
-  constructor(provider: PushProvider, taskConfig?: TaskConfig) {
-    super(`stopDetecting${pascalCase(provider.provides)}Changes`, provider, {
-      ...taskConfig,
-      // Descendant classes should not declare custom output events
-      outputEventNames: [],
-    });
+  constructor(
+    provider: PushProvider,
+    recordPrefix = "",
+    taskConfig?: TaskConfig
+  ) {
+    super(
+      `stopDetecting${recordPrefix}${pascalCase(provider.provides)}Changes`,
+      provider,
+      {
+        ...taskConfig,
+        // Descendant classes should not declare custom output events
+        outputEventNames: [],
+      }
+    );
   }
 
   protected async onRun(
@@ -20,5 +28,6 @@ export class StopPushProviderTask extends ProviderTask<PushProvider> {
     invocationEvent: DispatchableEvent
   ): Promise<void> {
     await this.provider.stopProviding();
+    this.log("Change detection stopped");
   }
 }

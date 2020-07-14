@@ -9,11 +9,13 @@ describe("Start push provider task", () => {
 
     beforeEach(() => {
         provider = createPushProviderMock();
-        task = new StartPushProviderTask(provider);
+        task = new StartPushProviderTask(provider, "Intermediate");
     });
 
     it("should have a predictable name", () => {
-        expect(task.name).toEqual("startDetectingHumanActivityChanges");
+        expect(task.name).toEqual(
+            "startDetectingIntermediateHumanActivityChanges"
+        );
     });
 
     it("should indicate the underlying provider to start providing on task run", async () => {

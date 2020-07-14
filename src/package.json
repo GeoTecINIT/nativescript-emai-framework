@@ -54,9 +54,9 @@
 		"semver": "^5.6.0"
 	},
 	"dependencies": {
-		"nativescript-context-apis": "^1.0.0",
+		"nativescript-context-apis": "file:../../nativescript-context-apis/publish/package/nativescript-context-apis-1.0.0.tgz",
 		"nativescript-local-notifications": "^4.2.1",
-		"nativescript-task-dispatcher": "^1.0.0",
+		"nativescript-task-dispatcher": "file:../../nativescript-task-dispatcher/publish/package/nativescript-task-dispatcher-1.0.0.tgz",
 		"rxjs": "^6.6.0"
 	},
 	"bootstrapper": "nativescript-plugin-seed"
