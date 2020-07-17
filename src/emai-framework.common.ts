@@ -14,13 +14,13 @@ export class Common extends Observable {
     appTaskGraph: TaskGraph,
     config: ConfigParams = {}
   ): Promise<void> {
-    this.initializeListeners();
-    await contextApis.init();
     await taskDispatcher.init(
       [...builtInTasks, ...appTasks],
       appTaskGraph,
       config
     );
+    this.initializeListeners();
+    await contextApis.init();
   }
 
   isReady(): Promise<boolean> {

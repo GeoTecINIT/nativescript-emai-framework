@@ -22,6 +22,9 @@ export class HumanActivityProvider implements PushProvider {
     possibleResolutions.forEach((resolution) => {
       getActivityRecognizer(resolution).listenActivityChanges(
         (activityChange) => {
+          console.log(
+            `Got an activity change!: ${JSON.stringify(activityChange)}`
+          );
           getHumanActivityChangeReceiver().onReceive(activityChange);
         }
       );
