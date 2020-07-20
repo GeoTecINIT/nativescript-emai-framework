@@ -6,6 +6,7 @@ import {
 } from "nativescript-context-apis/activity-recognition";
 
 import { RecordType } from "../base-record";
+import { getLogger } from "../../utils/logger";
 import { getHumanActivityChangeReceiver } from "./receiver";
 
 const possibleResolutions: Array<Resolution> = [
@@ -22,7 +23,7 @@ export class HumanActivityProvider implements PushProvider {
     possibleResolutions.forEach((resolution) => {
       getActivityRecognizer(resolution).listenActivityChanges(
         (activityChange) => {
-          console.log(
+          getLogger("HumanActivityProvider").debug(
             `Got an activity change!: ${JSON.stringify(activityChange)}`
           );
           getHumanActivityChangeReceiver().onReceive(activityChange);
