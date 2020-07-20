@@ -3,7 +3,7 @@ import { Record, RecordType } from "../base-record";
 import {
   GeolocationLike,
   Geolocation as NativeGeolocation,
-} from "nativescript-context-apis/internal/geolocation/geolocation";
+} from "nativescript-context-apis/geolocation";
 
 export class Geolocation extends Record {
   constructor(
@@ -24,4 +24,4 @@ export class Geolocation extends Record {
   }
 }
 
-export { GeolocationLike } from "nativescript-context-apis/internal/geolocation/geolocation";
+export { GeolocationLike } from "nativescript-context-apis/geolocation";
