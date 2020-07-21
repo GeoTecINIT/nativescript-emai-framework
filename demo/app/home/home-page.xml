@@ -1,12 +1,36 @@
 <Page
-    navigatingTo="onNavigatingTo" 
+    navigatingTo="onNavigatingTo"
     xmlns="http://schemas.nativescript.org/tns.xsd">
-    
+
     <ActionBar>
-        <Label text="Home"></Label>
+        <Label text="Tracked Events"/>
     </ActionBar>
 
-    <GridLayout>
-        <!-- Add your page content here -->
-    </GridLayout>
+    <ListView items="{{ records }}"
+              loadMoreItems="onLoadMoreItems"
+              separatorColor="orangered" rowHeight="140"
+              class="list-group" itemTemplateSelector="type"
+              id="listView">
+        <ListView.itemTemplates>
+            <!-- The item template can only have a single root view container (e.g. GriLayout, StackLayout, etc.) -->
+            <template key="geolocation">
+                <GridLayout columns="auto, *" rows="auto, auto, auto, auto" class="list-group-item">
+                    <Label text="Geolocation" row="0" col="0" textWrap="true" class="h3" />
+                    <Label text="{{ timestamp }}" row="0" col="1" textWrap="true" class="h4 text-right" />
+                    <Label text="{{ latitude, 'Latitude: ' + latitude }}" row="1" col="0" colSpan="2" textWrap="true" class="title" />
+                    <Label text="{{ longitude, 'Longitude: ' + longitude }}" row="2" col="0" colSpan="2" textWrap="true" class="title" />
+                    <Label text="{{ horizontalAccuracy, 'Accuracy: ' + horizontalAccuracy + 'm' }}" row="3" col="0" colSpan="2" textWrap="true" class="title" />
+                </GridLayout>
+            </template>
+            <template key="human-activity">
+                <GridLayout columns="auto, *" rows="auto, auto, auto, auto" class="list-group-item">
+                    <Label text="Human Activity" row="0" col="0" textWrap="true" class="h3" />
+                    <Label text="{{ timestamp }}" row="0" col="1" textWrap="true" class="h4 text-right" />
+                    <Label text="{{ change, 'Change: ' + change }}" row="1" col="0" colSpan="2" textWrap="true" class="title" />
+                    <Label text="{{ activity, 'Type: ' + activity }}" row="2" col="0" colSpan="2" textWrap="true" class="title" />
+                    <Label text="{{ confidence, 'Confidence: ' + (!!confidence ? (confidence + '%') : '--') }}" row="3" col="0" colSpan="2" textWrap="true" class="title" />
+                </GridLayout>
+            </template>
+        </ListView.itemTemplates>
+    </ListView>
 </Page>

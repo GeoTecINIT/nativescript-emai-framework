@@ -6,14 +6,14 @@ logic, and to set up your page’s data binding.
 
 import { NavigatedData, Page } from "tns-core-modules/ui/page";
 
-import { HomeViewModel } from "./home-view-model";
-
 import { emaiFramework } from "nativescript-emai-framework";
+import { ItemEventData } from "@nativescript/core";
+import { HomeViewModel } from "~/home/home-view-model";
 
 export function onNavigatingTo(args: NavigatedData) {
     const page = <Page>args.object;
 
-    page.bindingContext = new HomeViewModel();
+    page.bindingContext = getHomeViewModel();
 
     emitStartEvent()
         .then(() => {
@@ -24,6 +24,11 @@ export function onNavigatingTo(args: NavigatedData) {
         });
 }
 
+export function onLoadMoreItems(args: ItemEventData) {
+    console.log(`Loading more items...`);
+    //getHomeViewModel().loadMore();
+}
+
 async function emitStartEvent() {
     const isReady = await emaiFramework.isReady();
     if (!isReady) {
@@ -31,9 +36,17 @@ async function emitStartEvent() {
         console.log(
             `The following tasks are not ready!: ${JSON.stringify(
                 tasksNotReady.map((task) => task.name)
-            )}.Going to prepare them...`
+            )}. Going to prepare them...`
         );
         await emaiFramework.prepare();
     }
     emaiFramework.emitEvent("startEvent");
+}
+
+let _vm: HomeViewModel;
+function getHomeViewModel() {
+    if (!_vm) {
+        _vm = new HomeViewModel();
+    }
+    return _vm;
 }
