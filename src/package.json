@@ -54,6 +54,7 @@
 		"semver": "^5.6.0"
 	},
 	"dependencies": {
+		"@nano-sql/adapter-sqlite-nativescript": "^2.0.3",
 		"nativescript-context-apis": "^1.0.2",
 		"nativescript-local-notifications": "^4.2.1",
 		"nativescript-task-dispatcher": "^1.0.1",
