@@ -3,7 +3,7 @@ import {
     Geolocation as NativeGeolocation,
 } from "nativescript-context-apis/geolocation";
 
-import { createNativeGeolocationProviderMock } from "~/tests/internal/providers/geolocation/index";
+import { createNativeGeolocationProviderMock } from "./index";
 
 import {
     GeolocationProvider,

@@ -11,3 +11,5 @@ export class HumanActivityChange extends Record {
     super(RecordType.HumanActivity, detectedAt, change);
   }
 }
+
+export { HumanActivity } from "nativescript-context-apis/activity-recognition";

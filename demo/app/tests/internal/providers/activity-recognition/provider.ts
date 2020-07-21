@@ -1,8 +1,8 @@
 import { ActivityRecognizer } from "nativescript-context-apis/internal/activity-recognition";
 import { HumanActivityProvider } from "nativescript-emai-framework/internal/providers/activity-recognition/provider";
-import { createActivityRecognizerMock } from "~/tests/internal/providers/activity-recognition/index";
-import { HumanActivityRecognizerNotReadyErr } from "../../../../../../src/internal/providers/activity-recognition/provider";
-import { Resolution } from "nativescript-context-apis/activity-recognition";
+import { createActivityRecognizerMock } from "./index";
+import { HumanActivityRecognizerNotReadyErr } from "nativescript-emai-framework/internal/providers/activity-recognition/provider";
+import { Resolution } from "nativescript-emai-framework/internal/providers/activity-recognition/provider";
 
 describe("Human activity provider", () => {
     let nativeRecognizer: ActivityRecognizer;
