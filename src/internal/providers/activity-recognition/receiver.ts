@@ -20,8 +20,8 @@ export class HumanActivityChangeReceiver {
     const { type, timestamp, confidence } = activityChange;
     const change =
       activityChange.transition === Transition.STARTED
-        ? Change.Start
-        : Change.End;
+        ? Change.START
+        : Change.END;
     const record = new HumanActivityChange(type, change, timestamp, confidence);
     this.emitEvent(DEFAULT_EVENT, record);
     this.emitEvent(generateEventNameFromActivityChange(record), record);
@@ -32,7 +32,7 @@ function generateEventNameFromActivityChange(
   activityChange: HumanActivityChange
 ) {
   const transition =
-    activityChange.change === Change.Start ? "Started" : "Finished";
+    activityChange.change === Change.START ? "Started" : "Finished";
   return `user${transition}${actionFromActivityType(activityChange.activity)}`;
 }
 

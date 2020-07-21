@@ -7,7 +7,7 @@ describe("Human activity change serializer", () => {
     it("allows to serialize and deserialize an unchanged human activity change record", () => {
         const expectedChange = new HumanActivityChange(
             HumanActivity.WALKING,
-            Change.Start,
+            Change.START,
             new Date()
         );
         const serializer = new HumanActivityChangeSerializer();

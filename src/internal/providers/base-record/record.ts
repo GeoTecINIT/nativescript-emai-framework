@@ -5,6 +5,6 @@ export abstract class Record {
   protected constructor(
     public type: RecordType,
     public timestamp = new Date(),
-    public change = Change.None
+    public change = Change.NONE
   ) {}
 }

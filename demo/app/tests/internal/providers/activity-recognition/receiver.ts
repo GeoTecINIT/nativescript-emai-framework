@@ -29,7 +29,7 @@ describe("Human activity change receiver", () => {
 
         const expectedChange = new HumanActivityChange(
             activityChange.type,
-            Change.End,
+            Change.END,
             activityChange.timestamp,
             activityChange.confidence
         );
@@ -55,7 +55,7 @@ describe("Human activity change receiver", () => {
 
         const expectedChange = new HumanActivityChange(
             activityChange.type,
-            Change.Start,
+            Change.START,
             activityChange.timestamp,
             activityChange.confidence
         );
