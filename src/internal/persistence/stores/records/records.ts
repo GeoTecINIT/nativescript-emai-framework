@@ -9,6 +9,7 @@ import { SerializedRecord } from "../../serializers/record/serialized-record";
 export interface RecordsStore {
   insert(record: Record): Promise<void>;
   list(size?: number): Observable<Array<Record>>;
+  getAll(): Promise<Array<Record>>;
   clear(): Promise<void>;
 }
 
@@ -61,6 +62,18 @@ class RecordsStoreDB implements RecordsStore {
         }
       };
     });
+  }
+
+  async getAll(): Promise<Array<Record>> {
+    const instance = await this.db();
+    const rows = await instance
+      .query("select")
+      .orderBy(["timestamp ASC"])
+      .exec();
+    const serializedRecords = rows.map((row) => serializedRecordFrom(row));
+    return serializedRecords.map((serializedRecord) =>
+      recordFrom(serializedRecord)
+    );
   }
 
   async clear(): Promise<void> {

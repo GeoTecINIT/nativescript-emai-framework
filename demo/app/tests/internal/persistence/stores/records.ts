@@ -24,6 +24,10 @@ describe("Records store", () => {
         new Geolocation(39.2, -0.2, 120, 13.1, 13.1, 10.4, 60.7, nowMinus(1)),
     ];
 
+    beforeAll(async () => {
+        await store.clear();
+    });
+
     it("allows to insert a record", async () => {
         await store.insert(records[0]);
     });
@@ -66,8 +70,21 @@ describe("Records store", () => {
         expect(storedRecords[1]).toEqual(records[1]);
     });
 
+    it("allows to recover all the stored records from the oldest to the newest", async () => {
+        for (let record of records) {
+            await store.insert(record);
+        }
+
+        const storedRecords = await store.getAll();
+
+        expect(storedRecords.length).toBe(3);
+        expect(storedRecords[0]).toEqual(records[0]);
+        expect(storedRecords[1]).toEqual(records[1]);
+        expect(storedRecords[2]).toEqual(records[2]);
+    });
+
     afterEach(async () => {
-        await recordsStoreDB.clear();
+        await store.clear();
     });
 });
 
