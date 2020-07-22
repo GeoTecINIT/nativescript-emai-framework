@@ -26,7 +26,7 @@ export function onNavigatingTo(args: NavigatedData) {
 
 export function onLoadMoreItems(args: ItemEventData) {
     console.log(`Loading more items...`);
-    //getHomeViewModel().loadMore();
+    getHomeViewModel().loadMore();
 }
 
 async function emitStartEvent() {

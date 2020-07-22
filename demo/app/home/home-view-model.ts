@@ -5,19 +5,22 @@ import {
     RecordsStore,
     recordsStoreDB,
 } from "nativescript-emai-framework/internal/persistence/stores/records";
-import { map } from "rxjs/operators";
-import { Subscription } from "rxjs";
+import { debounceTime, map, switchMap } from "rxjs/operators";
+import { Subject, Subscription } from "rxjs";
 import { ObservableArray } from "@nativescript/core";
 
-const LOAD_INCREMENT = 1000;
+const SIZE_INCREMENT = 10;
 
 export class HomeViewModel extends Observable {
     private _records = new ObservableArray([]);
     private _size = 0;
+
+    private _fetchOrders: Subject<number>;
     private _subscription: Subscription;
 
     constructor(private store: RecordsStore = recordsStoreDB) {
         super();
+        this.subscribeToDatabaseChanges();
         this.loadMore();
     }
 
@@ -26,24 +29,30 @@ export class HomeViewModel extends Observable {
     }
 
     loadMore() {
-        this._size += LOAD_INCREMENT;
-        if (this._subscription) {
-            this._subscription.unsubscribe();
-        }
-        this.onLoadMore();
+        this._size += SIZE_INCREMENT;
+        this._fetchOrders.next(this._size);
     }
 
-    private onLoadMore() {
-        this._subscription = this.store
-            .list(this._size)
-            .pipe(map((records) => records.map(formatRecord)))
-            .subscribe(
-                (records) => {
-                    this._records = new ObservableArray(records);
-                    this.notifyPropertyChange("records", records);
-                },
-                (err) => console.error(`Error loading records: ${err}`)
-            );
+    private subscribeToDatabaseChanges() {
+        this._fetchOrders = new Subject<number>();
+
+        const listRecords = (size: number) =>
+            this.store
+                .list(size)
+                .pipe(map((records) => records.map(formatRecord)));
+
+        const stream = this._fetchOrders.pipe(
+            debounceTime(1000),
+            switchMap(listRecords)
+        );
+
+        this._subscription = stream.subscribe(
+            (records) => {
+                this._records = new ObservableArray(records);
+                this.notifyPropertyChange("records", records);
+            },
+            (err) => console.error(`Error loading records: ${err}`)
+        );
     }
 }
 
