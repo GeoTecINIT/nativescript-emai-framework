@@ -5,7 +5,12 @@ logic, and to set up your page’s data binding.
 */
 
 import { NavigatedData, Page } from "tns-core-modules/ui/page";
-import { confirm, ConfirmOptions } from "@nativescript/core/ui/dialogs";
+import {
+    alert,
+    AlertOptions,
+    confirm,
+    ConfirmOptions,
+} from "@nativescript/core/ui/dialogs";
 
 import { emaiFramework } from "nativescript-emai-framework";
 import { ItemEventData } from "@nativescript/core";
@@ -22,6 +27,23 @@ export function onNavigatingTo(args: NavigatedData) {
         })
         .catch((err) => {
             console.error(`Could not emit start event: ${err}`);
+        });
+}
+
+export function onExportTap() {
+    getHomeViewModel()
+        .exportRecords()
+        .then((result) => {
+            const alertOptions: AlertOptions = {
+                message: "Event log exported",
+                okButtonText: "OK",
+            };
+            return alert(alertOptions);
+        })
+        .catch((err) => {
+            console.error(
+                `Could not export records: ${err.stack ? err.stack : err}`
+            );
         });
 }
 

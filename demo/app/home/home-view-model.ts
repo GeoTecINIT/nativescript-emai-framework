@@ -7,13 +7,21 @@ import {
 } from "nativescript-emai-framework/internal/persistence/stores/records";
 import { debounceTime, map, switchMap } from "rxjs/operators";
 import { Subject, Subscription } from "rxjs";
-import { ObservableArray } from "@nativescript/core";
+
+import {
+    RecordsExportResult,
+    createRecordsExporter,
+} from "nativescript-emai-framework/internal/persistence/file/records-exporter";
 
 const SIZE_INCREMENT = 10;
 
+const EXPORT_FOLDER = "Record logs";
+
 export class HomeViewModel extends Observable {
-    private _records = new ObservableArray([]);
+    private _records = [];
     private _size = 0;
+
+    private _exportingRecords = false;
 
     private _fetchOrders: Subject<number>;
     private _subscription: Subscription;
@@ -28,9 +36,27 @@ export class HomeViewModel extends Observable {
         return this._records;
     }
 
+    get exportingRecords() {
+        return this._exportingRecords;
+    }
+
     loadMore() {
         this._size += SIZE_INCREMENT;
         this._fetchOrders.next(this._size);
+    }
+
+    exportRecords(): Promise<RecordsExportResult> {
+        this.toggleExportingRecords(true);
+        return createRecordsExporter(EXPORT_FOLDER)
+            .export()
+            .then((result) => {
+                this.toggleExportingRecords(false);
+                return result;
+            })
+            .catch((err) => {
+                this.toggleExportingRecords(false);
+                return err;
+            });
     }
 
     clearRecords() {
@@ -53,11 +79,16 @@ export class HomeViewModel extends Observable {
 
         this._subscription = stream.subscribe(
             (records) => {
-                this._records = new ObservableArray(records);
+                this._records = records;
                 this.notifyPropertyChange("records", records);
             },
             (err) => console.error(`Error loading records: ${err}`)
         );
+    }
+
+    private toggleExportingRecords(value: boolean) {
+        this._exportingRecords = value;
+        this.notifyPropertyChange("exportingRecords", value);
     }
 }
 
