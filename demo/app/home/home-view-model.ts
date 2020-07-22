@@ -33,6 +33,11 @@ export class HomeViewModel extends Observable {
         this._fetchOrders.next(this._size);
     }
 
+    clearRecords() {
+        console.warn("Up to clear records!");
+        this.store.clear();
+    }
+
     private subscribeToDatabaseChanges() {
         this._fetchOrders = new Subject<number>();
 

@@ -5,6 +5,7 @@ logic, and to set up your page’s data binding.
 */
 
 import { NavigatedData, Page } from "tns-core-modules/ui/page";
+import { confirm, ConfirmOptions } from "@nativescript/core/ui/dialogs";
 
 import { emaiFramework } from "nativescript-emai-framework";
 import { ItemEventData } from "@nativescript/core";
@@ -22,6 +23,20 @@ export function onNavigatingTo(args: NavigatedData) {
         .catch((err) => {
             console.error(`Could not emit start event: ${err}`);
         });
+}
+
+export function onClearEvents() {
+    const confirmOptions: ConfirmOptions = {
+        title: "Clear tracked events",
+        message: "Are you sure you want to clear all your tracked events?",
+        okButtonText: "Yes",
+        cancelButtonText: "No",
+    };
+    confirm(confirmOptions).then((confirmed) => {
+        if (confirmed) {
+            getHomeViewModel().clearRecords();
+        }
+    });
 }
 
 export function onLoadMoreItems(args: ItemEventData) {

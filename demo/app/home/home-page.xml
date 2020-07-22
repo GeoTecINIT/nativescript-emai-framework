@@ -2,8 +2,12 @@
     navigatingTo="onNavigatingTo"
     xmlns="http://schemas.nativescript.org/tns.xsd">
 
-    <ActionBar>
-        <Label text="Tracked Events"/>
+    <ActionBar title="Tracked Events">
+        <ActionBar.actionItems>
+            <ActionItem tap="onClearEvents" text="Clear events"
+                        ios.systemIcon="16" ios.position="right"
+                        android.position="popup"/>
+        </ActionBar.actionItems>
     </ActionBar>
 
     <ListView items="{{ records }}"
