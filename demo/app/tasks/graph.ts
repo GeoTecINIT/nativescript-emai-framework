@@ -9,8 +9,8 @@ class DemoTaskGraph implements TaskGraph {
         on: EventListenerGenerator,
         run: RunnableTaskDescriptor
     ): Promise<void> {
-        on("startEvent", run("startDetectingIntermediateHumanActivityChanges"));
-        on("stopEvent", run("stopDetectingIntermediateHumanActivityChanges"));
+        on("startEvent", run("startDetectingCoarseHumanActivityChanges"));
+        on("stopEvent", run("stopDetectingCoarseHumanActivityChanges"));
 
         on(
             "startEvent",
