@@ -77,5 +77,5 @@ export interface RecordsExportResult {
 }
 
 function formatString(str: string) {
-  return `"${str.replace('"', '\\"')}"`;
+  return `"${str.split('"').join('""')}"`;
 }
