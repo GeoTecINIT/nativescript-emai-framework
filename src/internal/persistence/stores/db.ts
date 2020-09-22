@@ -1,6 +1,7 @@
 import { NativeSQLite } from "@nano-sql/adapter-sqlite-nativescript";
 import { nSQL } from "@nano-sql/core/lib";
 import { recordsModel } from "./records/model";
+import { tracesModel } from "./traces/model";
 
 const dbName = "emai-framework";
 
@@ -16,7 +17,7 @@ class PluginDB {
       this.createDBProcedure = nSQL().createDatabase({
         id: dbName,
         mode: new NativeSQLite(),
-        tables: [recordsModel],
+        tables: [recordsModel, tracesModel],
       });
     }
     await this.createDBProcedure;
