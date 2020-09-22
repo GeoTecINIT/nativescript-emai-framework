@@ -4,7 +4,7 @@ import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 import { Record } from "../providers/base-record";
 import { recordsStoreDB } from "../persistence/stores/records";
 
-export class RecordLoggerTask extends Task {
+export class RecordWriterTask extends Task {
   protected async onRun(
     taskParams: TaskParams,
     invocationEvent: DispatchableEvent
