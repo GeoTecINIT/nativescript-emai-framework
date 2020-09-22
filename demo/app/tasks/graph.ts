@@ -32,8 +32,8 @@ class DemoTaskGraph implements TaskGraph {
                 .cancelOn("userStartedBeingStill")
         );
 
-        on("geolocationAcquired", run("logRecord"));
-        on("userActivityChanged", run("logRecord"));
+        on("geolocationAcquired", run("writeRecord"));
+        on("userActivityChanged", run("writeRecord"));
     }
 }
 

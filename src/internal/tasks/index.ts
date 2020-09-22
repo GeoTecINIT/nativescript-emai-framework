@@ -4,5 +4,5 @@ import { RecordLoggerTask } from "./record-logger";
 
 export const builtInTasks: Array<Task> = [
   ...dataCollectionTasks,
-  new RecordLoggerTask("logRecord"),
+  new RecordLoggerTask("writeRecord"),
 ];
