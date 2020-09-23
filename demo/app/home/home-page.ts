@@ -32,7 +32,7 @@ export function onNavigatingTo(args: NavigatedData) {
 
 export function onExportTap() {
     getHomeViewModel()
-        .exportRecords()
+        .exportTraces()
         .then((result) => {
             const alertOptions: AlertOptions = {
                 message: "Event log exported",
@@ -56,7 +56,7 @@ export function onClearEvents() {
     };
     confirm(confirmOptions).then((confirmed) => {
         if (confirmed) {
-            getHomeViewModel().clearRecords();
+            getHomeViewModel().clearTraces();
         }
     });
 }
