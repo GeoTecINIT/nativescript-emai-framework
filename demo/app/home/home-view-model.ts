@@ -9,9 +9,9 @@ import { debounceTime, map, switchMap } from "rxjs/operators";
 import { Subject, Subscription } from "rxjs";
 
 import {
-    RecordsExportResult,
-    createRecordsExporter,
-} from "nativescript-emai-framework/internal/persistence/file/records-exporter";
+    TracesExportResult,
+    createTracesExporter,
+} from "nativescript-emai-framework/internal/persistence/file/traces-exporter";
 
 const SIZE_INCREMENT = 10;
 
@@ -45,9 +45,9 @@ export class HomeViewModel extends Observable {
         this._fetchOrders.next(this._size);
     }
 
-    exportTraces(): Promise<RecordsExportResult> {
+    exportTraces(): Promise<TracesExportResult> {
         this.toggleExportingTraces(true);
-        return createRecordsExporter(EXPORT_FOLDER)
+        return createTracesExporter(EXPORT_FOLDER)
             .export()
             .then((result) => {
                 this.toggleExportingTraces(false);

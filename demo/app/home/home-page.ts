@@ -35,7 +35,7 @@ export function onExportTap() {
         .exportTraces()
         .then((result) => {
             const alertOptions: AlertOptions = {
-                message: "Event log exported",
+                message: `Event log exported (${result.traceCount} exported)`,
                 okButtonText: "OK",
             };
             return alert(alertOptions);
