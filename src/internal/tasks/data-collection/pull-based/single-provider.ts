@@ -1,20 +1,16 @@
 import { ProviderTask } from "../provider-task";
-
-import {
-  TaskConfig,
-  TaskOutcome,
-  TaskParams,
-} from "nativescript-task-dispatcher/tasks";
-import { DispatchableEvent } from "nativescript-task-dispatcher/events";
-
 import { PullProvider } from "../../../providers";
+import { TracerConfig } from "../../tracing";
+
 import { pascalCase } from "../../../utils/string";
+import { TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
+import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 
 export class SinglePullProviderTask extends ProviderTask<PullProvider> {
   constructor(
     provider: PullProvider,
     recordPrefix = "",
-    taskConfig?: TaskConfig
+    taskConfig?: TracerConfig
   ) {
     super(`acquire${recordPrefix}${pascalCase(provider.provides)}`, provider, {
       ...taskConfig,
@@ -25,7 +21,7 @@ export class SinglePullProviderTask extends ProviderTask<PullProvider> {
     });
   }
 
-  protected async onRun(
+  protected async onTracedRun(
     taskParams: TaskParams,
     invocationEvent: DispatchableEvent
   ): Promise<TaskOutcome> {

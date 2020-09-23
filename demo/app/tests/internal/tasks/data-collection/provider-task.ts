@@ -36,7 +36,7 @@ class ProviderChecker extends ProviderTask<BaseProvider> {
         super("", provider, {});
     }
 
-    protected onRun(
+    protected onTracedRun(
         taskParams: import("nativescript-task-dispatcher/tasks").TaskParams,
         invocationEvent: import("nativescript-task-dispatcher/events").DispatchableEvent
     ): Promise<

@@ -1,16 +1,16 @@
 import { ProviderTask } from "../provider-task";
 import { PushProvider } from "../../../providers";
+import { TracerConfig } from "../../tracing";
 
 import { pascalCase } from "../../../utils/string";
-
-import { TaskConfig, TaskParams } from "nativescript-task-dispatcher/tasks";
+import { TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 
 export class StopPushProviderTask extends ProviderTask<PushProvider> {
   constructor(
     provider: PushProvider,
     recordPrefix = "",
-    taskConfig?: TaskConfig
+    taskConfig?: TracerConfig
   ) {
     super(
       `stopDetecting${recordPrefix}${pascalCase(provider.provides)}Changes`,
@@ -23,7 +23,7 @@ export class StopPushProviderTask extends ProviderTask<PushProvider> {
     );
   }
 
-  protected async onRun(
+  protected async onTracedRun(
     taskParams: TaskParams,
     invocationEvent: DispatchableEvent
   ): Promise<void> {

@@ -1,11 +1,13 @@
-import { Task, TaskConfig } from "nativescript-task-dispatcher/tasks";
+import { TraceableTask, TracerConfig } from "../tracing";
 import { BaseProvider } from "../../providers/base-provider";
 
-export abstract class ProviderTask<T extends BaseProvider> extends Task {
+export abstract class ProviderTask<
+  T extends BaseProvider
+> extends TraceableTask {
   protected constructor(
     name: string,
     protected provider: T,
-    taskConfig: TaskConfig
+    taskConfig: TracerConfig
   ) {
     super(name, taskConfig);
   }
