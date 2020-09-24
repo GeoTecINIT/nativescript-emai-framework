@@ -12,10 +12,11 @@ import {
 import { RecordType } from "nativescript-emai-framework/internal/providers";
 
 import { from, Observable, of } from "rxjs";
+import { delay } from "rxjs/internal/operators";
 
 describe("Geolocation provider", () => {
     const bestLocationOf = 3;
-    const timeout = 5000;
+    const timeout = 1000;
     const locations = createFakeLocations();
 
     let nativeProvider: NativeProvider;
@@ -75,6 +76,33 @@ describe("Geolocation provider", () => {
         const location = await bestLocation;
         expect(location.horizontalAccuracy).toBe(
             locations[4].horizontalAccuracy
+        );
+    });
+
+    it("tries to acquire the last location at least if the sensor is unable to get a fix within the timeout window", async () => {
+        spyOn(nativeProvider, "locationStream").and.returnValue(
+            from(locations).pipe(delay(timeout))
+        );
+        spyOn(nativeProvider, "acquireLocation").and.returnValue(
+            Promise.resolve(locations[4])
+        );
+        const [bestLocation] = provider.next();
+        const location = await bestLocation;
+        expect(location.horizontalAccuracy).toBe(
+            locations[4].horizontalAccuracy
+        );
+    });
+
+    it("throws an error if the sensor is unable to get a fix and no last location is available", async () => {
+        spyOn(nativeProvider, "locationStream").and.returnValue(of());
+        spyOn(nativeProvider, "acquireLocation").and.returnValue(
+            new Promise((resolve) =>
+                setTimeout(() => resolve(locations[0]), timeout + 100)
+            )
+        );
+        const [bestLocation] = provider.next();
+        await expectAsync(bestLocation).toBeRejectedWithError(
+            "Could not acquire location"
         );
     });
 
