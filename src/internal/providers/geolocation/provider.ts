@@ -12,8 +12,15 @@ import {
   getGeolocationProvider as getNativeProvider,
 } from "nativescript-context-apis/geolocation";
 
-import { from, Observable, of, Subject } from "rxjs";
-import { map, mergeMap, take, takeUntil, toArray } from "rxjs/operators";
+import { from, Observable, of, Subject, throwError } from "rxjs";
+import {
+  map,
+  mergeMap,
+  take,
+  takeUntil,
+  timeoutWith,
+  toArray,
+} from "rxjs/operators";
 
 export class GeolocationProvider implements PullProvider {
   get provides(): RecordType {
@@ -62,13 +69,13 @@ export class GeolocationProvider implements PullProvider {
         stdInterval: 1000,
         minInterval: 100,
         maxAge: 60000,
-        timeout: this.timeout,
         allowBackground: true,
         saveBattery: false,
       })
       .pipe(
         takeUntil(interrupted),
         take(amount),
+        timeoutWith(this.timeout, of(null)),
         toArray(),
         map(pickBest),
         mergeMap((location) => this.ensureItGetsAtLeastOne(location)),
@@ -84,9 +91,13 @@ export class GeolocationProvider implements PullProvider {
       return from(
         this.nativeProvider().acquireLocation({
           highAccuracy: true,
-          timeout: this.timeout,
           allowBackground: true,
         })
+      ).pipe(
+        timeoutWith(
+          this.timeout,
+          throwError(new Error("Could not acquire location"))
+        )
       );
     }
     return of(location);
@@ -101,7 +112,9 @@ function pickBest(locations: Array<NativeGeolocation>): NativeGeolocation {
   const now = Date.now();
   return locations.reduce(
     (previous, current) =>
-      !previous || calculateScore(current, now) > calculateScore(previous, now)
+      current &&
+      (!previous ||
+        calculateScore(current, now) > calculateScore(previous, now))
         ? current
         : previous,
     null
