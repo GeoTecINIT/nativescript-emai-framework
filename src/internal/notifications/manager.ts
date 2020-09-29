@@ -1,11 +1,17 @@
 import { LocalNotifications } from "nativescript-local-notifications";
-import { Blue } from "tns-core-modules/color/known-colors";
+import { android as androidApp } from "tns-core-modules/application";
 
 import { Notification } from "./notification";
 
 const DEFAULT_CHANNEL_NAME = "Mobile interventions";
 
-class NotificationsManager {
+export interface NotificationsManager {
+  hasPermission(): Promise<boolean>;
+  requestPermission(): Promise<boolean>;
+  display(notification: Notification): Promise<void>;
+}
+
+class NotificationsManagerImpl implements NotificationsManager {
   private channelName = DEFAULT_CHANNEL_NAME;
 
   public hasPermission(): Promise<boolean> {
@@ -18,6 +24,8 @@ class NotificationsManager {
 
   public async display(notification: Notification): Promise<void> {
     const { title, body, bigTextStyle } = notification;
+
+    this.fixAndroidChannel();
     const ids = await LocalNotifications.schedule([
       {
         title,
@@ -26,7 +34,6 @@ class NotificationsManager {
         channel: this.channelName,
         forceShowWhenInForeground: true,
         priority: 2,
-        notificationLed: Blue,
       },
     ]);
 
@@ -36,6 +43,35 @@ class NotificationsManager {
   public setChannelName(name: string) {
     this.channelName = name;
   }
+
+  private fixAndroidChannel() {
+    if (
+      typeof android === "undefined" ||
+      android.os.Build.VERSION.SDK_INT < 26
+    ) {
+      return;
+    }
+    const notificationManager = androidApp.context.getSystemService(
+      android.content.Context.NOTIFICATION_SERVICE
+    );
+    if (
+      !notificationManager ||
+      !!notificationManager.getNotificationChannel(this.channelName)
+    ) {
+      console.log(notificationManager.getNotificationChannel(this.channelName));
+      return;
+    }
+    const channel = new android.app.NotificationChannel(
+      this.channelName,
+      this.channelName,
+      android.app.NotificationManager.IMPORTANCE_HIGH
+    );
+    channel.enableLights(true);
+    channel.setLightColor(android.graphics.Color.BLUE);
+    channel.enableVibration(true);
+    channel.setVibrationPattern([0, 1000, 500, 1000]);
+    notificationManager.createNotificationChannel(channel);
+  }
 }
 
-export const notificationsManager = new NotificationsManager();
+export const notificationsManager = new NotificationsManagerImpl();
