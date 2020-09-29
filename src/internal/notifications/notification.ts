@@ -1,5 +1,5 @@
 export interface Notification {
   title: string;
-  body: string;
-  bigTextStyle: boolean;
+  body?: string;
+  bigTextStyle?: boolean;
 }

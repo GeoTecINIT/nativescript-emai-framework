@@ -3,10 +3,11 @@ import { Blue } from "tns-core-modules/color/known-colors";
 
 import { Notification } from "./notification";
 
-// TODO: Parameterize this
-const CHANNEL_NAME = "Mobile interventions";
+const DEFAULT_CHANNEL_NAME = "Mobile interventions";
 
 class NotificationsManager {
+  private channelName = DEFAULT_CHANNEL_NAME;
+
   public hasPermission(): Promise<boolean> {
     return LocalNotifications.hasPermission();
   }
@@ -22,7 +23,7 @@ class NotificationsManager {
         title,
         body,
         bigTextStyle,
-        channel: CHANNEL_NAME,
+        channel: this.channelName,
         forceShowWhenInForeground: true,
         priority: 2,
         notificationLed: Blue,
@@ -30,6 +31,10 @@ class NotificationsManager {
     ]);
 
     console.log(`Notification successfully displayed with id: ${ids[0]}`);
+  }
+
+  public setChannelName(name: string) {
+    this.channelName = name;
   }
 }
 
