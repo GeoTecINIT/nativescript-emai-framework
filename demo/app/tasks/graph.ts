@@ -10,6 +10,13 @@ class DemoTaskGraph implements TaskGraph {
         run: RunnableTaskDescriptor
     ): Promise<void> {
         on("startEvent", run("startDetectingCoarseHumanActivityChanges"));
+        on(
+            "startEvent",
+            run("sendNotification", {
+                title: "Application started!",
+                body: ":D",
+            })
+        );
         on("stopEvent", run("stopDetectingCoarseHumanActivityChanges"));
 
         on(
@@ -34,7 +41,10 @@ class DemoTaskGraph implements TaskGraph {
 
         // on("geolocationAcquired", run("writeRecord"));
         // on("userActivityChanged", run("writeRecord"));
-        on("userActivityChanged", run("sendNotification"));
+        on(
+            "userActivityChanged",
+            run("sendNotification", { title: "User activity has changed" })
+        );
         on("userActivityChanged", run("trackEvent"));
     }
 }

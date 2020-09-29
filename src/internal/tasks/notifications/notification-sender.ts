@@ -5,6 +5,7 @@ import {
 } from "../../notifications/manager";
 import { TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
+import { Notification } from "../../notifications";
 
 export const notificationPermissionMissingErr = new Error(
   "Notification permission has not been granted"
@@ -42,10 +43,30 @@ export class NotificationSenderTask extends TraceableTask {
     taskParams: TaskParams,
     invocationEvent: DispatchableEvent
   ): Promise<void> {
-    await this.manager.display({
-      title: "New internal event",
-      body: JSON.stringify(invocationEvent.data),
-      bigTextStyle: true,
-    });
+    await this.manager.display(
+      NotificationSenderTask.createNotificationFromParamsOrEvent(
+        taskParams,
+        invocationEvent
+      )
+    );
+  }
+
+  private static createNotificationFromParamsOrEvent(
+    params: TaskParams,
+    evt: DispatchableEvent
+  ): Notification {
+    const { title } = params;
+    if (!title) {
+      throw new Error("A title must be included as a task parameter!");
+    }
+
+    const body = params.body ? params.body : JSON.stringify(evt.data);
+    const bigTextStyle = body.length >= 25;
+
+    return {
+      title,
+      body,
+      bigTextStyle,
+    };
   }
 }
