@@ -5,7 +5,7 @@ import {
 } from "../../notifications/manager";
 import { TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
-import { Notification } from "../../notifications";
+import { Notification, TapContentType } from "../../notifications";
 
 export const notificationPermissionMissingErr = new Error(
   "Notification permission has not been granted"
@@ -55,17 +55,38 @@ export class NotificationSenderTask extends TraceableTask {
     params: TaskParams,
     evt: DispatchableEvent
   ): Notification {
-    const { title } = params;
+    const { title, tapContent } = params;
     if (!title) {
       throw new Error("A title must be included as a task parameter!");
     }
+    if (
+      tapContent &&
+      tapContent.type !== TapContentType.NONE &&
+      !tapContent.id
+    ) {
+      throw new Error(
+        "When tap content is declared as !NONE an id must be provided!"
+      );
+    }
 
-    const body = params.body ? params.body : JSON.stringify(evt.data);
+    const body = params.body
+      ? params.body
+      : evt.data.body
+      ? evt.data.body
+      : JSON.stringify(evt.data);
+    const timestamp = new Date();
     const bigTextStyle = body.length >= 25;
 
     return {
       title,
       body,
+      tapContent: tapContent
+        ? tapContent
+        : {
+            type: TapContentType.NONE,
+            id: null,
+          },
+      timestamp,
       bigTextStyle,
     };
   }
