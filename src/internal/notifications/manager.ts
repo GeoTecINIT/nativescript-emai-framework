@@ -26,7 +26,7 @@ class NotificationsManagerImpl implements NotificationsManager {
     const { title, body, bigTextStyle } = notification;
 
     this.fixAndroidChannel();
-    const ids = await LocalNotifications.schedule([
+    await LocalNotifications.schedule([
       {
         title,
         body,
@@ -36,12 +36,24 @@ class NotificationsManagerImpl implements NotificationsManager {
         priority: 2,
       },
     ]);
-
-    console.log(`Notification successfully displayed with id: ${ids[0]}`);
   }
 
   public setChannelName(name: string) {
     this.channelName = name;
+  }
+
+  public onNotificationTap(tapCallback: NotificationCallback): Promise<void> {
+    return LocalNotifications.addOnMessageReceivedCallback((received) =>
+      tapCallback()
+    );
+  }
+
+  public onNotificationCleared(
+    clearCallback: NotificationCallback
+  ): Promise<void> {
+    return LocalNotifications.addOnMessageClearedCallback((received) =>
+      clearCallback()
+    );
   }
 
   private fixAndroidChannel() {
@@ -58,7 +70,6 @@ class NotificationsManagerImpl implements NotificationsManager {
       !notificationManager ||
       !!notificationManager.getNotificationChannel(this.channelName)
     ) {
-      console.log(notificationManager.getNotificationChannel(this.channelName));
       return;
     }
     const channel = new android.app.NotificationChannel(
@@ -73,5 +84,7 @@ class NotificationsManagerImpl implements NotificationsManager {
     notificationManager.createNotificationChannel(channel);
   }
 }
+
+export type NotificationCallback = () => void;
 
 export const notificationsManager = new NotificationsManagerImpl();
