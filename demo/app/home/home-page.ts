@@ -5,8 +5,6 @@ logic, and to set up your page’s data binding.
 */
 
 import { NavigatedData, Page } from "tns-core-modules/ui/page";
-import { EventData } from "tns-core-modules/data/observable";
-import { View } from "tns-core-modules/ui/core/view";
 import {
     alert,
     AlertOptions,
@@ -35,7 +33,8 @@ export function onNavigatingTo(args: NavigatedData) {
 export function onNavigatedTo(args: NavigatedData) {
     const page = <Page>args.object;
 
-    getHomeViewModel().onNotificationTap(() => {
+    getHomeViewModel().onNotificationTap((notification) => {
+        console.log(notification);
         const context = null;
         const closeCallback = null;
         const fullscreen = true;
@@ -77,20 +76,6 @@ export function onClearEvents() {
         if (confirmed) {
             getHomeViewModel().clearTraces();
         }
-    });
-}
-
-export function onShowModal(args: EventData) {
-    const view: View = <View>args.object;
-    const context = null;
-    const closeCallback = null;
-    const fullscreen = true;
-    const animated = true;
-    view.showModal("notification-handler/notification-handler-root", {
-        context,
-        closeCallback,
-        fullscreen,
-        animated,
     });
 }
 

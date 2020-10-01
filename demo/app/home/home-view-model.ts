@@ -13,6 +13,7 @@ import {
     createTracesExporter,
 } from "nativescript-emai-framework/internal/persistence/file/traces-exporter";
 import { notificationsManager } from "nativescript-emai-framework/internal/notifications/manager";
+import { Notification } from "nativescript-emai-framework/internal/notifications";
 
 const SIZE_INCREMENT = 10;
 
@@ -65,7 +66,7 @@ export class HomeViewModel extends Observable {
         this.store.clear();
     }
 
-    onNotificationTap(cb: () => void) {
+    onNotificationTap(cb: (notification: Notification) => void) {
         notificationsManager
             .onNotificationTap(cb)
             .catch((err) =>
