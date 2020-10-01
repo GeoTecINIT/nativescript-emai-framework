@@ -32,6 +32,23 @@ export function onNavigatingTo(args: NavigatedData) {
         });
 }
 
+export function onNavigatedTo(args: NavigatedData) {
+    const page = <Page>args.object;
+
+    getHomeViewModel().onNotificationTap(() => {
+        const context = null;
+        const closeCallback = null;
+        const fullscreen = true;
+        const animated = true;
+        page.showModal("notification-handler/notification-handler-root", {
+            context,
+            closeCallback,
+            fullscreen,
+            animated,
+        });
+    });
+}
+
 export function onExportTap() {
     getHomeViewModel()
         .exportTraces()

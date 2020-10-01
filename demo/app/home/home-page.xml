@@ -1,5 +1,6 @@
 <Page
     navigatingTo="onNavigatingTo"
+    navigatedTo="onNavigatedTo"
     xmlns="http://schemas.nativescript.org/tns.xsd">
 
     <ActionBar title="Tracked Events">
@@ -8,9 +9,6 @@
                         ios.systemIcon="3" ios.position="left"
                         android.systemIcon="ic_menu_save" android.position="actionBar"/>
             <ActionItem tap="onClearEvents" text="Clear events"
-                        ios.systemIcon="16" ios.position="right"
-                        android.position="popup"/>
-            <ActionItem tap="onShowModal" text="Show modal"
                         ios.systemIcon="16" ios.position="right"
                         android.position="popup"/>
         </ActionBar.actionItems>

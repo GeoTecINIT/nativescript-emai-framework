@@ -12,6 +12,7 @@ import {
     TracesExportResult,
     createTracesExporter,
 } from "nativescript-emai-framework/internal/persistence/file/traces-exporter";
+import { notificationsManager } from "nativescript-emai-framework/internal/notifications/manager";
 
 const SIZE_INCREMENT = 10;
 
@@ -62,6 +63,16 @@ export class HomeViewModel extends Observable {
     clearTraces() {
         console.warn("Up to clear traces!");
         this.store.clear();
+    }
+
+    onNotificationTap(cb: () => void) {
+        notificationsManager
+            .onNotificationTap(cb)
+            .catch((err) =>
+                console.error(
+                    `Could not subscribe to notification taps. Reason: ${err}`
+                )
+            );
     }
 
     private subscribeToDatabaseChanges() {
