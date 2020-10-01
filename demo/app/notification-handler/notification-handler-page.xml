@@ -1,0 +1,7 @@
+<Page class="page">
+    <ActionBar title="Notification Handler" class="action-bar"/>
+
+    <StackLayout>
+        <Button class="btn btn-primary" text="closeModal()" tap="closeModal"/>
+    </StackLayout>
+</Page>

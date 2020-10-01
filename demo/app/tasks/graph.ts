@@ -10,13 +10,6 @@ class DemoTaskGraph implements TaskGraph {
         run: RunnableTaskDescriptor
     ): Promise<void> {
         on("startEvent", run("startDetectingCoarseHumanActivityChanges"));
-        on(
-            "startEvent",
-            run("sendNotification", {
-                title: "Application started!",
-                body: ":D",
-            })
-        );
         on("stopEvent", run("stopDetectingCoarseHumanActivityChanges"));
 
         on(

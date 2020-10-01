@@ -10,6 +10,9 @@
             <ActionItem tap="onClearEvents" text="Clear events"
                         ios.systemIcon="16" ios.position="right"
                         android.position="popup"/>
+            <ActionItem tap="onShowModal" text="Show modal"
+                        ios.systemIcon="16" ios.position="right"
+                        android.position="popup"/>
         </ActionBar.actionItems>
     </ActionBar>
 
