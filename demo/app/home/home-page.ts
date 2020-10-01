@@ -15,6 +15,7 @@ import {
 import { emaiFramework } from "nativescript-emai-framework";
 import { ItemEventData } from "@nativescript/core";
 import { HomeViewModel } from "~/home/home-view-model";
+import { TapContentType } from "nativescript-emai-framework/internal/notifications";
 
 export function onNavigatingTo(args: NavigatedData) {
     const page = <Page>args.object;
@@ -34,8 +35,11 @@ export function onNavigatedTo(args: NavigatedData) {
     const page = <Page>args.object;
 
     getHomeViewModel().onNotificationTap((notification) => {
-        console.log(notification);
-        const context = null;
+        if (notification.tapContent.type === TapContentType.NONE) {
+            return;
+        }
+
+        const context = notification;
         const closeCallback = null;
         const fullscreen = true;
         const animated = true;
