@@ -1,7 +1,18 @@
-<Page class="page">
+<Page
+        showingModally="onShowingModally"
+        navigatedTo="onNavigatedTo"
+        xmlns="http://schemas.nativescript.org/tns.xsd">
     <ActionBar title="Notification Handler" class="action-bar"/>
 
     <StackLayout>
-        <Button class="btn btn-primary" text="closeModal()" tap="closeModal"/>
+        <StackLayout class="m-4 p-x-12" visibility="{{ tapContent.type === 'rich-text' ? 'visible' : 'collapsed' }}">
+            <Label text="Showing some 'rich-text'"/>
+            <Label text="{{ 'Content id: ' + tapContent.id }}"/>
+        </StackLayout>
+        <StackLayout class="m-4 p-x-12" visibility="{{ tapContent.type === 'questions' ? 'visible' : 'collapsed' }}">
+            <Label text="Showing some questions"/>
+            <Label text="{{ 'Question set id: ' + tapContent.id }}"/>
+        </StackLayout>
+        <Button class="btn btn-primary" text="Close" tap="closeModal"/>
     </StackLayout>
 </Page>
