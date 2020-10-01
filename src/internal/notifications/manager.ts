@@ -1,7 +1,15 @@
-import { LocalNotifications } from "nativescript-local-notifications";
+import {
+  LocalNotifications,
+  ReceivedNotification,
+} from "nativescript-local-notifications";
 import { android as androidApp } from "tns-core-modules/application";
 
 import { Notification } from "./notification";
+import {
+  NotificationsStore,
+  notificationsStoreDB,
+} from "../persistence/stores/notifications";
+import { getLogger, Logger } from "../utils/logger";
 
 const DEFAULT_CHANNEL_NAME = "Mobile interventions";
 
@@ -12,6 +20,12 @@ export interface NotificationsManager {
 }
 
 class NotificationsManagerImpl implements NotificationsManager {
+  private logger: Logger;
+
+  constructor(private store: NotificationsStore) {
+    this.logger = getLogger("NotificationsManager");
+  }
+
   private channelName = DEFAULT_CHANNEL_NAME;
 
   public hasPermission(): Promise<boolean> {
@@ -25,9 +39,13 @@ class NotificationsManagerImpl implements NotificationsManager {
   public async display(notification: Notification): Promise<void> {
     const { title, body, bigTextStyle } = notification;
 
+    const id = NotificationsManagerImpl.generateNotificationId();
+    await this.store.insert(id, notification);
+
     this.fixAndroidChannel();
     await LocalNotifications.schedule([
       {
+        id,
         title,
         body,
         bigTextStyle,
@@ -44,7 +62,9 @@ class NotificationsManagerImpl implements NotificationsManager {
 
   public onNotificationTap(tapCallback: NotificationCallback): Promise<void> {
     return LocalNotifications.addOnMessageReceivedCallback((received) =>
-      tapCallback()
+      this.processReceivedNotification(received)
+        .then((notification) => tapCallback(notification))
+        .catch((err) => this.logger.error(err))
     );
   }
 
@@ -52,8 +72,19 @@ class NotificationsManagerImpl implements NotificationsManager {
     clearCallback: NotificationCallback
   ): Promise<void> {
     return LocalNotifications.addOnMessageClearedCallback((received) =>
-      clearCallback()
+      this.processReceivedNotification(received)
+        .then((notification) => clearCallback(notification))
+        .catch((err) => this.logger.error(err))
     );
+  }
+
+  private async processReceivedNotification(
+    received: ReceivedNotification
+  ): Promise<Notification> {
+    const { id } = received;
+    const notification = await this.store.get(id);
+    await this.store.delete(id);
+    return notification;
   }
 
   private fixAndroidChannel() {
@@ -83,8 +114,16 @@ class NotificationsManagerImpl implements NotificationsManager {
     channel.setVibrationPattern([0, 1000, 500, 1000]);
     notificationManager.createNotificationChannel(channel);
   }
+
+  private static generateNotificationId(): number {
+    // From nativescript-local-notifications
+    // https://github.com/EddyVerbruggen/nativescript-local-notifications/blob/master/src/local-notifications-common.ts
+    return Math.round((Date.now() + Math.round(100000 * Math.random())) / 1000);
+  }
 }
 
-export type NotificationCallback = () => void;
+export type NotificationCallback = (notification: Notification) => void;
 
-export const notificationsManager = new NotificationsManagerImpl();
+export const notificationsManager = new NotificationsManagerImpl(
+  notificationsStoreDB
+);
