@@ -35,10 +35,6 @@ class DemoTaskGraph implements TaskGraph {
 
         // on("geolocationAcquired", run("writeRecord"));
         // on("userActivityChanged", run("writeRecord"));
-        on(
-            "userActivityChanged",
-            run("sendNotification", { title: "User activity has changed" })
-        );
         on("userActivityChanged", run("trackEvent"));
 
         on(
@@ -64,6 +60,8 @@ class DemoTaskGraph implements TaskGraph {
                 },
             })
         );
+
+        on("questionsAnswered", run("trackEvent"));
     }
 }
 
