@@ -1,6 +1,6 @@
 <Page
         showingModally="onShowingModally"
-        navigatedTo="onNavigatedTo"
+        navigatingTo="onNavigatingTo"
         xmlns="http://schemas.nativescript.org/tns.xsd">
     <ActionBar title="{{ content.title }}" class="action-bar"/>
 

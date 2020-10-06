@@ -7,7 +7,7 @@ import { NotificationViewModel } from "./notification-view-model";
 
 let vm: NotificationViewModel;
 
-export function onNavigatedTo(args: EventData) {
+export function onNavigatingTo(args: EventData) {
     const context = getNotificationHandlerService().tappedNotification;
     const page: Page = <Page>args.object;
     vm = new NotificationViewModel(context);
