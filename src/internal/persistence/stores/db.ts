@@ -1,6 +1,7 @@
 import { NativeSQLite } from "@nano-sql/adapter-sqlite-nativescript";
 import { nSQL } from "@nano-sql/core/lib";
 import { recordsModel } from "./records/model";
+import { areasOfInterestModel } from "./geofencing/aois/model";
 import { notificationsModel } from "./notifications/model";
 import { tracesModel } from "./traces/model";
 
@@ -18,7 +19,12 @@ class PluginDB {
       this.createDBProcedure = nSQL().createDatabase({
         id: dbName,
         mode: new NativeSQLite(),
-        tables: [recordsModel, notificationsModel, tracesModel],
+        tables: [
+          recordsModel,
+          areasOfInterestModel,
+          notificationsModel,
+          tracesModel,
+        ],
       });
     }
     await this.createDBProcedure;
