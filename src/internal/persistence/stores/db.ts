@@ -2,6 +2,7 @@ import { NativeSQLite } from "@nano-sql/adapter-sqlite-nativescript";
 import { nSQL } from "@nano-sql/core/lib";
 import { recordsModel } from "./records/model";
 import { areasOfInterestModel } from "./geofencing/aois/model";
+import { geofencingStateModel } from "./geofencing/state/model";
 import { notificationsModel } from "./notifications/model";
 import { tracesModel } from "./traces/model";
 
@@ -22,6 +23,7 @@ class PluginDB {
         tables: [
           recordsModel,
           areasOfInterestModel,
+          geofencingStateModel,
           notificationsModel,
           tracesModel,
         ],
