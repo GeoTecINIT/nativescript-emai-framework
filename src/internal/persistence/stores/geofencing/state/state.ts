@@ -5,6 +5,7 @@ import { pluginDB } from "../../db";
 export interface GeofencingStateStore {
   updateProximity(id: string, proximity: GeofencingProximity): Promise<void>;
   getProximity(id: string): Promise<GeofencingProximity>;
+  getKnownNearbyAreas(): Promise<Array<NearbyArea>>;
   clear(): Promise<void>;
 }
 
@@ -39,6 +40,12 @@ class GeofencingStateStoreDB implements GeofencingStateStore {
     return rows[0].proximity;
   }
 
+  async getKnownNearbyAreas(): Promise<Array<NearbyArea>> {
+    const instance = await this.db();
+    const rows = await instance.query("select").exec();
+    return rows.map((row) => ({ id: row.id, proximity: row.proximity }));
+  }
+
   async clear(): Promise<void> {
     const instance = await this.db();
     await instance.query("delete").exec();
@@ -47,6 +54,11 @@ class GeofencingStateStoreDB implements GeofencingStateStore {
   private db(tableName = this.tableName) {
     return pluginDB.instance(tableName);
   }
+}
+
+export interface NearbyArea {
+  id: string;
+  proximity: GeofencingProximity;
 }
 
 export const geofencingStateStoreDB = new GeofencingStateStoreDB();

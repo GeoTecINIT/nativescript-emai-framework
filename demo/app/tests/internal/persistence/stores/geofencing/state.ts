@@ -34,6 +34,20 @@ describe("Geofencing state store", () => {
         expect(proximityState).toEqual(GeofencingProximity.OUTSIDE);
     });
 
+    it("returns all known nearby places (ids)", async () => {
+        await store.updateProximity("aoi1", GeofencingProximity.NEARBY);
+        await store.updateProximity("aoi2", GeofencingProximity.INSIDE);
+
+        const nearbyAreas = await store.getKnownNearbyAreas();
+        expect(nearbyAreas.length).toBe(2);
+        expect(
+            nearbyAreas.find((area) => area.id === "aoi1")
+        ).not.toBeUndefined();
+        expect(
+            nearbyAreas.find((area) => area.id === "aoi2")
+        ).not.toBeUndefined();
+    });
+
     afterEach(async () => {
         await store.clear();
     });
