@@ -1,1 +1,5 @@
-export { GeofencingStateStore, geofencingStateStoreDB } from "./state";
+export {
+  GeofencingStateStore,
+  geofencingStateStoreDB,
+  NearbyArea,
+} from "./state";
