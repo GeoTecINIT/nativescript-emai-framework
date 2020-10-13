@@ -97,7 +97,7 @@ describe("Geolocation provider", () => {
         spyOn(nativeProvider, "locationStream").and.returnValue(of());
         spyOn(nativeProvider, "acquireLocation").and.returnValue(
             new Promise((resolve) =>
-                setTimeout(() => resolve(locations[0]), timeout + 100)
+                setTimeout(() => resolve(locations[0]), timeout + 500)
             )
         );
         const [bestLocation] = provider.next();
