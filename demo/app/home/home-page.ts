@@ -14,15 +14,18 @@ import {
 
 import { emaiFramework } from "nativescript-emai-framework";
 import { ItemEventData } from "@nativescript/core";
-import { HomeViewModel } from "~/home/home-view-model";
+import { HomeViewModel } from "./home-view-model";
 import { TapContentType } from "nativescript-emai-framework/internal/notifications";
+import { areasOfInterestStoreDB } from "nativescript-emai-framework/internal/persistence/stores/geofencing/aois";
+import { AreaOfInterest } from "nativescript-emai-framework/internal/tasks/geofencing/aoi";
 
 export function onNavigatingTo(args: NavigatedData) {
     const page = <Page>args.object;
 
     page.bindingContext = getHomeViewModel();
 
-    emitStartEvent()
+    setupAreasOfInterest()
+        .then(() => emitStartEvent())
         .then(() => {
             console.log("Start event emitted!");
         })
@@ -100,6 +103,23 @@ async function emitStartEvent() {
         await emaiFramework.prepare();
     }
     emaiFramework.emitEvent("startEvent");
+}
+
+async function setupAreasOfInterest() {
+    console.log("Setting up areas of interest...");
+    const store = areasOfInterestStoreDB;
+    const aois = await store.getAll();
+    if (aois.length > 0) {
+        console.log("Areas already set up!");
+        return;
+    }
+
+    const newAoIs: Array<AreaOfInterest> = [
+        // Add your areas of interest here
+    ];
+    console.log(`Going to store ${newAoIs.length} new areas of interest`);
+    await store.insert(newAoIs);
+    console.log("Done setting up areas of interest!");
 }
 
 let _vm: HomeViewModel;
