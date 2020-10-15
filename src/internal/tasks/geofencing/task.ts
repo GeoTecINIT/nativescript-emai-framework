@@ -76,8 +76,8 @@ export class GeofencingTask extends TraceableTask {
       return { eventName: MOVED_AWAY, result: aois };
     }
 
-    // Notify first transition to moved outside.
-    // Jointly notify (with already nearby areas) as "moved away" in the next call.
+    // First, notify the transition to moved outside, so in the invocation it can
+    // jointly notify (along with the areas know to be nearby) as "moved away".
     await this.updateProximityState(
       knownInsideAreas,
       GeofencingProximity.NEARBY
