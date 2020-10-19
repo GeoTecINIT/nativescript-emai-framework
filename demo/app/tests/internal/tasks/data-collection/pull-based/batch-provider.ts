@@ -1,0 +1,91 @@
+import { PullProvider } from "nativescript-emai-framework/internal/providers";
+import { BatchPullProviderTask } from "nativescript-emai-framework/internal/tasks/data-collection/pull-based";
+import { createPullProviderMock } from "./index";
+import { Geolocation } from "nativescript-emai-framework/internal/providers/geolocation/geolocation";
+import {
+    createEvent,
+    off,
+    on,
+} from "nativescript-task-dispatcher/internal/events";
+import { RecordType } from "nativescript-emai-framework/internal/providers/base-record";
+
+describe("Batch pull-based provider task", () => {
+    let provider: PullProvider;
+    let task: BatchPullProviderTask;
+
+    beforeEach(() => {
+        provider = createPullProviderMock();
+        task = new BatchPullProviderTask(provider, "Phone");
+    });
+
+    it("should have a predictable name", () => {
+        expect(task.name).toEqual("acquireMultiplePhoneGeolocation");
+    });
+
+    it("runs and generates an event with multiple measurements collected", async () => {
+        spyOn(provider, "next").and.callFake(() => {
+            return [
+                new Promise((resolve) =>
+                    setTimeout(() => resolve(createFakeGeolocation()), 200)
+                ),
+                () => null,
+            ];
+        });
+
+        const igniter = createEvent("fake", {
+            expirationTimestamp: Date.now() + 1000,
+        });
+        const done = listenToGeolocationAcquiredEvent(igniter.id);
+
+        task.run({}, igniter);
+        const acquiredData = await done;
+        expect(acquiredData[3]).not.toBeUndefined();
+        expect(acquiredData[4]).toBeUndefined();
+        expect(acquiredData[0].type).toEqual(RecordType.Geolocation);
+        expect(acquiredData[1].type).toEqual(RecordType.Geolocation);
+        expect(acquiredData[2].type).toEqual(RecordType.Geolocation);
+    });
+
+    it("indicates the underlying provider to stop collecting data on cancel", async () => {
+        const interrupter = jasmine.createSpy();
+        spyOn(provider, "next").and.callFake(() => {
+            return [
+                new Promise((resolve) =>
+                    setTimeout(
+                        () => resolve(createFakeGeolocation()),
+
+                        200
+                    )
+                ),
+                interrupter,
+            ];
+        });
+
+        const runPromise = task.run(
+            {},
+            createEvent("fake", { expirationTimestamp: Date.now() + 500 })
+        );
+        await new Promise((resolve) => setTimeout(() => resolve(), 300));
+        task.cancel();
+        await runPromise;
+
+        expect(interrupter).toHaveBeenCalled();
+    });
+});
+
+function createFakeGeolocation(): Geolocation {
+    return new Geolocation(0.0, 0.0, 0, 0, 0, 0, 0, new Date());
+}
+
+function listenToGeolocationAcquiredEvent(
+    id: string
+): Promise<Array<Geolocation>> {
+    return new Promise((resolve) => {
+        const listenerId = on("geolocationAcquired", (evt) => {
+            if (evt.id === id) {
+                off("geolocationAcquired", listenerId);
+                resolve(evt.data as Array<Geolocation>);
+            }
+        });
+    });
+}
