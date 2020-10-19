@@ -34,7 +34,6 @@ describe("Geofencing checker", () => {
     });
 
     it("returns an empty list when no area of interest is nearby", async () => {
-        console.log("Distance from distant place");
         const point = createGeolocation(
             39.994198168578016,
             -0.07218897342681885
@@ -45,7 +44,6 @@ describe("Geofencing checker", () => {
     });
 
     it("returns a list with one element and proximity 'nearby' when the given location is in the outer area", async () => {
-        console.log("Distance close to aoi1");
         const point = createGeolocation(
             39.993602254871945,
             -0.0744849443435669
@@ -58,7 +56,6 @@ describe("Geofencing checker", () => {
     });
 
     it("returns a list with one element and proximity 'inside' when the given location is inside the inner area", async () => {
-        console.log("Distance inside aoi1");
         const point = createGeolocation(
             39.99395569397331,
             -0.07432937622070312
@@ -71,7 +68,6 @@ describe("Geofencing checker", () => {
     });
 
     it("returns a list with two elements when the given location is inside one area and nearby another", async () => {
-        console.log("Distance inside aoi1 and close to aoi2");
         const point = createGeolocation(
             39.99377075513676,
             -0.07363736629486084

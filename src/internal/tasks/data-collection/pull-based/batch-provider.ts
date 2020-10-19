@@ -24,8 +24,15 @@ export class BatchPullProviderTask extends SinglePullProviderTask {
       average(executionTimes) < this.remainingTime()
     ) {
       const start = Date.now();
-      const taskOutcome = await super.onTracedRun(taskParams, invocationEvent);
-      records.push(taskOutcome.result);
+      try {
+        const taskOutcome = await super.onTracedRun(
+          taskParams,
+          invocationEvent
+        );
+        records.push(taskOutcome.result);
+      } catch (err) {
+        this.log(`Provider has thrown an error while collecting data: ${err}`);
+      }
       executionTimes.push(Date.now() - start);
     }
     return { result: records };

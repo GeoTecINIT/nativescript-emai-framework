@@ -8,6 +8,7 @@ import {
     on,
 } from "nativescript-task-dispatcher/internal/events";
 import { RecordType } from "nativescript-emai-framework/internal/providers/base-record";
+import { ProviderInterrupter } from "nativescript-emai-framework/internal/providers/provider-interrupter";
 
 describe("Batch pull-based provider task", () => {
     let provider: PullProvider;
@@ -44,6 +45,53 @@ describe("Batch pull-based provider task", () => {
         expect(acquiredData[0].type).toEqual(RecordType.Geolocation);
         expect(acquiredData[1].type).toEqual(RecordType.Geolocation);
         expect(acquiredData[2].type).toEqual(RecordType.Geolocation);
+    });
+
+    it("returns an empty list when the provider is not able to collect measurements", async () => {
+        spyOn(provider, "next").and.callFake(() => {
+            return [
+                new Promise((_, reject) =>
+                    setTimeout(() => reject("Could not get location!"), 200)
+                ),
+                () => null,
+            ];
+        });
+
+        const igniter = createEvent("fake", {
+            expirationTimestamp: Date.now() + 1000,
+        });
+        const done = listenToGeolocationAcquiredEvent(igniter.id);
+
+        task.run({}, igniter);
+        const acquiredData = await done;
+        expect(acquiredData[0]).toBeUndefined();
+    });
+
+    it("gracefully finishes when timeout rises", async () => {
+        spyOn(provider, "next").and.callFake(() => {
+            let interrupter = new ProviderInterrupter();
+            const promise = new Promise<Geolocation>((resolve) => {
+                const listenerId = setTimeout(
+                    () => resolve(createFakeGeolocation()),
+                    10000
+                );
+                interrupter.interruption = () => {
+                    clearTimeout(listenerId);
+                    resolve(null);
+                };
+            });
+
+            return [promise, () => interrupter.interrupt()];
+        });
+
+        const igniter = createEvent("fake", {
+            expirationTimestamp: Date.now() + 1000,
+        });
+
+        const runPromise = task.run({}, igniter);
+        await new Promise((resolve) => setTimeout(() => resolve(), 1000));
+        task.cancel();
+        await runPromise;
     });
 
     it("indicates the underlying provider to stop collecting data on cancel", async () => {
