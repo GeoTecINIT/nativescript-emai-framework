@@ -49,7 +49,7 @@ describe("Geofencing task", () => {
         );
     });
 
-    it("outputs a default event when no area is nearby an no area was nearby", async () => {
+    it("outputs a default event when no area is nearby and no area was nearby", async () => {
         spyOn(checker, "findNearby")
             .withArgs(location, nearbyRange)
             .and.returnValue(Promise.resolve([]));
@@ -64,6 +64,28 @@ describe("Geofencing task", () => {
 
         task.run({ nearbyRange }, invocationEvent);
         await done;
+        expect(checker.findNearby).toHaveBeenCalled();
+    });
+
+    it("outputs a default event when no area is nearby and no area was nearby a given trajectory", async () => {
+        spyOn(checker, "findNearbyTrajectory")
+            .withArgs([location, location], nearbyRange)
+            .and.returnValue(Promise.resolve([]));
+        spyOn(state, "getKnownNearbyAreas").and.returnValue(
+            Promise.resolve([])
+        );
+
+        const invocationEvent = createEvent("locationAcquired", {
+            data: [location, location],
+        });
+        const done = listenToTaskFinished(
+            "checkAreaOfInterestProximityFinished",
+            invocationEvent.id
+        );
+
+        task.run({ nearbyRange }, invocationEvent);
+        await done;
+        expect(checker.findNearbyTrajectory).toHaveBeenCalled();
     });
 
     it("outputs a 'movedAwayFromAreaOfInterest' event when there was an area nearby but no longer it is", async () => {

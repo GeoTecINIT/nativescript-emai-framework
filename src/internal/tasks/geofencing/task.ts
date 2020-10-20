@@ -46,17 +46,34 @@ export class GeofencingTask extends TraceableTask {
     taskParams: TaskParams,
     invocationEvent: DispatchableEvent
   ): Promise<TaskOutcome> {
-    const nearbyRange = taskParams.nearbyRange
-      ? taskParams.nearbyRange
-      : DEFAULT_NEARBY_RANGE;
-    const nearbyAreas = await this.checker.findNearby(
-      invocationEvent.data as Geolocation,
-      nearbyRange
+    const nearbyAreas = await this.queryNearbyAreasWith(
+      invocationEvent,
+      taskParams
     );
+
     if (nearbyAreas.length === 0) {
       return this.handleNoNearbyAreasLeft();
     }
+
     return this.handleNearbyAreas(nearbyAreas);
+  }
+
+  private queryNearbyAreasWith(
+    invocationEvent: DispatchableEvent,
+    taskParams: TaskParams
+  ): Promise<Array<GeofencingResult>> {
+    const nearbyRange = taskParams.nearbyRange
+      ? taskParams.nearbyRange
+      : DEFAULT_NEARBY_RANGE;
+    const evtData = invocationEvent.data;
+
+    if (Array.isArray(evtData)) {
+      return this.checker.findNearbyTrajectory(
+        evtData as Array<Geolocation>,
+        nearbyRange
+      );
+    }
+    return this.checker.findNearby(evtData as Geolocation, nearbyRange);
   }
 
   private async handleNoNearbyAreasLeft(): Promise<TaskOutcome> {
