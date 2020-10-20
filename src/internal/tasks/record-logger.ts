@@ -10,9 +10,6 @@ export class RecordWriterTask extends Task {
     invocationEvent: DispatchableEvent
   ): Promise<void> {
     const record = invocationEvent.data as Record;
-    if (typeof record.timestamp === "string") {
-      record.timestamp = new Date(record.timestamp);
-    }
     await recordsStoreDB.insert(record);
     this.log(`A new record has been logged: ${JSON.stringify(record)}`);
   }
