@@ -40,11 +40,10 @@ describe("Batch pull-based provider task", () => {
 
         task.run({}, igniter);
         const acquiredData = await done;
-        expect(acquiredData[3]).not.toBeUndefined();
-        expect(acquiredData[4]).toBeUndefined();
-        expect(acquiredData[0].type).toEqual(RecordType.Geolocation);
-        expect(acquiredData[1].type).toEqual(RecordType.Geolocation);
-        expect(acquiredData[2].type).toEqual(RecordType.Geolocation);
+        expect(acquiredData.length).toBe(4);
+        for (let i = 0; i < 4; i++) {
+            expect(acquiredData[i].type).toEqual(RecordType.Geolocation);
+        }
     });
 
     it("returns an empty list when the provider is not able to collect measurements", async () => {
@@ -64,7 +63,7 @@ describe("Batch pull-based provider task", () => {
 
         task.run({}, igniter);
         const acquiredData = await done;
-        expect(acquiredData[0]).toBeUndefined();
+        expect(acquiredData.length).toBe(0);
     });
 
     it("gracefully finishes when timeout rises", async () => {
@@ -111,7 +110,7 @@ describe("Batch pull-based provider task", () => {
 
         const runPromise = task.run(
             {},
-            createEvent("fake", { expirationTimestamp: Date.now() + 500 })
+            createEvent("fake", { expirationTimestamp: Date.now() + 1000 })
         );
         await new Promise((resolve) => setTimeout(() => resolve(), 300));
         task.cancel();

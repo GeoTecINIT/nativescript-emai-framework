@@ -59,7 +59,7 @@
 		"@turf/helpers": "^6.1.4",
 		"nativescript-context-apis": "^1.0.2",
 		"nativescript-local-notifications": "^4.2.1",
-		"nativescript-task-dispatcher": "^1.0.2",
+		"nativescript-task-dispatcher": "^1.0.3",
 		"rxjs": "^6.6.0"
 	},
 	"bootstrapper": "nativescript-plugin-seed"
