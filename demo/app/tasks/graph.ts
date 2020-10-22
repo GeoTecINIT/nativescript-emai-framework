@@ -44,7 +44,7 @@ class DemoTaskGraph implements TaskGraph {
         );
         on(
             "movedCloseToAreaOfInterest",
-            run("acquirePhoneGeolocation")
+            run("acquireMultiplePhoneGeolocation")
                 .every(1, "minutes")
                 .cancelOn("movedAwayFromAreaOfInterest")
         );
