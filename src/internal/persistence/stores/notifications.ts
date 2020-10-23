@@ -1,6 +1,5 @@
-import { Notification } from "../../../notifications";
-import { notificationsModel } from "./model";
-import { pluginDB } from "../db";
+import { Notification } from "../../notifications";
+import { Couchbase } from "nativescript-couchbase-plugin";
 
 export interface NotificationsStore {
   insert(id: number, notification: Notification): Promise<void>;
@@ -8,44 +7,42 @@ export interface NotificationsStore {
   delete(id: number): Promise<void>;
 }
 
+const DB_NAME = "emai-notifications";
+
 class NotificationsStoreDB implements NotificationsStore {
-  private tableName = notificationsModel.name;
+  private readonly database: Couchbase;
+
+  constructor() {
+    this.database = new Couchbase(DB_NAME);
+  }
 
   async insert(id: number, notification: Notification): Promise<void> {
-    const row = rowFrom(id, notification);
+    const doc = docFrom(notification);
 
     try {
       await this.get(id);
       return;
     } catch (err) {
-      const instance = await this.db();
-      await instance.query("upsert", row).exec();
+      this.database.createDocument(doc, `${id}`);
     }
   }
 
   async get(id: number): Promise<Notification> {
-    const instance = await this.db();
-    const rows = await instance.query("select").where(["id", "=", id]).exec();
-    if (rows.length === 0) {
+    const doc = this.database.getDocument(`${id}`);
+    if (!doc) {
       throw new Error(`Notification not found (id=${id})`);
     }
-    return notificationFrom(rows[0]);
+    return notificationFrom(doc);
   }
 
   async delete(id: number): Promise<void> {
-    const instance = await this.db();
-    await instance.query("delete").where(["id", "=", id]).exec();
-  }
-
-  private db(tableName = this.tableName) {
-    return pluginDB.instance(tableName);
+    this.database.deleteDocument(`${id}`);
   }
 }
 
-function rowFrom(id: number, notification: Notification): any {
+function docFrom(notification: Notification): any {
   const { title, tapContent, body, timestamp } = notification;
   return {
-    id,
     title,
     tapContentType: tapContent.type,
     tapContentId: tapContent.id,
@@ -54,8 +51,8 @@ function rowFrom(id: number, notification: Notification): any {
   };
 }
 
-function notificationFrom(row: any): Notification {
-  const { title, tapContentType, tapContentId, body, timestamp } = row;
+function notificationFrom(doc: any): Notification {
+  const { title, tapContentType, tapContentId, body, timestamp } = doc;
   return {
     title,
     tapContent: {
