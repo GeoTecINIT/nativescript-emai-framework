@@ -7,6 +7,10 @@ import { GeofencingProximity } from "nativescript-emai-framework/internal/tasks/
 describe("Geofencing state store", () => {
     const store: GeofencingStateStore = geofencingStateStoreDB;
 
+    beforeAll(async () => {
+        await store.clear();
+    });
+
     it("allows to update the proximity state of an area of interest given its id", async () => {
         await store.updateProximity("aoi1", GeofencingProximity.INSIDE);
     });
