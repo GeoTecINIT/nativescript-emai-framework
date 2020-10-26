@@ -1,6 +1,6 @@
 import { Trace } from "../../tasks/tracing";
-import { Couchbase, QueryMeta } from "nativescript-couchbase-plugin";
-import { Observable, Subject } from "rxjs";
+import { Observable } from "rxjs";
+import { EMAIStore } from "./emai-store";
 
 export interface TracesStore {
   insert(trace: Trace): Promise<void>;
@@ -9,33 +9,29 @@ export interface TracesStore {
   clear(): Promise<void>;
 }
 
-const DB_NAME = "emai-traces";
+const DOC_TYPE = "trace";
 
 class TracesStoreDB implements TracesStore {
-  private readonly database: Couchbase;
-  private readonly changes: Subject<Array<string>>;
+  private readonly store: EMAIStore<Trace>;
 
   constructor() {
-    this.database = new Couchbase(DB_NAME);
-    this.changes = new Subject<Array<string>>();
+    this.store = new EMAIStore<Trace>(DOC_TYPE, docFrom, traceFrom);
   }
 
   async insert(trace: Trace): Promise<void> {
-    const doc = docFrom(trace);
-    const id = this.database.createDocument(doc);
-    this.changes.next([id]);
+    await this.store.create(trace);
   }
 
   list(size = 100): Observable<Array<Trace>> {
     return new Observable<Array<Trace>>((subscriber) => {
-      const subscription = this.changes.subscribe(() => {
-        this.getAllFromNewToOld(size)
+      const subscription = this.store.changes.subscribe(() => {
+        this.getAll(true, size)
           .then((traces) => {
             subscriber.next(traces);
           })
           .catch((err) => subscriber.error(err));
       });
-      this.getAllFromNewToOld(size)
+      this.getAll(true, size)
         .then((traces) => {
           subscriber.next(traces);
         })
@@ -47,39 +43,21 @@ class TracesStoreDB implements TracesStore {
     });
   }
 
-  async getAll(): Promise<Array<Trace>> {
-    const docs = this.database.query({
+  async getAll(
+    reverseOrder?: boolean,
+    limitSize?: number
+  ): Promise<Array<Trace>> {
+    return this.store.fetch({
       select: [],
-      order: [{ property: "timestamp", direction: "asc" }],
-    });
-    return docs.map((doc) => traceFrom(doc));
-  }
-
-  clear(): Promise<void> {
-    return new Promise((resolve) => {
-      this.database.inBatch(() => {
-        const docs = this.database.query({
-          select: [QueryMeta.ID],
-        });
-        const ids: Array<string> = [];
-        for (let doc of docs) {
-          const id = doc.id;
-          this.database.deleteDocument(id);
-          ids.push(id);
-        }
-        this.changes.next(ids);
-        resolve();
-      });
+      order: [
+        { property: "timestamp", direction: !reverseOrder ? "asc" : "desc" },
+      ],
+      limit: limitSize,
     });
   }
 
-  private async getAllFromNewToOld(size: number): Promise<Array<Trace>> {
-    const docs = this.database.query({
-      select: [],
-      order: [{ property: "timestamp", direction: "desc" }],
-      limit: size,
-    });
-    return docs.map((doc) => traceFrom(doc));
+  async clear(): Promise<void> {
+    await this.store.clear();
   }
 }
 

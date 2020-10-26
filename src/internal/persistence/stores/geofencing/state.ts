@@ -1,5 +1,5 @@
 import { GeofencingProximity } from "../../../tasks/geofencing/geofencing-state";
-import { Couchbase, QueryMeta } from "nativescript-couchbase-plugin";
+import { EMAIStore } from "../emai-store";
 
 export interface GeofencingStateStore {
   updateProximity(id: string, proximity: GeofencingProximity): Promise<void>;
@@ -8,13 +8,13 @@ export interface GeofencingStateStore {
   clear(): Promise<void>;
 }
 
-const DB_NAME = "emai-geofencing";
+const DOC_TYPE = "geofencing-state";
 
 class GeofencingStateStoreDB implements GeofencingStateStore {
-  private readonly database: Couchbase;
+  private readonly store: EMAIStore<NearbyArea>;
 
   constructor() {
-    this.database = new Couchbase(DB_NAME);
+    this.store = new EMAIStore<NearbyArea>(DOC_TYPE, docFrom, nearbyAreaFrom);
   }
 
   async updateProximity(
@@ -26,46 +26,44 @@ class GeofencingStateStoreDB implements GeofencingStateStore {
       if (prevState === GeofencingProximity.OUTSIDE) {
         return;
       }
-      this.database.deleteDocument(id);
+      await this.store.delete(id);
       return;
     }
 
-    const doc = this.database.getDocument(id);
+    const doc = await this.store.get(id);
+    const area = { id, proximity };
     if (!doc) {
-      this.database.createDocument({ proximity }, id);
+      await this.store.create(docFrom(area), id);
       return;
     }
-    this.database.updateDocument(id, { proximity });
+    await this.store.update(id, { proximity });
   }
 
   async getProximity(id: string): Promise<GeofencingProximity> {
-    const doc = this.database.getDocument(id);
-    if (!doc) {
+    const areaProximity = await this.store.get(id);
+    if (!areaProximity) {
       return GeofencingProximity.OUTSIDE;
     }
-    return doc.proximity;
+    return areaProximity.proximity;
   }
 
   async getKnownNearbyAreas(): Promise<Array<NearbyArea>> {
-    const docs = this.database.query();
-    return docs.map((doc) => nearbyAreaFrom(doc));
+    return this.store.fetch();
   }
 
-  clear(): Promise<void> {
-    return new Promise((resolve) => {
-      this.database.inBatch(() => {
-        const docs = this.database.query({ select: [QueryMeta.ID] });
-        for (let doc of docs) {
-          this.database.deleteDocument(doc.id);
-        }
-        resolve();
-      });
-    });
+  async clear(): Promise<void> {
+    await this.store.clear();
   }
 }
 
+function docFrom(area: NearbyArea): any {
+  const { proximity } = area;
+  return { proximity };
+}
+
 function nearbyAreaFrom(doc: any): NearbyArea {
-  return { id: doc.id, proximity: doc.proximity };
+  const { id, proximity } = doc;
+  return { id, proximity };
 }
 
 export interface NearbyArea {

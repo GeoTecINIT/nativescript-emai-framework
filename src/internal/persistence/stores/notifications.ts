@@ -1,5 +1,5 @@
 import { Notification } from "../../notifications";
-import { Couchbase } from "nativescript-couchbase-plugin";
+import { EMAIStore } from "./emai-store";
 
 export interface NotificationsStore {
   insert(id: number, notification: Notification): Promise<void>;
@@ -7,36 +7,38 @@ export interface NotificationsStore {
   delete(id: number): Promise<void>;
 }
 
-const DB_NAME = "emai-notifications";
+const DOC_TYPE = "notification";
 
 class NotificationsStoreDB implements NotificationsStore {
-  private readonly database: Couchbase;
+  private readonly store: EMAIStore<Notification>;
 
   constructor() {
-    this.database = new Couchbase(DB_NAME);
+    this.store = new EMAIStore<Notification>(
+      DOC_TYPE,
+      docFrom,
+      notificationFrom
+    );
   }
 
   async insert(id: number, notification: Notification): Promise<void> {
-    const doc = docFrom(notification);
-
     try {
       await this.get(id);
       return;
     } catch (err) {
-      this.database.createDocument(doc, `${id}`);
+      await this.store.create(notification, `${id}`);
     }
   }
 
   async get(id: number): Promise<Notification> {
-    const doc = this.database.getDocument(`${id}`);
-    if (!doc) {
+    const notification = await this.store.get(`${id}`);
+    if (!notification) {
       throw new Error(`Notification not found (id=${id})`);
     }
-    return notificationFrom(doc);
+    return notification;
   }
 
   async delete(id: number): Promise<void> {
-    this.database.deleteDocument(`${id}`);
+    await this.store.delete(`${id}`);
   }
 }
 
