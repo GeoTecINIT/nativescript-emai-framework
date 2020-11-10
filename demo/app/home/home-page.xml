@@ -1,5 +1,6 @@
 <Page
     navigatingTo="onNavigatingTo"
+    navigatedTo="onNavigatedTo"
     xmlns="http://schemas.nativescript.org/tns.xsd">
 
     <ActionBar title="Tracked Events">

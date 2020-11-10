@@ -15,6 +15,7 @@ import {
 import { emaiFramework } from "nativescript-emai-framework";
 import { ItemEventData } from "@nativescript/core";
 import { HomeViewModel } from "~/home/home-view-model";
+import { TapContentType } from "nativescript-emai-framework/internal/notifications";
 
 export function onNavigatingTo(args: NavigatedData) {
     const page = <Page>args.object;
@@ -28,6 +29,27 @@ export function onNavigatingTo(args: NavigatedData) {
         .catch((err) => {
             console.error(`Could not emit start event: ${err}`);
         });
+}
+
+export function onNavigatedTo(args: NavigatedData) {
+    const page = <Page>args.object;
+
+    getHomeViewModel().onNotificationTap((notification) => {
+        if (notification.tapContent.type === TapContentType.NONE) {
+            return;
+        }
+
+        const context = notification;
+        const closeCallback = null;
+        const fullscreen = true;
+        const animated = true;
+        page.showModal("notification-handler/notification-handler-root", {
+            context,
+            closeCallback,
+            fullscreen,
+            animated,
+        });
+    });
 }
 
 export function onExportTap() {

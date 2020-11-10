@@ -3,7 +3,10 @@ import { emaiFramework } from "nativescript-emai-framework";
 import { demoTaskGraph } from "~/tasks/graph";
 
 emaiFramework
-    .init([], demoTaskGraph, { enableLogging: true })
+    .init([], demoTaskGraph, {
+        enableLogging: true,
+        notificationsChannelName: "Intervention alerts",
+    })
     .then(() => console.log("EMA/I framework successfully loaded"))
     .catch((err) => {
         console.error(

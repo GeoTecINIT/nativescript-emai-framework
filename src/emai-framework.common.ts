@@ -1,6 +1,6 @@
 import { Observable } from "tns-core-modules/data/observable";
 
-import { ConfigParams } from "nativescript-task-dispatcher/task-dispatcher.common";
+import { ConfigParams as TDConfigParams } from "nativescript-task-dispatcher/task-dispatcher.common";
 import { Task, TaskGraph } from "./tasks";
 import { HumanActivityProvider } from "./internal/providers/activity-recognition/provider";
 import { taskDispatcher } from "nativescript-task-dispatcher";
@@ -8,6 +8,7 @@ import { contextApis } from "nativescript-context-apis";
 import { EventData } from "./events";
 import { builtInTasks } from "./internal/tasks";
 import { enableLogging, setLoggerCreator } from "./internal/utils/logger";
+import { notificationsManager } from "./internal/notifications/manager";
 
 export class Common extends Observable {
   public async init(
@@ -52,7 +53,12 @@ export class Common extends Observable {
     if (config.enableLogging || config.customLogger) {
       enableLogging();
     }
+    if (config.notificationsChannelName) {
+      notificationsManager.setChannelName(config.notificationsChannelName);
+    }
   }
 }
 
-export { ConfigParams } from "nativescript-task-dispatcher/task-dispatcher.common";
+export interface ConfigParams extends TDConfigParams {
+  notificationsChannelName?: string;
+}
