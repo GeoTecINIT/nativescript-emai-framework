@@ -10,8 +10,9 @@ import {
 
 export const dataCollectionTasks: Array<Task> = [
   /* Geolocation */
-  new SinglePullProviderTask(new GeolocationProvider(5, 5000), "Phone", {
+  new SinglePullProviderTask(new GeolocationProvider(3, 10000), "Phone", {
     foreground: true,
+    sensitiveData: true,
   }),
   /* Human activity recognition */
   new StartPushProviderTask(

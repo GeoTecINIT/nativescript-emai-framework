@@ -1,43 +1,43 @@
 import { Observable } from "tns-core-modules/data/observable";
-import { Record } from "nativescript-emai-framework/internal/providers/base-record";
+import { Trace } from "nativescript-emai-framework/internal/tasks/tracing";
 
 import {
-    RecordsStore,
-    recordsStoreDB,
-} from "nativescript-emai-framework/internal/persistence/stores/records";
+    TracesStore,
+    tracesStoreDB,
+} from "nativescript-emai-framework/internal/persistence/stores/traces";
 import { debounceTime, map, switchMap } from "rxjs/operators";
 import { Subject, Subscription } from "rxjs";
 
 import {
-    RecordsExportResult,
-    createRecordsExporter,
-} from "nativescript-emai-framework/internal/persistence/file/records-exporter";
+    TracesExportResult,
+    createTracesExporter,
+} from "nativescript-emai-framework/internal/persistence/file/traces-exporter";
 
 const SIZE_INCREMENT = 10;
 
 const EXPORT_FOLDER = "Record logs";
 
 export class HomeViewModel extends Observable {
-    private _records = [];
+    private _traces = [];
     private _size = 0;
 
-    private _exportingRecords = false;
+    private _exportingTraces = false;
 
     private _fetchOrders: Subject<number>;
     private _subscription: Subscription;
 
-    constructor(private store: RecordsStore = recordsStoreDB) {
+    constructor(private store: TracesStore = tracesStoreDB) {
         super();
         this.subscribeToDatabaseChanges();
         this.loadMore();
     }
 
-    get records() {
-        return this._records;
+    get traces() {
+        return this._traces;
     }
 
-    get exportingRecords() {
-        return this._exportingRecords;
+    get exportingTraces() {
+        return this._exportingTraces;
     }
 
     loadMore() {
@@ -45,57 +45,57 @@ export class HomeViewModel extends Observable {
         this._fetchOrders.next(this._size);
     }
 
-    exportRecords(): Promise<RecordsExportResult> {
-        this.toggleExportingRecords(true);
-        return createRecordsExporter(EXPORT_FOLDER)
+    exportTraces(): Promise<TracesExportResult> {
+        this.toggleExportingTraces(true);
+        return createTracesExporter(EXPORT_FOLDER)
             .export()
             .then((result) => {
-                this.toggleExportingRecords(false);
+                this.toggleExportingTraces(false);
                 return result;
             })
             .catch((err) => {
-                this.toggleExportingRecords(false);
+                this.toggleExportingTraces(false);
                 return err;
             });
     }
 
-    clearRecords() {
-        console.warn("Up to clear records!");
+    clearTraces() {
+        console.warn("Up to clear traces!");
         this.store.clear();
     }
 
     private subscribeToDatabaseChanges() {
         this._fetchOrders = new Subject<number>();
 
-        const listRecords = (size: number) =>
+        const listTraces = (size: number) =>
             this.store
                 .list(size)
-                .pipe(map((records) => records.map(formatRecord)));
+                .pipe(map((traces) => traces.map(formatTrace)));
 
         const stream = this._fetchOrders.pipe(
             debounceTime(1000),
-            switchMap(listRecords)
+            switchMap(listTraces)
         );
 
         this._subscription = stream.subscribe(
-            (records) => {
-                this._records = records;
-                this.notifyPropertyChange("records", records);
+            (traces) => {
+                this._traces = traces;
+                this.notifyPropertyChange("traces", traces);
             },
-            (err) => console.error(`Error loading records: ${err}`)
+            (err) => console.error(`Error loading traces: ${err}`)
         );
     }
 
-    private toggleExportingRecords(value: boolean) {
-        this._exportingRecords = value;
-        this.notifyPropertyChange("exportingRecords", value);
+    private toggleExportingTraces(value: boolean) {
+        this._exportingTraces = value;
+        this.notifyPropertyChange("exportingTraces", value);
     }
 }
 
-function formatRecord(record: Record) {
+function formatTrace(trace: Trace) {
     return {
-        ...record,
-        timestamp: timestampFormatter(record.timestamp),
+        ...trace,
+        timestamp: timestampFormatter(trace.timestamp),
     };
 }
 

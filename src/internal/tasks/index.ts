@@ -1,8 +1,10 @@
-import { dataCollectionTasks } from "./data-collection";
 import { Task } from "nativescript-task-dispatcher/tasks";
-import { RecordLoggerTask } from "./record-logger";
+import { dataCollectionTasks } from "./data-collection";
+import { tracingTasks } from "./tracing";
+import { RecordWriterTask } from "./record-logger";
 
 export const builtInTasks: Array<Task> = [
   ...dataCollectionTasks,
-  new RecordLoggerTask("logRecord"),
+  ...tracingTasks,
+  new RecordWriterTask("writeRecord"),
 ];

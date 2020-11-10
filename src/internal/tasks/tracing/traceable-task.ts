@@ -1,0 +1,64 @@
+import {
+  Task,
+  TaskOutcome,
+  TaskParams,
+} from "nativescript-task-dispatcher/tasks";
+import { TracerConfig } from "./tracer-config";
+import { TracesStore, tracesStoreDB } from "../../persistence/stores/traces";
+import { DispatchableEvent } from "nativescript-task-dispatcher/events";
+import { Trace } from "./trace";
+import { TraceType } from "./trace-type";
+import { TraceResult } from "./trace-result";
+
+export abstract class TraceableTask extends Task {
+  private readonly sensibleData: boolean;
+
+  constructor(
+    name: string,
+    taskConfig?: TracerConfig,
+    private tracesStore: TracesStore = tracesStoreDB
+  ) {
+    super(name, taskConfig);
+    this.sensibleData = taskConfig && taskConfig.sensitiveData;
+  }
+
+  protected async onRun(
+    taskParams: TaskParams,
+    invocationEvent: DispatchableEvent
+  ): Promise<void | TaskOutcome> {
+    const { id, name } = invocationEvent;
+    const trace: Trace = {
+      timestamp: new Date(),
+      id,
+      type: TraceType.TASK,
+      result: TraceResult.OK,
+      name: this.name,
+      content: { invokedBy: name },
+    };
+
+    let taskOutcome: void | TaskOutcome;
+    let execError: Error;
+    try {
+      taskOutcome = await this.onTracedRun(taskParams, invocationEvent);
+      trace.content.outcome =
+        this.sensibleData || !taskOutcome ? {} : taskOutcome.result;
+    } catch (err) {
+      execError = err;
+      trace.result = TraceResult.ERROR;
+      trace.content.message = err.stack ? err.stack : `${err}`;
+    }
+    trace.content.took = Date.now() - trace.timestamp.getTime();
+    await this.tracesStore.insert(trace);
+    this.log(`Task trace recorded: ${JSON.stringify(trace)}`);
+
+    if (execError) {
+      throw execError;
+    }
+    return taskOutcome;
+  }
+
+  protected abstract onTracedRun(
+    taskParams: TaskParams,
+    invocationEvent: DispatchableEvent
+  ): Promise<void | TaskOutcome>;
+}
