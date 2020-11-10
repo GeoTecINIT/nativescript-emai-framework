@@ -1,19 +1,13 @@
-import { TraceableTask, TracerConfig } from "../tracing";
-import { TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
-import { DispatchableEvent } from "nativescript-task-dispatcher/events";
-import {
-  GeofencingStateStore,
-  geofencingStateStoreDB,
-  NearbyArea,
-} from "../../persistence/stores/geofencing/state";
-import { GeofencingChecker, GeofencingResult } from "./checker";
-import {
-  AreasOfInterestStore,
-  areasOfInterestStoreDB,
-} from "../../persistence/stores/geofencing/aois";
-import { Geolocation } from "../../providers/geolocation/geolocation";
-import { GeofencingProximity } from "./geofencing-state";
-import { AreaOfInterest } from "./aoi";
+import {TraceableTask, TracerConfig} from "../tracing";
+import {TaskOutcome, TaskParams} from "nativescript-task-dispatcher/tasks";
+import {DispatchableEvent} from "nativescript-task-dispatcher/events";
+import {GeofencingStateStore, geofencingStateStoreDB, NearbyArea} from "../../persistence/stores/geofencing/state";
+import {GeofencingChecker, GeofencingResult} from "./checker";
+import {AreasOfInterestStore, areasOfInterestStoreDB} from "../../persistence/stores/geofencing/aois";
+import {Geolocation} from "../../providers/geolocation/geolocation";
+import {GeofencingProximity} from "./geofencing-state";
+import {AoIProximityChange, AreaOfInterest} from "./aoi";
+import {Change} from "../../providers/base-record";
 
 const DEFAULT_NEARBY_RANGE = 100;
 
@@ -90,7 +84,12 @@ export class GeofencingTask extends TraceableTask {
         GeofencingProximity.OUTSIDE
       );
       const aois = await this.getRelatedAoIs(knownCloseAreas);
-      return { eventName: MOVED_AWAY, result: aois };
+      const result = this.buildAoIProximityChanges(
+          aois,
+          GeofencingProximity.NEARBY,
+          Change.END
+      );
+      return { eventName: MOVED_AWAY, result };
     }
 
     // First, notify the transition to moved outside, so in the invocation it can
@@ -100,7 +99,12 @@ export class GeofencingTask extends TraceableTask {
       GeofencingProximity.NEARBY
     );
     const aois = await this.getRelatedAoIs(knownInsideAreas);
-    return { eventName: MOVED_OUTSIDE, result: aois };
+    const result = this.buildAoIProximityChanges(
+        aois,
+        GeofencingProximity.INSIDE,
+        Change.END
+    );
+    return { eventName: MOVED_OUTSIDE, result };
   }
 
   private async handleNearbyAreas(
@@ -126,13 +130,23 @@ export class GeofencingTask extends TraceableTask {
       if (changedFromInsideAreas.length === 0) {
         const aois = changedFromOutsideAreas.map((area) => area.aoi);
         await this.updateProximityState(aois, GeofencingProximity.NEARBY);
-        return { eventName: MOVED_CLOSE, result: aois };
+        const result = this.buildAoIProximityChanges(
+            aois,
+            GeofencingProximity.NEARBY,
+            Change.START
+        );
+        return { eventName: MOVED_CLOSE, result };
       }
 
       // A transition from inside to outside has priority over an away to nearby transition
       const aois = changedFromInsideAreas.map((area) => area.aoi);
       await this.updateProximityState(aois, GeofencingProximity.NEARBY);
-      return { eventName: MOVED_OUTSIDE, result: aois };
+      const result = this.buildAoIProximityChanges(
+          aois,
+          GeofencingProximity.INSIDE,
+          Change.END
+      );
+      return { eventName: MOVED_OUTSIDE, result };
     }
 
     const changedAreas = await this.filterChangedToInside(insideAreas);
@@ -143,7 +157,12 @@ export class GeofencingTask extends TraceableTask {
       // Do not disturb with other changes while inside
       return { eventName: this.outputEventNames[0] };
     }
-    return { eventName: MOVED_INSIDE, result: aois };
+    const result = this.buildAoIProximityChanges(
+        aois,
+        GeofencingProximity.INSIDE,
+        Change.START
+    );
+    return { eventName: MOVED_INSIDE, result };
   }
 
   private async updateProximityState(
@@ -193,6 +212,14 @@ export class GeofencingTask extends TraceableTask {
       }
     }
     return changedOnes;
+  }
+
+  private buildAoIProximityChanges(
+      aois: Array<AreaOfInterest>,
+      proximity: GeofencingProximity,
+      change: Change
+  ): Array<AoIProximityChange> {
+    return aois.map((aoi) => new AoIProximityChange(aoi, proximity, change));
   }
 }
 
