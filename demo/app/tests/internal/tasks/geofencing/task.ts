@@ -7,8 +7,9 @@ import {GeofencingTask} from "nativescript-emai-framework/internal/tasks/geofenc
 import {createEvent, DispatchableEvent, off, on,} from "nativescript-task-dispatcher/internal/events";
 import {createAreasOfInterestStoreMock, createGeofencingCheckerMock, createGeofencingStateStoreMock,} from "./index";
 import {GeofencingProximity} from "nativescript-emai-framework/internal/tasks/geofencing/geofencing-state";
-import {Change, RecordType} from "../../../../../../src/internal/providers/base-record";
-import {AoIProximityChange} from "../../../../../../src/internal/tasks/geofencing/aoi";
+import {Change, RecordType} from "nativescript-emai-framework/internal/providers/base-record";
+import {AoIProximityChange} from "nativescript-emai-framework/internal/tasks/geofencing/aoi";
+
 
 describe("Geofencing task", () => {
     const location = createFakeLocation();
