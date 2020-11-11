@@ -9,10 +9,17 @@ export class RecordWriterTask extends Task {
     taskParams: TaskParams,
     invocationEvent: DispatchableEvent
   ): Promise<void> {
-    const record = invocationEvent.data as Record;
-    if (typeof record.timestamp === "string") {
-      record.timestamp = new Date(record.timestamp);
+    const data = invocationEvent.data;
+    if (Array.isArray(data)) {
+      for (let record of data as Array<Record>) {
+        await this.storeRecord(record);
+      }
+    } else {
+      await this.storeRecord(data as Record);
     }
+  }
+
+  private async storeRecord(record: Record): Promise<void> {
     await recordsStoreDB.insert(record);
     this.log(`A new record has been logged: ${JSON.stringify(record)}`);
   }

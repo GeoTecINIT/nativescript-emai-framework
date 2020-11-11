@@ -10,6 +10,8 @@ export class RecordSerializerFactory {
                 return new GeolocationSerializer();
             case RecordType.HumanActivity:
                 return new HumanActivityChangeSerializer();
+            case RecordType.AoIProximityChange:
+                return null;
         }
     }
 }
