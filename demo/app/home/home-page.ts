@@ -18,6 +18,7 @@ import { HomeViewModel } from "./home-view-model";
 import { TapContentType } from "nativescript-emai-framework/internal/notifications";
 import { areasOfInterestStoreDB } from "nativescript-emai-framework/internal/persistence/stores/geofencing/aois";
 import { AreaOfInterest } from "nativescript-emai-framework/internal/tasks/geofencing/aoi";
+import { Notification } from "nativescript-emai-framework/internal/notifications";
 
 export function onNavigatingTo(args: NavigatedData) {
     const page = <Page>args.object;
@@ -42,16 +43,7 @@ export function onNavigatedTo(args: NavigatedData) {
             return;
         }
 
-        const context = notification;
-        const closeCallback = null;
-        const fullscreen = true;
-        const animated = true;
-        page.showModal("notification-handler/notification-handler-root", {
-            context,
-            closeCallback,
-            fullscreen,
-            animated,
-        });
+        showNotificationModal(notification, page);
     });
 }
 
@@ -109,17 +101,38 @@ async function setupAreasOfInterest() {
     console.log("Setting up areas of interest...");
     const store = areasOfInterestStoreDB;
     const aois = await store.getAll();
-    if (aois.length > 0) {
-        console.log("Areas already set up!");
-        return;
-    }
 
     const newAoIs: Array<AreaOfInterest> = [
         // Add your areas of interest here
     ];
+    if (aois.length === newAoIs.length) {
+        console.log("Areas already set up!");
+        return;
+    }
+    await store.deleteAll();
+
     console.log(`Going to store ${newAoIs.length} new areas of interest`);
     await store.insert(newAoIs);
     console.log("Done setting up areas of interest!");
+}
+
+function showNotificationModal(notification: Notification, page: Page) {
+    const context = notification;
+    const closeCallback = null;
+    const fullscreen = true;
+    const animated = true;
+
+    try {
+        page.showModal("notification-handler/notification-handler-root", {
+            context,
+            closeCallback,
+            fullscreen,
+            animated,
+        });
+    } catch (err) {
+        console.error(`Could not show modal: ${err}`);
+        setTimeout(() => showNotificationModal(notification, page));
+    }
 }
 
 let _vm: HomeViewModel;

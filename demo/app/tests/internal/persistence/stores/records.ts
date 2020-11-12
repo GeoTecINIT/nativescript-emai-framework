@@ -2,16 +2,16 @@ import {
     RecordsStore,
     recordsStoreDB,
 } from "nativescript-emai-framework/internal/persistence/stores/records";
-import {
-    Record,
-    Change,
-} from "nativescript-emai-framework/internal/providers/base-record";
+import { Record } from "nativescript-emai-framework/internal/providers/base-record";
 
 import { Geolocation } from "nativescript-emai-framework/internal/providers/geolocation/geolocation";
 import {
-    HumanActivityChange,
     HumanActivity,
+    HumanActivityChange,
 } from "nativescript-emai-framework/internal/providers/activity-recognition/human-activity-change";
+import { Change } from "nativescript-emai-framework/internal/providers/base-record";
+import { AoIProximityChange } from "nativescript-emai-framework/internal/tasks/geofencing/aoi";
+import { GeofencingProximity } from "nativescript-emai-framework/internal/tasks/geofencing/geofencing-state";
 
 import { first, last, take } from "rxjs/operators";
 
@@ -19,9 +19,21 @@ describe("Records store", () => {
     const store: RecordsStore = recordsStoreDB;
 
     const records: Array<Record> = [
-        new Geolocation(39.1, -0.1, 122, 10.1, 10.1, 12.4, 175.9, nowMinus(3)),
-        new HumanActivityChange(HumanActivity.STILL, Change.START, nowMinus(2)),
-        new Geolocation(39.2, -0.2, 120, 13.1, 13.1, 10.4, 60.7, nowMinus(1)),
+        new Geolocation(39.1, -0.1, 122, 10.1, 10.1, 12.4, 175.9, nowMinus(4)),
+        new HumanActivityChange(HumanActivity.STILL, Change.START, nowMinus(3)),
+        new Geolocation(39.2, -0.2, 120, 13.1, 13.1, 10.4, 60.7, nowMinus(2)),
+        new AoIProximityChange(
+            {
+                id: "aoi1",
+                name: "Area of Interest 1",
+                latitude: 39.2,
+                longitude: -0.2,
+                radius: 20,
+            },
+            GeofencingProximity.INSIDE,
+            Change.START,
+            nowMinus(1)
+        ),
     ];
 
     beforeAll(async () => {
@@ -39,10 +51,11 @@ describe("Records store", () => {
 
         const storedRecords = await store.list().pipe(first()).toPromise();
 
-        expect(storedRecords.length).toBe(3);
-        expect(storedRecords[0]).toEqual(records[2]);
-        expect(storedRecords[1]).toEqual(records[1]);
-        expect(storedRecords[2]).toEqual(records[0]);
+        expect(storedRecords.length).toBe(4);
+        expect(storedRecords[0]).toEqual(records[3]);
+        expect(storedRecords[1]).toEqual(records[2]);
+        expect(storedRecords[2]).toEqual(records[1]);
+        expect(storedRecords[3]).toEqual(records[0]);
     });
 
     it("allows to listen to stored records changes", async () => {
@@ -77,10 +90,11 @@ describe("Records store", () => {
 
         const storedRecords = await store.getAll();
 
-        expect(storedRecords.length).toBe(3);
+        expect(storedRecords.length).toBe(4);
         expect(storedRecords[0]).toEqual(records[0]);
         expect(storedRecords[1]).toEqual(records[1]);
         expect(storedRecords[2]).toEqual(records[2]);
+        expect(storedRecords[3]).toEqual(records[3]);
     });
 
     afterEach(async () => {

@@ -1,13 +1,14 @@
-import {Change, Record, RecordType} from "../../providers/base-record";
-import {GeofencingProximity} from "./geofencing-state";
+import { Change, Record, RecordType } from "../../providers/base-record";
+import { GeofencingProximity } from "./geofencing-state";
 
 export class AoIProximityChange extends Record {
   constructor(
     public aoi: AreaOfInterest,
     public proximity: GeofencingProximity,
-    change: Change
+    change: Change,
+    timestamp = new Date()
   ) {
-    super(RecordType.AoIProximityChange, new Date(), change);
+    super(RecordType.AoIProximityChange, timestamp, change);
   }
 }
 
