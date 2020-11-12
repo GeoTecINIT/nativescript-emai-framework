@@ -96,8 +96,8 @@ function createExampleQuestionSet(): QuestionSet {
         questions: [
             {
                 type: "scale",
-                title: "From 0 to 10, how clear are your thoughts?",
-                start: 0,
+                title: "From 1 to 10, how clear are your thoughts?",
+                start: 1,
                 end: 10,
             },
         ],
