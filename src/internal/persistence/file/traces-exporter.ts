@@ -4,7 +4,11 @@ import { Trace } from "../../tasks/tracing";
 
 const SEPARATOR = ",";
 
-class CSVTracesExporter {
+export interface TracesExporter {
+  export(): Promise<TracesExportResult>;
+}
+
+class CSVTracesExporter implements TracesExporter {
   private folder: Folder;
   private fileName: string;
 
@@ -67,7 +71,10 @@ class CSVTracesExporter {
   }
 }
 
-export function createTracesExporter(folder: string, file?: string) {
+export function createTracesExporter(
+  folder: string,
+  file?: string
+): TracesExporter {
   return new CSVTracesExporter(folder, file);
 }
 
