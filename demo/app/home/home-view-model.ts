@@ -1,19 +1,23 @@
 import { Observable } from "tns-core-modules/data/observable";
-import { Trace } from "nativescript-emai-framework/internal/tasks/tracing";
+
+import { Subject, Subscription } from "rxjs";
+import { debounceTime, map, switchMap } from "rxjs/operators";
 
 import {
+    Trace,
     TracesStore,
-    tracesStoreDB,
-} from "nativescript-emai-framework/internal/persistence/stores/traces";
-import { debounceTime, map, switchMap } from "rxjs/operators";
-import { Subject, Subscription } from "rxjs";
+    tracesDB,
+} from "nativescript-emai-framework/storage/traces";
 
 import {
     TracesExportResult,
     createTracesExporter,
-} from "nativescript-emai-framework/internal/persistence/file/traces-exporter";
-import { notificationsManager } from "nativescript-emai-framework/internal/notifications/manager";
-import { Notification } from "nativescript-emai-framework/internal/notifications";
+} from "nativescript-emai-framework/storage/exporters";
+
+import {
+    notificationsManager,
+    Notification,
+} from "nativescript-emai-framework/notifications";
 
 const SIZE_INCREMENT = 10;
 
@@ -28,7 +32,7 @@ export class HomeViewModel extends Observable {
     private _fetchOrders: Subject<number>;
     private _subscription: Subscription;
 
-    constructor(private store: TracesStore = tracesStoreDB) {
+    constructor(private store: TracesStore = tracesDB) {
         super();
         this.subscribeToDatabaseChanges();
         this.loadMore();

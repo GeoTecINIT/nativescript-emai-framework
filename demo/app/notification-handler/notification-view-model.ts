@@ -2,8 +2,8 @@ import { Observable } from "tns-core-modules/data/observable";
 import {
     Notification,
     TapContentType,
-} from "nativescript-emai-framework/internal/notifications";
-import { taskDispatcher } from "nativescript-task-dispatcher";
+} from "nativescript-emai-framework/notifications";
+import { emaiFramework } from "nativescript-emai-framework";
 
 export class NotificationViewModel extends Observable {
     private readonly _content: NotificationContent;
@@ -40,7 +40,7 @@ export class NotificationViewModel extends Observable {
                 answer: this.answers[i],
             })
         );
-        taskDispatcher.emitEvent("questionsAnswered", { answers: qas });
+        emaiFramework.emitEvent("questionsAnswered", { answers: qas });
     }
 }
 
