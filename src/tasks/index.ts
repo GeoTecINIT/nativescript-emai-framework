@@ -5,9 +5,7 @@ export {
   TaskOutcome,
   SimpleTask,
 } from "nativescript-task-dispatcher/tasks";
+
+export { TraceableTask, TracerConfig } from "../internal/tasks/tracing";
+
 export { DispatchableEvent } from "nativescript-task-dispatcher/events";
-export {
-  TaskGraph,
-  EventListenerGenerator,
-  RunnableTaskDescriptor,
-} from "nativescript-task-dispatcher/tasks/graph";
