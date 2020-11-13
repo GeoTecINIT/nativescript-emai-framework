@@ -1,7 +1,7 @@
 import { Change, RecordType } from "../../../providers/base-record";
 
 export interface SerializedRecord {
-  type: RecordType;
+  type: RecordType | string;
   timestamp: Date;
   change: Change;
   extraProperties: SerializedProperties;
