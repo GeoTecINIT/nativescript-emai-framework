@@ -40,6 +40,10 @@ export abstract class TraceableTask extends Task {
     let execError: Error;
     try {
       taskOutcome = await this.onTracedRun(taskParams, invocationEvent);
+      trace.content.emitted =
+        taskOutcome && taskOutcome.eventName
+          ? taskOutcome.eventName
+          : this.outputEventNames[0];
       trace.content.outcome =
         this.sensibleData || !taskOutcome ? {} : taskOutcome.result;
     } catch (err) {

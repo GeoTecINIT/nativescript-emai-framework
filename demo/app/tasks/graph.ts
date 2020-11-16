@@ -11,6 +11,10 @@ class DemoTaskGraph implements TaskGraph {
         run: RunnableTaskDescriptor
     ): Promise<void> {
         on("startEvent", run("startDetectingCoarseHumanActivityChanges"));
+
+        on("userActivityChanged", run("trackEvent"));
+        on("userActivityChanged", run("writeRecords"));
+
         on("stopEvent", run("stopDetectingCoarseHumanActivityChanges"));
 
         on(
@@ -33,15 +37,18 @@ class DemoTaskGraph implements TaskGraph {
                 .cancelOn("userStartedBeingStill")
         );
 
+        on("geolocationAcquired", run("writeRecords"));
+
         on(
             "geolocationAcquired",
             run("checkAreaOfInterestProximity", { nearbyRange: 100 })
         );
 
-        on(
-            "movedCloseToAreaOfInterest",
-            run("sendNotification", { title: "You've moved close to an AoI!" })
-        );
+        on("movedCloseToAreaOfInterest", run("writeRecords"));
+        on("movedInsideAreaOfInterest", run("writeRecords"));
+        on("movedOutsideAreaOfInterest", run("writeRecords"));
+        on("movedAwayFromAreaOfInterest", run("writeRecords"));
+
         on(
             "movedCloseToAreaOfInterest",
             run("acquireMultiplePhoneGeolocation")
@@ -49,10 +56,6 @@ class DemoTaskGraph implements TaskGraph {
                 .cancelOn("movedAwayFromAreaOfInterest")
         );
 
-        on(
-            "movedInsideAreaOfInterest",
-            run("sendNotification", { title: "You've moved inside an AoI!" })
-        );
         on(
             "movedInsideAreaOfInterest",
             run("sendNotification", {
@@ -66,12 +69,9 @@ class DemoTaskGraph implements TaskGraph {
                 .every(1, "minutes")
                 .cancelOn("movedOutsideAreaOfInterest")
         );
+
         on("questionsAnswered", run("trackEvent"));
 
-        on(
-            "movedOutsideAreaOfInterest",
-            run("sendNotification", { title: "You've moved outside an AoI!" })
-        );
         on(
             "movedOutsideAreaOfInterest",
             run("sendNotification", {
@@ -83,15 +83,6 @@ class DemoTaskGraph implements TaskGraph {
                 },
             })
         );
-
-        on(
-            "movedAwayFromAreaOfInterest",
-            run("sendNotification", { title: "You've moved away from an AoI!" })
-        );
-
-        on("userActivityChanged", run("trackEvent"));
-        // on("geolocationAcquired", run("writeRecord"));
-        // on("userActivityChanged", run("writeRecord"));
     }
 }
 

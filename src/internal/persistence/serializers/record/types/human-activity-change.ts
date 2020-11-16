@@ -27,7 +27,12 @@ export class HumanActivityChangeSerializer
     const extraProperties = serializedRecord.extraProperties as HumanActivityChangeProps;
     const { activity, confidence } = extraProperties;
 
-    return new HumanActivityChange(activity, change, timestamp, confidence);
+    return new HumanActivityChange(
+      activity,
+      change,
+      timestamp,
+      confidence ? confidence : undefined
+    );
   }
 }
 

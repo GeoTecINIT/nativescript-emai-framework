@@ -1,45 +1,185 @@
-import { NativeSQLite } from "@nano-sql/adapter-sqlite-nativescript";
-import { nSQL } from "@nano-sql/core/lib";
-import { recordsModel } from "./records/model";
-import { areasOfInterestModel } from "./geofencing/aois/model";
-import { geofencingStateModel } from "./geofencing/state/model";
-import { notificationsModel } from "./notifications/model";
-import { tracesModel } from "./traces/model";
+import {
+  Couchbase,
+  Query,
+  QueryLogicalOperator,
+  QueryMeta,
+  QueryWhereItem,
+} from "nativescript-couchbase-plugin";
 
-const dbName = "emai-framework";
+const DB_NAME = "emai-framework";
 
-class PluginDB {
-  private dbInitialized: boolean = false;
-  private createDBProcedure: Promise<void>;
+class Database {
+  private db: Couchbase;
 
-  async createDB() {
-    if (this.dbInitialized) {
-      return;
-    }
-    if (!this.createDBProcedure) {
-      this.createDBProcedure = nSQL().createDatabase({
-        id: dbName,
-        mode: new NativeSQLite(),
-        tables: [
-          recordsModel,
-          areasOfInterestModel,
-          geofencingStateModel,
-          notificationsModel,
-          tracesModel,
-        ],
-      });
-    }
-    await this.createDBProcedure;
-    this.dbInitialized = true;
+  constructor() {
+    this.db = new Couchbase(DB_NAME);
   }
 
-  async instance(tableName: string) {
-    await this.createDB();
-    if (nSQL().selectedDB !== dbName) {
-      nSQL().useDatabase(dbName);
+  async createDocument(
+    docType: string,
+    doc: any,
+    id?: string
+  ): Promise<string> {
+    return new Promise((resolve, reject) => {
+      this.db.inBatch(() => {
+        const typedId = id ? typeId(docType, id) : undefined;
+        if (typedId && this.db.getDocument(typedId)) {
+          reject(new NotUniqueErr(id));
+          return;
+        }
+        const typedDoc = { docType, ...doc };
+        const docId = this.db.createDocument(typedDoc, typedId);
+        resolve(untypeId(docType, docId));
+      });
+    });
+  }
+
+  async createMultipleDocs(
+    docType: string,
+    docs: Array<any>
+  ): Promise<Array<string>> {
+    if (docs.length === 0) {
+      return [];
     }
-    return nSQL(tableName);
+    if (docs[0].id && typeof docs[0].id !== "string") {
+      throw new Error("Built in id property must be a string!");
+    }
+    return new Promise((resolve, reject) => {
+      this.db.inBatch(() => {
+        if (docs[0].id) {
+          const existingIds = [];
+          for (let doc of docs) {
+            const existingDoc = this.db.getDocument(typeId(docType, doc.id));
+            if (existingDoc) {
+              existingIds.push(existingDoc.id);
+            }
+          }
+          if (existingIds.length > 0) {
+            reject(new NotUniqueErr(existingIds));
+            return;
+          }
+        }
+
+        const ids = [];
+        for (let doc of docs) {
+          const typedDoc = { docType, ...doc };
+          let id: string;
+          if (typedDoc.id) {
+            id = typeId(docType, typedDoc.id);
+            delete typedDoc["id"];
+          }
+          const docId = this.db.createDocument(typedDoc, id);
+          ids.push(untypeId(docType, docId));
+        }
+        resolve(ids);
+      });
+    });
+  }
+
+  async getDocument(docType: string, id: string): Promise<any> {
+    const doc = this.db.getDocument(typeId(docType, id));
+    if (!doc) {
+      return null;
+    }
+    return doc;
+  }
+
+  async query(
+    docType: string,
+    q: Query = { select: [QueryMeta.ALL, QueryMeta.ID] }
+  ): Promise<Array<any>> {
+    const docTypeFilter: QueryWhereItem = {
+      property: "docType",
+      comparison: "equalTo",
+      value: docType,
+    };
+
+    if (!q.where) {
+      q.where = [docTypeFilter];
+    } else {
+      q.where.push({ logical: QueryLogicalOperator.AND, ...docTypeFilter });
+    }
+
+    return this.db
+      .query(q)
+      .map((doc) => ({ ...doc, id: untypeId(docType, doc.id) }));
+  }
+
+  async updateDocument(docType: string, id: string, doc: any): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.db.inBatch(() => {
+        this.getDocument(docType, id)
+          .then((prevDoc) => {
+            if (!prevDoc) {
+              resolve();
+              return;
+            }
+            this.db.updateDocument(typeId(docType, id), doc);
+            resolve();
+          })
+          .catch((err) => reject(err));
+      });
+    });
+  }
+
+  async deleteDocument(docType: string, id: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.db.inBatch(() => {
+        this.getDocument(docType, id)
+          .then((prevDoc) => {
+            if (!prevDoc) {
+              resolve();
+              return;
+            }
+            this.db.deleteDocument(typeId(docType, id));
+            resolve();
+          })
+          .catch((err) => reject(err));
+      });
+    });
+  }
+
+  async deleteAll(docType: string): Promise<Array<string>> {
+    return new Promise((resolve) => {
+      this.db.inBatch(() => {
+        const docs = this.db.query({
+          select: [QueryMeta.ID],
+          where: [
+            { property: "docType", comparison: "equalTo", value: docType },
+          ],
+        });
+        const ids: Array<string> = [];
+        for (let doc of docs) {
+          const id = doc.id;
+          this.db.deleteDocument(id);
+          ids.push(untypeId(docType, id));
+        }
+        resolve(ids);
+      });
+    });
   }
 }
 
-export const pluginDB = new PluginDB();
+function typeId(docType: string, id: string) {
+  return `${docType}#${id}`;
+}
+
+function untypeId(docType: string, typedId: string) {
+  return typedId.replace(`${docType}#`, "");
+}
+
+export const pluginDB = new Database();
+
+export class NotUniqueErr extends Error {
+  constructor(ids: string | Array<string>) {
+    super(
+      typeof ids === "string"
+        ? `Document with id (${ids}) already exists (perhaps with a different doc type)`
+        : `Documents with ids (${JSON.stringify(
+            ids
+          )}) already exist (perhaps with a different doc type). No change has been committed`
+    );
+  }
+}
+
+export { Query, QueryLogicalOperator };

@@ -1,6 +1,5 @@
-import { Notification } from "../../../notifications";
-import { notificationsModel } from "./model";
-import { pluginDB } from "../db";
+import { Notification } from "../../notifications";
+import { EMAIStore } from "./emai-store";
 
 export interface NotificationsStore {
   insert(id: number, notification: Notification): Promise<void>;
@@ -8,44 +7,44 @@ export interface NotificationsStore {
   delete(id: number): Promise<void>;
 }
 
+const DOC_TYPE = "notification";
+
 class NotificationsStoreDB implements NotificationsStore {
-  private tableName = notificationsModel.name;
+  private readonly store: EMAIStore<Notification>;
+
+  constructor() {
+    this.store = new EMAIStore<Notification>(
+      DOC_TYPE,
+      docFrom,
+      notificationFrom
+    );
+  }
 
   async insert(id: number, notification: Notification): Promise<void> {
-    const row = rowFrom(id, notification);
-
     try {
       await this.get(id);
       return;
     } catch (err) {
-      const instance = await this.db();
-      await instance.query("upsert", row).exec();
+      await this.store.create(notification, `${id}`);
     }
   }
 
   async get(id: number): Promise<Notification> {
-    const instance = await this.db();
-    const rows = await instance.query("select").where(["id", "=", id]).exec();
-    if (rows.length === 0) {
+    const notification = await this.store.get(`${id}`);
+    if (!notification) {
       throw new Error(`Notification not found (id=${id})`);
     }
-    return notificationFrom(rows[0]);
+    return notification;
   }
 
   async delete(id: number): Promise<void> {
-    const instance = await this.db();
-    await instance.query("delete").where(["id", "=", id]).exec();
-  }
-
-  private db(tableName = this.tableName) {
-    return pluginDB.instance(tableName);
+    await this.store.delete(`${id}`);
   }
 }
 
-function rowFrom(id: number, notification: Notification): any {
+function docFrom(notification: Notification): any {
   const { title, tapContent, body, timestamp } = notification;
   return {
-    id,
     title,
     tapContentType: tapContent.type,
     tapContentId: tapContent.id,
@@ -54,8 +53,8 @@ function rowFrom(id: number, notification: Notification): any {
   };
 }
 
-function notificationFrom(row: any): Notification {
-  const { title, tapContentType, tapContentId, body, timestamp } = row;
+function notificationFrom(doc: any): Notification {
+  const { title, tapContentType, tapContentId, body, timestamp } = doc;
   return {
     title,
     tapContent: {

@@ -1,6 +1,5 @@
-import { GeofencingProximity } from "../../../../tasks/geofencing/geofencing-state";
-import { geofencingStateModel } from "./model";
-import { pluginDB } from "../../db";
+import { GeofencingProximity } from "../../../tasks/geofencing/geofencing-state";
+import { EMAIStore } from "../emai-store";
 
 export interface GeofencingStateStore {
   updateProximity(id: string, proximity: GeofencingProximity): Promise<void>;
@@ -9,51 +8,62 @@ export interface GeofencingStateStore {
   clear(): Promise<void>;
 }
 
+const DOC_TYPE = "geofencing-state";
+
 class GeofencingStateStoreDB implements GeofencingStateStore {
-  private tableName = geofencingStateModel.name;
+  private readonly store: EMAIStore<NearbyArea>;
+
+  constructor() {
+    this.store = new EMAIStore<NearbyArea>(DOC_TYPE, docFrom, nearbyAreaFrom);
+  }
 
   async updateProximity(
     id: string,
     proximity: GeofencingProximity
   ): Promise<void> {
-    const instance = await this.db();
     const prevState = await this.getProximity(id);
     if (proximity === GeofencingProximity.OUTSIDE) {
       if (prevState === GeofencingProximity.OUTSIDE) {
         return;
       }
-      await instance.query("delete").where(["id", "=", id]).exec();
+      await this.store.delete(id);
       return;
     }
 
-    await instance.query("upsert", { id, proximity }).exec();
+    const doc = await this.store.get(id);
+    const area = { id, proximity };
+    if (!doc) {
+      await this.store.create(docFrom(area), id);
+      return;
+    }
+    await this.store.update(id, { proximity });
   }
 
   async getProximity(id: string): Promise<GeofencingProximity> {
-    const instance = await this.db();
-
-    const rows = await instance.query("select").where(["id", "=", id]).exec();
-    if (rows.length === 0) {
+    const areaProximity = await this.store.get(id);
+    if (!areaProximity) {
       return GeofencingProximity.OUTSIDE;
     }
-
-    return rows[0].proximity;
+    return areaProximity.proximity;
   }
 
   async getKnownNearbyAreas(): Promise<Array<NearbyArea>> {
-    const instance = await this.db();
-    const rows = await instance.query("select").exec();
-    return rows.map((row) => ({ id: row.id, proximity: row.proximity }));
+    return this.store.fetch();
   }
 
   async clear(): Promise<void> {
-    const instance = await this.db();
-    await instance.query("delete").exec();
+    await this.store.clear();
   }
+}
 
-  private db(tableName = this.tableName) {
-    return pluginDB.instance(tableName);
-  }
+function docFrom(area: NearbyArea): any {
+  const { proximity } = area;
+  return { proximity };
+}
+
+function nearbyAreaFrom(doc: any): NearbyArea {
+  const { id, proximity } = doc;
+  return { id, proximity };
 }
 
 export interface NearbyArea {

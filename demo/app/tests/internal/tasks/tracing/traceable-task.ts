@@ -49,6 +49,7 @@ describe("Traceable task", () => {
                 content: {
                     took: jasmine.anything(),
                     invokedBy: invocationEvent.name,
+                    emitted: `${dummyTaskName}Finished`,
                     outcome: dummyTaskResult,
                 },
             })
@@ -78,6 +79,7 @@ describe("Traceable task", () => {
                 content: {
                     took: jasmine.anything(),
                     invokedBy: invocationEvent.name,
+                    emitted: `${dummyTaskName}Finished`,
                     outcome: {},
                 },
             })

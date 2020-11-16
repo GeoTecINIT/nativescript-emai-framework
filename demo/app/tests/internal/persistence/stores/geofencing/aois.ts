@@ -39,6 +39,10 @@ describe("Areas of interest store", () => {
 
     const expectedAoIs = [aoi1, aoi2, aoi3];
 
+    beforeAll(async () => {
+        await store.deleteAll();
+    });
+
     it("allows to insert one area of interest", async () => {
         await store.insert([aoi1]);
     });
