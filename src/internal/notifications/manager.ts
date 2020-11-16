@@ -19,7 +19,13 @@ export interface NotificationsManager {
   display(notification: Notification): Promise<void>;
 }
 
-class NotificationsManagerImpl implements NotificationsManager {
+export interface NotificationActionsManager {
+  onNotificationTap(tapCallback: NotificationCallback): Promise<void>;
+  onNotificationCleared(clearCallback: NotificationCallback): Promise<void>;
+}
+
+class NotificationsManagerImpl
+  implements NotificationsManager, NotificationActionsManager {
   private logger: Logger;
 
   constructor(private store: NotificationsStore) {

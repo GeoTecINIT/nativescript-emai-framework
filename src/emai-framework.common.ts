@@ -1,7 +1,8 @@
 import { Observable } from "tns-core-modules/data/observable";
 
 import { ConfigParams as TDConfigParams } from "nativescript-task-dispatcher/task-dispatcher.common";
-import { Task, TaskGraph } from "./tasks";
+import { Task } from "./tasks";
+import { TaskGraph } from "./tasks/graph";
 import { HumanActivityProvider } from "./internal/providers/activity-recognition/provider";
 import { taskDispatcher } from "nativescript-task-dispatcher";
 import { contextApis } from "nativescript-context-apis";

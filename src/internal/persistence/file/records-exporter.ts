@@ -5,7 +5,11 @@ import { RecordSerializerFactory } from "../serializers/record/factory";
 
 const SEPARATOR = ",";
 
-class CSVRecordsExporter {
+export interface RecordsExporter {
+  export(): Promise<RecordsExportResult>;
+}
+
+class CSVRecordsExporter implements RecordsExporter {
   private folder: Folder;
   private fileName: string;
 
@@ -67,7 +71,10 @@ class CSVRecordsExporter {
   }
 }
 
-export function createRecordsExporter(folder: string, file?: string) {
+export function createRecordsExporter(
+  folder: string,
+  file?: string
+): RecordsExporter {
   return new CSVRecordsExporter(folder, file);
 }
 

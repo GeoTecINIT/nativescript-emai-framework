@@ -2,8 +2,8 @@ import {
     TaskGraph,
     EventListenerGenerator,
     RunnableTaskDescriptor,
-} from "nativescript-emai-framework/tasks";
-import { TapContentType } from "nativescript-emai-framework/internal/notifications";
+} from "nativescript-emai-framework/tasks/graph";
+import { TapContentType } from "nativescript-emai-framework/notifications";
 
 class DemoTaskGraph implements TaskGraph {
     async describe(

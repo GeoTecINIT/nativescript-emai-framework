@@ -6,7 +6,7 @@ import { AoiProximityChangeSerializer } from "./types/aoi-proximity-change";
 
 export class RecordSerializerFactory {
   public static createSerializer<T extends Record>(
-    recordType: RecordType
+    recordType: RecordType | string
   ): RecordSerializer<Record | T> {
     switch (recordType) {
       case RecordType.Geolocation:
