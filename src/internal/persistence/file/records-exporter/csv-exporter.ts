@@ -1,15 +1,13 @@
+import { RecordsExporter, RecordsExportResult } from "./exporter";
+
 import { knownFolders, Folder } from "tns-core-modules/file-system";
-import { RecordsStore, recordsStoreDB } from "../stores/records";
-import { Record } from "../../providers/base-record";
-import { RecordSerializerFactory } from "../serializers/record/factory";
+import { RecordsStore, recordsStoreDB } from "../../stores/records";
+import { Record } from "../../../providers/base-record";
+import { RecordSerializerFactory } from "../../serializers/record/factory";
 
 const SEPARATOR = ",";
 
-export interface RecordsExporter {
-  export(): Promise<RecordsExportResult>;
-}
-
-class CSVRecordsExporter implements RecordsExporter {
+export class CSVRecordsExporter implements RecordsExporter {
   private folder: Folder;
   private fileName: string;
 
@@ -69,18 +67,6 @@ class CSVRecordsExporter implements RecordsExporter {
     await file.writeText(this.textToWrite);
     this.textToWrite = "";
   }
-}
-
-export function createRecordsExporter(
-  folder: string,
-  file?: string
-): RecordsExporter {
-  return new CSVRecordsExporter(folder, file);
-}
-
-export interface RecordsExportResult {
-  recordCount: number;
-  fileName: string;
 }
 
 function formatString(str: string) {

@@ -1,14 +1,12 @@
+import { TracesExporter, TracesExportResult } from "./exporter";
+
 import { Folder, knownFolders } from "tns-core-modules/file-system";
-import { TracesStore, tracesStoreDB } from "../stores/traces";
-import { Trace } from "../../tasks/tracing";
+import { TracesStore, tracesStoreDB } from "../../stores/traces";
+import { Trace } from "../../../tasks/tracing";
 
 const SEPARATOR = ",";
 
-export interface TracesExporter {
-  export(): Promise<TracesExportResult>;
-}
-
-class CSVTracesExporter implements TracesExporter {
+export class CSVTracesExporter implements TracesExporter {
   private folder: Folder;
   private fileName: string;
 
@@ -69,18 +67,6 @@ class CSVTracesExporter implements TracesExporter {
     await file.writeText(this.textToWrite);
     this.textToWrite = "";
   }
-}
-
-export function createTracesExporter(
-  folder: string,
-  file?: string
-): TracesExporter {
-  return new CSVTracesExporter(folder, file);
-}
-
-export interface TracesExportResult {
-  traceCount: number;
-  fileName: string;
 }
 
 function formatString(str: string) {
