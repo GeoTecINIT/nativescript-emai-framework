@@ -79,16 +79,17 @@ export class GeofencingChecker {
   private static createProximityDict(
     sometimeNearby: Array<Array<GeofencingResult>>
   ): Map<AreaOfInterest, Array<GeofencingProximity>> {
-    const nearnessAlongTime = new Map<
-      AreaOfInterest,
-      Array<GeofencingProximity>
-    >();
+    // Cannot be merged in one map, because of identical AoIs are not understood as the same key for the map
+    const nearnessAlongTime = new Map<string, Array<GeofencingProximity>>();
+    const aois = new Map<string, AreaOfInterest>();
 
     for (let results of sometimeNearby) {
       for (let result of results) {
-        if (!nearnessAlongTime.has(result.aoi)) {
+        const id = result.aoi.id;
+        if (!aois.has(id)) {
+          aois.set(id, result.aoi);
           nearnessAlongTime.set(
-            result.aoi,
+            id,
             GeofencingChecker.createProximityArray(sometimeNearby.length)
           );
         }
@@ -97,13 +98,19 @@ export class GeofencingChecker {
 
     for (let i = 0; i < sometimeNearby.length; i++) {
       for (let result of sometimeNearby[i]) {
-        const nearness = nearnessAlongTime.get(result.aoi);
+        const id = result.aoi.id;
+        const nearness = nearnessAlongTime.get(id);
         nearness[i] = result.proximity;
-        nearnessAlongTime.set(result.aoi, nearness);
+        nearnessAlongTime.set(id, nearness);
       }
     }
 
-    return nearnessAlongTime;
+    const proximityDict = new Map<AreaOfInterest, Array<GeofencingProximity>>();
+    for (let [id, aoi] of aois) {
+      proximityDict.set(aoi, nearnessAlongTime.get(id));
+    }
+
+    return proximityDict;
   }
 
   private static pickBestProximity(

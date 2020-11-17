@@ -1,13 +1,20 @@
-import {TraceableTask, TracerConfig} from "../tracing";
-import {TaskOutcome, TaskParams} from "nativescript-task-dispatcher/tasks";
-import {DispatchableEvent} from "nativescript-task-dispatcher/events";
-import {GeofencingStateStore, geofencingStateStoreDB, NearbyArea} from "../../persistence/stores/geofencing/state";
-import {GeofencingChecker, GeofencingResult} from "./checker";
-import {AreasOfInterestStore, areasOfInterestStoreDB} from "../../persistence/stores/geofencing/aois";
-import {Geolocation} from "../../providers/geolocation/geolocation";
-import {GeofencingProximity} from "./geofencing-state";
-import {AoIProximityChange, AreaOfInterest} from "./aoi";
-import {Change} from "../../providers/base-record";
+import { TraceableTask, TracerConfig } from "../tracing";
+import { TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
+import { DispatchableEvent } from "nativescript-task-dispatcher/events";
+import {
+  GeofencingStateStore,
+  geofencingStateStoreDB,
+  NearbyArea,
+} from "../../persistence/stores/geofencing/state";
+import { GeofencingChecker, GeofencingResult } from "./checker";
+import {
+  AreasOfInterestStore,
+  areasOfInterestStoreDB,
+} from "../../persistence/stores/geofencing/aois";
+import { Geolocation } from "../../providers/geolocation/geolocation";
+import { GeofencingProximity } from "./geofencing-state";
+import { AoIProximityChange, AreaOfInterest } from "./aoi";
+import { Change } from "../../providers/base-record";
 
 const DEFAULT_NEARBY_RANGE = 100;
 
@@ -85,9 +92,9 @@ export class GeofencingTask extends TraceableTask {
       );
       const aois = await this.getRelatedAoIs(knownCloseAreas);
       const result = this.buildAoIProximityChanges(
-          aois,
-          GeofencingProximity.NEARBY,
-          Change.END
+        aois,
+        GeofencingProximity.NEARBY,
+        Change.END
       );
       return { eventName: MOVED_AWAY, result };
     }
@@ -100,9 +107,9 @@ export class GeofencingTask extends TraceableTask {
     );
     const aois = await this.getRelatedAoIs(knownInsideAreas);
     const result = this.buildAoIProximityChanges(
-        aois,
-        GeofencingProximity.INSIDE,
-        Change.END
+      aois,
+      GeofencingProximity.INSIDE,
+      Change.END
     );
     return { eventName: MOVED_OUTSIDE, result };
   }
@@ -131,9 +138,9 @@ export class GeofencingTask extends TraceableTask {
         const aois = changedFromOutsideAreas.map((area) => area.aoi);
         await this.updateProximityState(aois, GeofencingProximity.NEARBY);
         const result = this.buildAoIProximityChanges(
-            aois,
-            GeofencingProximity.NEARBY,
-            Change.START
+          aois,
+          GeofencingProximity.NEARBY,
+          Change.START
         );
         return { eventName: MOVED_CLOSE, result };
       }
@@ -142,9 +149,9 @@ export class GeofencingTask extends TraceableTask {
       const aois = changedFromInsideAreas.map((area) => area.aoi);
       await this.updateProximityState(aois, GeofencingProximity.NEARBY);
       const result = this.buildAoIProximityChanges(
-          aois,
-          GeofencingProximity.INSIDE,
-          Change.END
+        aois,
+        GeofencingProximity.INSIDE,
+        Change.END
       );
       return { eventName: MOVED_OUTSIDE, result };
     }
@@ -158,9 +165,9 @@ export class GeofencingTask extends TraceableTask {
       return { eventName: this.outputEventNames[0] };
     }
     const result = this.buildAoIProximityChanges(
-        aois,
-        GeofencingProximity.INSIDE,
-        Change.START
+      aois,
+      GeofencingProximity.INSIDE,
+      Change.START
     );
     return { eventName: MOVED_INSIDE, result };
   }
@@ -215,9 +222,9 @@ export class GeofencingTask extends TraceableTask {
   }
 
   private buildAoIProximityChanges(
-      aois: Array<AreaOfInterest>,
-      proximity: GeofencingProximity,
-      change: Change
+    aois: Array<AreaOfInterest>,
+    proximity: GeofencingProximity,
+    change: Change
   ): Array<AoIProximityChange> {
     return aois.map((aoi) => new AoIProximityChange(aoi, proximity, change));
   }
