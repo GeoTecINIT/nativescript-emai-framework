@@ -135,7 +135,6 @@ function showNotificationModal(notification: Notification, page: Page) {
         });
     } catch (err) {
         console.error(`Could not show modal: ${err}`);
-        setTimeout(() => showNotificationModal(notification, page));
     }
 }
 
