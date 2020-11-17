@@ -8,14 +8,13 @@ import {
   Resolution,
 } from "../../providers/activity-recognition/provider";
 
-const geolocationProvider = new GeolocationProvider(3, 10000);
 export const dataCollectionTasks: Array<Task> = [
   /* Geolocation */
-  new SinglePullProviderTask(geolocationProvider, "Phone", {
+  new SinglePullProviderTask(new GeolocationProvider(3, 10000), "Phone", {
     foreground: true,
     sensitiveData: true,
   }),
-  new BatchPullProviderTask(geolocationProvider, "Phone", {
+  new BatchPullProviderTask(new GeolocationProvider(1, 15000), "Phone", {
     foreground: true,
     sensitiveData: true,
   }),
