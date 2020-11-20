@@ -10,7 +10,7 @@ import {
 } from "nativescript-emai-framework/storage/traces";
 
 import {
-    TracesExportResult,
+    ExportResult,
     createTracesExporter,
 } from "nativescript-emai-framework/storage/exporters";
 
@@ -51,7 +51,7 @@ export class HomeViewModel extends Observable {
         this._fetchOrders.next(this._size);
     }
 
-    exportTraces(): Promise<TracesExportResult> {
+    exportTraces(): Promise<ExportResult> {
         this.toggleExportingTraces(true);
         return createTracesExporter(EXPORT_FOLDER)
             .export()
