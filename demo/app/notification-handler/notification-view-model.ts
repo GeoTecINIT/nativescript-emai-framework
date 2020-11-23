@@ -2,8 +2,8 @@ import { Observable } from "tns-core-modules/data/observable";
 import {
     Notification,
     TapContentType,
-} from "nativescript-emai-framework/notifications";
-import { emaiFramework } from "nativescript-emai-framework";
+} from "@geotecinit/emai-framework/notifications";
+import { emaiFramework } from "@geotecinit/emai-framework";
 
 export class NotificationViewModel extends Observable {
     private readonly _content: NotificationContent;

@@ -1,9 +1,9 @@
-import { PullProvider } from "nativescript-emai-framework/internal/providers";
-import { BatchPullProviderTask } from "nativescript-emai-framework/internal/tasks/data-collection/pull-based";
+import { PullProvider } from "@geotecinit/emai-framework/internal/providers";
+import { BatchPullProviderTask } from "@geotecinit/emai-framework/internal/tasks/data-collection/pull-based";
 import { createPullProviderMock } from "./index";
-import { Geolocation } from "nativescript-emai-framework/internal/providers/geolocation/geolocation";
-import { RecordType } from "nativescript-emai-framework/internal/providers/base-record";
-import { ProviderInterrupter } from "nativescript-emai-framework/internal/providers/provider-interrupter";
+import { Geolocation } from "@geotecinit/emai-framework/internal/providers/geolocation/geolocation";
+import { RecordType } from "@geotecinit/emai-framework/internal/providers/base-record";
+import { ProviderInterrupter } from "@geotecinit/emai-framework/internal/providers/provider-interrupter";
 import {
     createEvent,
     listenToEventTrigger,

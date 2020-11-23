@@ -1,8 +1,8 @@
 import {
     Notification,
     TapContentType,
-} from "nativescript-emai-framework/internal/notifications";
-import { notificationsStoreDB } from "nativescript-emai-framework/internal/persistence/stores/notifications";
+} from "@geotecinit/emai-framework/internal/notifications";
+import { notificationsStoreDB } from "@geotecinit/emai-framework/internal/persistence/stores/notifications";
 
 describe("Notifications store", () => {
     const notificationId = 1;

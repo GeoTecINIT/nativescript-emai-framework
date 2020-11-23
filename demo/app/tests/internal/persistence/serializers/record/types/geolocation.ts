@@ -1,5 +1,5 @@
-import { Geolocation } from "nativescript-emai-framework/internal/providers/geolocation/geolocation";
-import { GeolocationSerializer } from "nativescript-emai-framework/internal/persistence/serializers/record/types/geolocation";
+import { Geolocation } from "@geotecinit/emai-framework/internal/providers/geolocation/geolocation";
+import { GeolocationSerializer } from "@geotecinit/emai-framework/internal/persistence/serializers/record/types/geolocation";
 
 describe("Geolocation serializer", () => {
     it("allows to serialize and deserialize an unchanged geolocation record", () => {

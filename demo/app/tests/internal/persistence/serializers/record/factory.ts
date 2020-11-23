@@ -1,8 +1,8 @@
-import { RecordSerializerFactory } from "nativescript-emai-framework/internal/persistence/serializers/record/factory";
-import { RecordType } from "nativescript-emai-framework/internal/providers/base-record";
+import { RecordSerializerFactory } from "@geotecinit/emai-framework/internal/persistence/serializers/record/factory";
+import { RecordType } from "@geotecinit/emai-framework/internal/providers/base-record";
 
-import { GeolocationSerializer } from "nativescript-emai-framework/internal/persistence/serializers/record/types/geolocation";
-import { HumanActivityChangeSerializer } from "nativescript-emai-framework/internal/persistence/serializers/record/types/human-activity-change";
+import { GeolocationSerializer } from "@geotecinit/emai-framework/internal/persistence/serializers/record/types/geolocation";
+import { HumanActivityChangeSerializer } from "@geotecinit/emai-framework/internal/persistence/serializers/record/types/human-activity-change";
 
 describe("Record serializer factory", () => {
     it("allows to create a geolocation serializer", () => {

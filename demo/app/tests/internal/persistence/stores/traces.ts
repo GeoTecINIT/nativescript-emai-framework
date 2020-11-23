@@ -2,12 +2,12 @@ import {
     Trace,
     TraceResult,
     TraceType,
-} from "nativescript-emai-framework/internal/tasks/tracing";
+} from "@geotecinit/emai-framework/internal/tasks/tracing";
 
 import {
     TracesStore,
     tracesStoreDB,
-} from "nativescript-emai-framework/internal/persistence/stores/traces";
+} from "@geotecinit/emai-framework/internal/persistence/stores/traces";
 import { first, last, take } from "rxjs/operators";
 
 describe("Traces store", () => {

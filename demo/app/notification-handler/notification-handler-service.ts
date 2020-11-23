@@ -1,4 +1,4 @@
-import { Notification } from "nativescript-emai-framework/notifications";
+import { Notification } from "@geotecinit/emai-framework/notifications";
 
 class NotificationHandlerService {
     private _tappedNotification: Notification;

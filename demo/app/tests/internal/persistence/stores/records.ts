@@ -1,17 +1,17 @@
 import {
     RecordsStore,
     recordsStoreDB,
-} from "nativescript-emai-framework/internal/persistence/stores/records";
-import { Record } from "nativescript-emai-framework/internal/providers/base-record";
+} from "@geotecinit/emai-framework/internal/persistence/stores/records";
+import { Record } from "@geotecinit/emai-framework/internal/providers/base-record";
 
-import { Geolocation } from "nativescript-emai-framework/internal/providers/geolocation/geolocation";
+import { Geolocation } from "@geotecinit/emai-framework/internal/providers/geolocation/geolocation";
 import {
     HumanActivity,
     HumanActivityChange,
-} from "nativescript-emai-framework/internal/providers/activity-recognition/human-activity-change";
-import { Change } from "nativescript-emai-framework/internal/providers/base-record";
-import { AoIProximityChange } from "nativescript-emai-framework/internal/tasks/geofencing/aoi";
-import { GeofencingProximity } from "nativescript-emai-framework/internal/tasks/geofencing/geofencing-state";
+} from "@geotecinit/emai-framework/internal/providers/activity-recognition/human-activity-change";
+import { Change } from "@geotecinit/emai-framework/internal/providers/base-record";
+import { AoIProximityChange } from "@geotecinit/emai-framework/internal/tasks/geofencing/aoi";
+import { GeofencingProximity } from "@geotecinit/emai-framework/internal/tasks/geofencing/geofencing-state";
 
 import { first, last, take } from "rxjs/operators";
 

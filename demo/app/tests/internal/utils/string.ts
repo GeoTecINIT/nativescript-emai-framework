@@ -1,4 +1,4 @@
-import { pascalCase } from "nativescript-emai-framework/internal/utils/string";
+import { pascalCase } from "@geotecinit/emai-framework/internal/utils/string";
 
 describe("String utils", () => {
     it("allows to turn a sentence into pascal case", () => {

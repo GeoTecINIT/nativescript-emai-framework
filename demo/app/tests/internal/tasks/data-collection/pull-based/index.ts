@@ -1,7 +1,7 @@
 import {
     PullProvider,
     RecordType,
-} from "nativescript-emai-framework/internal/providers";
+} from "@geotecinit/emai-framework/internal/providers";
 
 export function createPullProviderMock(): PullProvider {
     return {

@@ -1,8 +1,8 @@
 import {
     GeofencingStateStore,
     geofencingStateStoreDB,
-} from "nativescript-emai-framework/internal/persistence/stores/geofencing/state";
-import { GeofencingProximity } from "nativescript-emai-framework/internal/tasks/geofencing/geofencing-state";
+} from "@geotecinit/emai-framework/internal/persistence/stores/geofencing/state";
+import { GeofencingProximity } from "@geotecinit/emai-framework/internal/tasks/geofencing/geofencing-state";
 
 describe("Geofencing state store", () => {
     const store: GeofencingStateStore = geofencingStateStoreDB;

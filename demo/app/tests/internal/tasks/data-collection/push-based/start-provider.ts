@@ -1,5 +1,5 @@
-import { PushProvider } from "nativescript-emai-framework/internal/providers";
-import { StartPushProviderTask } from "nativescript-emai-framework/internal/tasks/data-collection/push-based";
+import { PushProvider } from "@geotecinit/emai-framework/internal/providers";
+import { StartPushProviderTask } from "@geotecinit/emai-framework/internal/tasks/data-collection/push-based";
 import { createPushProviderMock } from "~/tests/internal/tasks/data-collection/push-based/index";
 import { createEvent } from "nativescript-task-dispatcher/testing/events";
 

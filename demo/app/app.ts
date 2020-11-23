@@ -1,5 +1,5 @@
 import * as app from "tns-core-modules/application";
-import { emaiFramework } from "nativescript-emai-framework";
+import { emaiFramework } from "@geotecinit/emai-framework";
 import { demoTaskGraph } from "~/tasks/graph";
 
 emaiFramework

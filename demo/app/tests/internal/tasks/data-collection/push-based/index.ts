@@ -1,5 +1,5 @@
-import { PushProvider } from "nativescript-emai-framework/internal/providers";
-import { RecordType } from "nativescript-emai-framework/internal/providers/base-record";
+import { PushProvider } from "@geotecinit/emai-framework/internal/providers";
+import { RecordType } from "@geotecinit/emai-framework/internal/providers/base-record";
 
 export function createPushProviderMock(): PushProvider {
     return {

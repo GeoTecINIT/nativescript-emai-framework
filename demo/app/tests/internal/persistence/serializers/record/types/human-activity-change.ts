@@ -1,7 +1,7 @@
-import { HumanActivityChange } from "nativescript-emai-framework/internal/providers/activity-recognition/human-activity-change";
-import { HumanActivity } from "nativescript-emai-framework/internal/providers/activity-recognition/human-activity-change";
-import { Change } from "nativescript-emai-framework/internal/providers/base-record";
-import { HumanActivityChangeSerializer } from "nativescript-emai-framework/internal/persistence/serializers/record/types/human-activity-change";
+import { HumanActivityChange } from "@geotecinit/emai-framework/internal/providers/activity-recognition/human-activity-change";
+import { HumanActivity } from "@geotecinit/emai-framework/internal/providers/activity-recognition/human-activity-change";
+import { Change } from "@geotecinit/emai-framework/internal/providers/base-record";
+import { HumanActivityChangeSerializer } from "@geotecinit/emai-framework/internal/persistence/serializers/record/types/human-activity-change";
 
 describe("Human activity change serializer", () => {
     it("allows to serialize and deserialize an unchanged human activity change record", () => {

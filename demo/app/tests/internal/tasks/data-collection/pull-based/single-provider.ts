@@ -1,7 +1,7 @@
-import { PullProvider } from "nativescript-emai-framework/internal/providers";
-import { SinglePullProviderTask } from "nativescript-emai-framework/internal/tasks/data-collection/pull-based";
+import { PullProvider } from "@geotecinit/emai-framework/internal/providers";
+import { SinglePullProviderTask } from "@geotecinit/emai-framework/internal/tasks/data-collection/pull-based";
 import { createPullProviderMock } from "./index";
-import { Geolocation } from "nativescript-emai-framework/internal/providers/geolocation/geolocation";
+import { Geolocation } from "@geotecinit/emai-framework/internal/providers/geolocation/geolocation";
 import {
     createEvent,
     listenToEventTrigger,

@@ -1,11 +1,11 @@
-import { TracesStore } from "nativescript-emai-framework/internal/persistence/stores/traces";
+import { TracesStore } from "@geotecinit/emai-framework/internal/persistence/stores/traces";
 import { createTracesStoreMock } from "./index";
 import {
     TraceableTask,
     TracerConfig,
     TraceType,
     TraceResult,
-} from "nativescript-emai-framework/internal/tasks/tracing";
+} from "@geotecinit/emai-framework/internal/tasks/tracing";
 import {
     TaskOutcome,
     TaskParams,

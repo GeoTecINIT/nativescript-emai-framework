@@ -1,8 +1,8 @@
 import { ActivityRecognizer } from "nativescript-context-apis/internal/activity-recognition";
-import { HumanActivityProvider } from "nativescript-emai-framework/internal/providers/activity-recognition/provider";
+import { HumanActivityProvider } from "@geotecinit/emai-framework/internal/providers/activity-recognition/provider";
 import { createActivityRecognizerMock } from "./index";
-import { HumanActivityRecognizerNotReadyErr } from "nativescript-emai-framework/internal/providers/activity-recognition/provider";
-import { Resolution } from "nativescript-emai-framework/internal/providers/activity-recognition/provider";
+import { HumanActivityRecognizerNotReadyErr } from "@geotecinit/emai-framework/internal/providers/activity-recognition/provider";
+import { Resolution } from "@geotecinit/emai-framework/internal/providers/activity-recognition/provider";
 
 describe("Human activity provider", () => {
     let nativeRecognizer: ActivityRecognizer;

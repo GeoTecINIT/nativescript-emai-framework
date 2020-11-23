@@ -1,5 +1,5 @@
-import { NotificationsManager } from "nativescript-emai-framework/internal/notifications/manager";
-import { Notification } from "nativescript-emai-framework/internal/notifications";
+import { NotificationsManager } from "@geotecinit/emai-framework/internal/notifications/manager";
+import { Notification } from "@geotecinit/emai-framework/internal/notifications";
 
 export function createNotificationsManagerMock(): NotificationsManager {
     return {

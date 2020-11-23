@@ -1,11 +1,11 @@
-import { EventTrackerTask } from "nativescript-emai-framework/internal/tasks/tracing/event-tracker";
+import { EventTrackerTask } from "@geotecinit/emai-framework/internal/tasks/tracing/event-tracker";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
-import { TracesStore } from "nativescript-emai-framework/internal/persistence/stores/traces";
+import { TracesStore } from "@geotecinit/emai-framework/internal/persistence/stores/traces";
 import { createTracesStoreMock } from "./index";
 import {
     TraceResult,
     TraceType,
-} from "nativescript-emai-framework/internal/tasks/tracing";
+} from "@geotecinit/emai-framework/internal/tasks/tracing";
 import {
     createEvent,
     listenToEventTrigger,

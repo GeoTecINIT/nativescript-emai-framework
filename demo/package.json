@@ -12,8 +12,8 @@
   "license": "SEE LICENSE IN <your-license-filename>",
   "repository": "<fill-your-repository-here>",
   "dependencies": {
+    "@geotecinit/emai-framework": "file:../src",
     "@nativescript/theme": "~2.3.0",
-    "nativescript-emai-framework": "file:../src",
     "nativescript-unit-test-runner": "^0.7.0",
     "tns-core-modules": "~6.5.0"
   },

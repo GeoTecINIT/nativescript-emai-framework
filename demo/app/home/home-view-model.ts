@@ -7,17 +7,17 @@ import {
     Trace,
     TracesStore,
     tracesDB,
-} from "nativescript-emai-framework/storage/traces";
+} from "@geotecinit/emai-framework/storage/traces";
 
 import {
     ExportResult,
     createTracesExporter,
-} from "nativescript-emai-framework/storage/exporters";
+} from "@geotecinit/emai-framework/storage/exporters";
 
 import {
     notificationsManager,
     Notification,
-} from "nativescript-emai-framework/notifications";
+} from "@geotecinit/emai-framework/notifications";
 
 const SIZE_INCREMENT = 10;
 

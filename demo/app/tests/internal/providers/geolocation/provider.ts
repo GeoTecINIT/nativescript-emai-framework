@@ -8,8 +8,8 @@ import { createNativeGeolocationProviderMock } from "./index";
 import {
     GeolocationProvider,
     geolocationProviderNotReadyErr,
-} from "nativescript-emai-framework/internal/providers/geolocation/provider";
-import { RecordType } from "nativescript-emai-framework/internal/providers";
+} from "@geotecinit/emai-framework/internal/providers/geolocation/provider";
+import { RecordType } from "@geotecinit/emai-framework/internal/providers";
 
 import { from, Observable, of } from "rxjs";
 import { delay } from "rxjs/internal/operators";

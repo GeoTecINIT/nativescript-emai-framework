@@ -1,4 +1,4 @@
-import { HumanActivityChangeReceiver } from "nativescript-emai-framework/internal/providers/activity-recognition/receiver";
+import { HumanActivityChangeReceiver } from "@geotecinit/emai-framework/internal/providers/activity-recognition/receiver";
 import { EventData } from "nativescript-task-dispatcher/internal/events";
 
 import {
@@ -6,9 +6,9 @@ import {
     HumanActivity,
     Transition,
 } from "nativescript-context-apis/internal/activity-recognition";
-import { HumanActivityChange } from "nativescript-emai-framework/internal/providers/activity-recognition/human-activity-change";
+import { HumanActivityChange } from "@geotecinit/emai-framework/internal/providers/activity-recognition/human-activity-change";
 
-import { Change } from "nativescript-emai-framework/internal/providers/base-record";
+import { Change } from "@geotecinit/emai-framework/internal/providers/base-record";
 
 describe("Human activity change receiver", () => {
     let eventEmitter: (eventName: string, eventData?: EventData) => void;

@@ -15,6 +15,10 @@ export class RecordSerializerFactory {
         return new HumanActivityChangeSerializer();
       case RecordType.AoIProximityChange:
         return new AoiProximityChangeSerializer();
+      default:
+        throw new Error(
+          `No serializer has been implemented for (${recordType}) record type`
+        );
     }
   }
 }

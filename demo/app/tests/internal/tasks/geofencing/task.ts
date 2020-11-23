@@ -1,21 +1,21 @@
-import { Geolocation } from "nativescript-emai-framework/internal/providers/geolocation/geolocation";
-import { AreaOfInterest } from "nativescript-emai-framework/internal/tasks/geofencing/aoi";
-import { GeofencingStateStore } from "nativescript-emai-framework/internal/persistence/stores/geofencing/state";
-import { GeofencingChecker } from "nativescript-emai-framework/internal/tasks/geofencing/checker";
-import { AreasOfInterestStore } from "nativescript-emai-framework/internal/persistence/stores/geofencing/aois";
-import { GeofencingTask } from "nativescript-emai-framework/internal/tasks/geofencing/task";
+import { Geolocation } from "@geotecinit/emai-framework/internal/providers/geolocation/geolocation";
+import { AreaOfInterest } from "@geotecinit/emai-framework/internal/tasks/geofencing/aoi";
+import { GeofencingStateStore } from "@geotecinit/emai-framework/internal/persistence/stores/geofencing/state";
+import { GeofencingChecker } from "@geotecinit/emai-framework/internal/tasks/geofencing/checker";
+import { AreasOfInterestStore } from "@geotecinit/emai-framework/internal/persistence/stores/geofencing/aois";
+import { GeofencingTask } from "@geotecinit/emai-framework/internal/tasks/geofencing/task";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 import {
     createAreasOfInterestStoreMock,
     createGeofencingCheckerMock,
     createGeofencingStateStoreMock,
 } from "./index";
-import { GeofencingProximity } from "nativescript-emai-framework/internal/tasks/geofencing/geofencing-state";
+import { GeofencingProximity } from "@geotecinit/emai-framework/internal/tasks/geofencing/geofencing-state";
 import {
     Change,
     RecordType,
-} from "nativescript-emai-framework/internal/providers/base-record";
-import { AoIProximityChange } from "nativescript-emai-framework/internal/tasks/geofencing/aoi";
+} from "@geotecinit/emai-framework/internal/providers/base-record";
+import { AoIProximityChange } from "@geotecinit/emai-framework/internal/tasks/geofencing/aoi";
 import {
     createEvent,
     listenToEventTrigger,

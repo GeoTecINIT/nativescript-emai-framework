@@ -1,5 +1,5 @@
-import { TracesStore } from "nativescript-emai-framework/internal/persistence/stores/traces";
-import { Trace } from "nativescript-emai-framework/internal/tasks/tracing";
+import { TracesStore } from "@geotecinit/emai-framework/internal/persistence/stores/traces";
+import { Trace } from "@geotecinit/emai-framework/internal/tasks/tracing";
 import { Observable, of } from "rxjs";
 
 export function createTracesStoreMock(): TracesStore {

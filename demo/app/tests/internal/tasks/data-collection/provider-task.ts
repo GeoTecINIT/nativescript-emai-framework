@@ -1,5 +1,5 @@
-import { BaseProvider } from "nativescript-emai-framework/internal/providers/base-provider";
-import { ProviderTask } from "nativescript-emai-framework/internal/tasks/data-collection/provider-task";
+import { BaseProvider } from "@geotecinit/emai-framework/internal/providers/base-provider";
+import { ProviderTask } from "@geotecinit/emai-framework/internal/tasks/data-collection/provider-task";
 import { createBaseProviderMock } from "./index";
 
 describe("Provider task", () => {

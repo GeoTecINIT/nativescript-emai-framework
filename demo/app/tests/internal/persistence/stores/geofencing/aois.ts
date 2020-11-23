@@ -1,8 +1,8 @@
 import {
     AreasOfInterestStore,
     areasOfInterestStoreDB,
-} from "nativescript-emai-framework/internal/persistence/stores/geofencing/aois";
-import { AreaOfInterest } from "nativescript-emai-framework/internal/tasks/geofencing/aoi";
+} from "@geotecinit/emai-framework/internal/persistence/stores/geofencing/aois";
+import { AreaOfInterest } from "@geotecinit/emai-framework/internal/tasks/geofencing/aoi";
 
 describe("Areas of interest store", () => {
     const store: AreasOfInterestStore = areasOfInterestStoreDB;

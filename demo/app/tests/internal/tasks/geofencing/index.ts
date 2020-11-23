@@ -1,15 +1,15 @@
-import { AreasOfInterestStore } from "nativescript-emai-framework/internal/persistence/stores/geofencing/aois";
-import { AreaOfInterest } from "nativescript-emai-framework/internal/tasks/geofencing/aoi";
+import { AreasOfInterestStore } from "@geotecinit/emai-framework/internal/persistence/stores/geofencing/aois";
+import { AreaOfInterest } from "@geotecinit/emai-framework/internal/tasks/geofencing/aoi";
 import {
     GeofencingStateStore,
     NearbyArea,
-} from "nativescript-emai-framework/internal/persistence/stores/geofencing/state";
-import { GeofencingProximity } from "nativescript-emai-framework/internal/tasks/geofencing/geofencing-state";
+} from "@geotecinit/emai-framework/internal/persistence/stores/geofencing/state";
+import { GeofencingProximity } from "@geotecinit/emai-framework/internal/tasks/geofencing/geofencing-state";
 import {
     GeofencingChecker,
     GeofencingResult,
-} from "nativescript-emai-framework/internal/tasks/geofencing/checker";
-import { Geolocation } from "nativescript-emai-framework/internal/providers/geolocation/geolocation";
+} from "@geotecinit/emai-framework/internal/tasks/geofencing/checker";
+import { Geolocation } from "@geotecinit/emai-framework/internal/providers/geolocation/geolocation";
 
 export function createAreasOfInterestStoreMock(): AreasOfInterestStore {
     return {
