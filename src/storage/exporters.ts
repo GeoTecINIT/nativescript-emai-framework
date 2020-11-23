@@ -1,11 +1,9 @@
 export {
-  RecordsExporter,
-  RecordsExportResult,
-  createRecordsExporter,
-} from "../internal/persistence/file/records-exporter";
+  Exporter,
+  ExportFormats,
+  ExportResult,
+} from "../internal/persistence/file/exporters";
 
-export {
-  TracesExporter,
-  TracesExportResult,
-  createTracesExporter,
-} from "../internal/persistence/file/traces-exporter";
+export { createRecordsExporter } from "../internal/persistence/file/exporters/records";
+
+export { createTracesExporter } from "../internal/persistence/file/exporters/traces";
