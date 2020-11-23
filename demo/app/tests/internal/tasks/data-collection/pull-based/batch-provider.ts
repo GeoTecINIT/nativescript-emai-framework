@@ -46,6 +46,29 @@ describe("Batch pull-based provider task", () => {
         }
     });
 
+    it("allows to limit the frequency at which measurements should be collected at maximum", async () => {
+        spyOn(provider, "next").and.callFake(() => {
+            return [
+                new Promise((resolve) =>
+                    setTimeout(() => resolve(createFakeGeolocation()), 200)
+                ),
+                () => null,
+            ];
+        });
+
+        const igniter = createEvent("fake", {
+            expirationTimestamp: Date.now() + 1000,
+        });
+        const done = listenToGeolocationAcquiredEvent(igniter.id);
+
+        task.run({ maxInterval: 400 }, igniter);
+        const acquiredData = await done;
+        expect(acquiredData.length).toBe(2);
+        for (let i = 0; i < 2; i++) {
+            expect(acquiredData[i].type).toEqual(RecordType.Geolocation);
+        }
+    });
+
     it("returns an empty list when the provider is not able to collect measurements", async () => {
         spyOn(provider, "next").and.callFake(() => {
             return [

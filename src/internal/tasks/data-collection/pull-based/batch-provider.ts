@@ -23,19 +23,38 @@ export class BatchPullProviderTask extends SinglePullProviderTask {
       executionTimes.length === 0 ||
       average(executionTimes) < this.remainingTime()
     ) {
-      const start = Date.now();
-      try {
-        const taskOutcome = await super.onTracedRun(
-          taskParams,
-          invocationEvent
-        );
-        records.push(taskOutcome.result);
-      } catch (err) {
-        this.log(`Provider has thrown an error while collecting data: ${err}`);
+      const { record, executionTime } = await this.acquireSingleRecord(
+        taskParams,
+        invocationEvent
+      );
+      if (record) {
+        records.push(record);
       }
-      executionTimes.push(Date.now() - start);
+      executionTimes.push(executionTime);
     }
     return { result: records };
+  }
+
+  private async acquireSingleRecord(
+    taskParams: TaskParams,
+    invocationEvent: DispatchableEvent
+  ): Promise<SingleExecutionResult> {
+    const { maxInterval } = taskParams;
+    const start = Date.now();
+    let record: Record;
+    try {
+      const taskOutcome = await super.onTracedRun(taskParams, invocationEvent);
+      record = taskOutcome.result;
+      if (maxInterval && Date.now() - start < maxInterval) {
+        await forMillis(maxInterval - (Date.now() - start));
+      }
+    } catch (err) {
+      this.log(`Provider has thrown an error while collecting data: ${err}`);
+    }
+    return {
+      record,
+      executionTime: Date.now() - start,
+    };
   }
 }
 
@@ -44,4 +63,15 @@ function average(executionTimes: Array<number>) {
     executionTimes.reduce((prev, curr) => prev + curr, 0) /
     executionTimes.length
   );
+}
+
+function forMillis(millis: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, millis);
+  });
+}
+
+interface SingleExecutionResult {
+  record?: Record;
+  executionTime: number;
 }
