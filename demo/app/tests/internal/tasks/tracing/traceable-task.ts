@@ -11,12 +11,13 @@ import {
     TaskParams,
 } from "nativescript-task-dispatcher/internal/tasks/task";
 import {
-    createEvent,
     DispatchableEvent,
-    off,
-    on,
     TaskDispatcherEvent,
 } from "nativescript-task-dispatcher/internal/events";
+import {
+    createEvent,
+    listenToEventTrigger,
+} from "nativescript-task-dispatcher/testing/events";
 
 const dummyTaskName = "doNothing";
 const dummyTaskResult = { secret: "doNotShare" };
@@ -136,12 +137,5 @@ function listenToTaskFinished(source: DispatchableEvent, error = false) {
     const eventName = error
         ? TaskDispatcherEvent.TaskChainFinished
         : "doNothingFinished";
-    return new Promise((resolve) => {
-        const listenerId = on(eventName, (evt) => {
-            if (evt.id === source.id) {
-                off(eventName, listenerId);
-                resolve();
-            }
-        });
-    });
+    return listenToEventTrigger(eventName, source.id);
 }

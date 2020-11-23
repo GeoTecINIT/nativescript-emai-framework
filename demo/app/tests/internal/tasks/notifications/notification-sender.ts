@@ -1,13 +1,12 @@
 import { NotificationsManager } from "nativescript-emai-framework/internal/notifications/manager";
 import { createNotificationsManagerMock } from "./index";
 import { NotificationSenderTask } from "nativescript-emai-framework/internal/tasks/notifications/notification-sender";
+import { DispatchableEvent } from "nativescript-task-dispatcher/events";
+import { TapContentType } from "nativescript-emai-framework/internal/notifications";
 import {
     createEvent,
-    DispatchableEvent,
-    off,
-    on,
-} from "nativescript-task-dispatcher/internal/events";
-import { TapContentType } from "nativescript-emai-framework/internal/notifications";
+    listenToEventTrigger,
+} from "nativescript-task-dispatcher/testing/events";
 
 describe("Notification sender task", () => {
     let manager: NotificationsManager;
@@ -234,12 +233,5 @@ describe("Notification sender task", () => {
 });
 
 function listenToTaskFinished(source: DispatchableEvent) {
-    return new Promise((resolve) => {
-        const listenerId = on("sendNotificationFinished", (evt) => {
-            if (evt.id === source.id) {
-                off("sendNotificationFinished", listenerId);
-                resolve();
-            }
-        });
-    });
+    return listenToEventTrigger("sendNotificationFinished", source.id);
 }

@@ -1,7 +1,7 @@
 import { PushProvider } from "nativescript-emai-framework/internal/providers";
 import { StopPushProviderTask } from "nativescript-emai-framework/internal/tasks/data-collection/push-based";
 import { createPushProviderMock } from "./index";
-import { createEvent } from "nativescript-task-dispatcher/internal/events";
+import { createEvent } from "nativescript-task-dispatcher/testing/events";
 
 describe("Stop push provider task", () => {
     let provider: PushProvider;

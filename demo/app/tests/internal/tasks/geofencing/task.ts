@@ -1,15 +1,25 @@
-import {Geolocation} from "nativescript-emai-framework/internal/providers/geolocation/geolocation";
-import {AreaOfInterest} from "nativescript-emai-framework/internal/tasks/geofencing/aoi";
-import {GeofencingStateStore} from "nativescript-emai-framework/internal/persistence/stores/geofencing/state";
-import {GeofencingChecker} from "nativescript-emai-framework/internal/tasks/geofencing/checker";
-import {AreasOfInterestStore} from "nativescript-emai-framework/internal/persistence/stores/geofencing/aois";
-import {GeofencingTask} from "nativescript-emai-framework/internal/tasks/geofencing/task";
-import {createEvent, DispatchableEvent, off, on,} from "nativescript-task-dispatcher/internal/events";
-import {createAreasOfInterestStoreMock, createGeofencingCheckerMock, createGeofencingStateStoreMock,} from "./index";
-import {GeofencingProximity} from "nativescript-emai-framework/internal/tasks/geofencing/geofencing-state";
-import {Change, RecordType} from "nativescript-emai-framework/internal/providers/base-record";
-import {AoIProximityChange} from "nativescript-emai-framework/internal/tasks/geofencing/aoi";
-
+import { Geolocation } from "nativescript-emai-framework/internal/providers/geolocation/geolocation";
+import { AreaOfInterest } from "nativescript-emai-framework/internal/tasks/geofencing/aoi";
+import { GeofencingStateStore } from "nativescript-emai-framework/internal/persistence/stores/geofencing/state";
+import { GeofencingChecker } from "nativescript-emai-framework/internal/tasks/geofencing/checker";
+import { AreasOfInterestStore } from "nativescript-emai-framework/internal/persistence/stores/geofencing/aois";
+import { GeofencingTask } from "nativescript-emai-framework/internal/tasks/geofencing/task";
+import { DispatchableEvent } from "nativescript-task-dispatcher/events";
+import {
+    createAreasOfInterestStoreMock,
+    createGeofencingCheckerMock,
+    createGeofencingStateStoreMock,
+} from "./index";
+import { GeofencingProximity } from "nativescript-emai-framework/internal/tasks/geofencing/geofencing-state";
+import {
+    Change,
+    RecordType,
+} from "nativescript-emai-framework/internal/providers/base-record";
+import { AoIProximityChange } from "nativescript-emai-framework/internal/tasks/geofencing/aoi";
+import {
+    createEvent,
+    listenToEventTrigger,
+} from "nativescript-task-dispatcher/testing/events";
 
 describe("Geofencing task", () => {
     const location = createFakeLocation();
@@ -51,7 +61,7 @@ describe("Geofencing task", () => {
             Promise.resolve([])
         );
 
-        const done = listenToTaskFinished(
+        const done = listenToEventTrigger(
             "checkAreaOfInterestProximityFinished",
             invocationEvent.id
         );
@@ -72,7 +82,7 @@ describe("Geofencing task", () => {
         const invocationEvent = createEvent("locationAcquired", {
             data: [location, location],
         });
-        const done = listenToTaskFinished(
+        const done = listenToEventTrigger(
             "checkAreaOfInterestProximityFinished",
             invocationEvent.id
         );
@@ -92,19 +102,21 @@ describe("Geofencing task", () => {
             ])
         );
 
-        const done = listenToTaskFinished(
+        const done = listenToEventTrigger(
             "movedAwayFromAreaOfInterest",
             invocationEvent.id
         );
         task.run({ nearbyRange }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(1);
-        expect(aoiProximityChanges[0]).toEqual(aoiProximityChangeFrom(
-            aoi1,
-            GeofencingProximity.NEARBY,
-            Change.END,
-            aoiProximityChanges[0].timestamp
-        ));
+        expect(aoiProximityChanges[0]).toEqual(
+            aoiProximityChangeFrom(
+                aoi1,
+                GeofencingProximity.NEARBY,
+                Change.END,
+                aoiProximityChanges[0].timestamp
+            )
+        );
         expect(state.updateProximity).toHaveBeenCalledWith(
             aoi1.id,
             GeofencingProximity.OUTSIDE
@@ -122,23 +134,29 @@ describe("Geofencing task", () => {
             ])
         );
 
-        const done = listenToTaskFinished(
+        const done = listenToEventTrigger(
             "movedAwayFromAreaOfInterest",
             invocationEvent.id
         );
         task.run({ nearbyRange }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(2);
-        expect(aoiProximityChanges[0]).toEqual(aoiProximityChangeFrom(aoi1,
-            GeofencingProximity.NEARBY,
-            Change.END,
-            aoiProximityChanges[0].timestamp
-        ));
-        expect(aoiProximityChanges[1]).toEqual(aoiProximityChangeFrom(aoi2,
-            GeofencingProximity.NEARBY,
-            Change.END,
-            aoiProximityChanges[1].timestamp
-        ));
+        expect(aoiProximityChanges[0]).toEqual(
+            aoiProximityChangeFrom(
+                aoi1,
+                GeofencingProximity.NEARBY,
+                Change.END,
+                aoiProximityChanges[0].timestamp
+            )
+        );
+        expect(aoiProximityChanges[1]).toEqual(
+            aoiProximityChangeFrom(
+                aoi2,
+                GeofencingProximity.NEARBY,
+                Change.END,
+                aoiProximityChanges[1].timestamp
+            )
+        );
         expect(state.updateProximity).toHaveBeenCalledWith(
             aoi1.id,
             GeofencingProximity.OUTSIDE
@@ -159,19 +177,21 @@ describe("Geofencing task", () => {
             ])
         );
 
-        const done = listenToTaskFinished(
+        const done = listenToEventTrigger(
             "movedOutsideAreaOfInterest",
             invocationEvent.id
         );
         task.run({ nearbyRange }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(1);
-        expect(aoiProximityChanges[0]).toEqual(aoiProximityChangeFrom(
-            aoi1,
-            GeofencingProximity.INSIDE,
-            Change.END,
-            aoiProximityChanges[0].timestamp
-        ));
+        expect(aoiProximityChanges[0]).toEqual(
+            aoiProximityChangeFrom(
+                aoi1,
+                GeofencingProximity.INSIDE,
+                Change.END,
+                aoiProximityChanges[0].timestamp
+            )
+        );
         expect(state.updateProximity).toHaveBeenCalledWith(
             aoi1.id,
             GeofencingProximity.NEARBY
@@ -189,25 +209,29 @@ describe("Geofencing task", () => {
             ])
         );
 
-        const done = listenToTaskFinished(
+        const done = listenToEventTrigger(
             "movedOutsideAreaOfInterest",
             invocationEvent.id
         );
         task.run({ nearbyRange }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(2);
-        expect(aoiProximityChanges[0]).toEqual(aoiProximityChangeFrom(
-            aoi1,
-            GeofencingProximity.INSIDE,
-            Change.END,
-            aoiProximityChanges[0].timestamp
-        ));
-        expect(aoiProximityChanges[1]).toEqual(aoiProximityChangeFrom(
-            aoi2,
-            GeofencingProximity.INSIDE,
-            Change.END,
-            aoiProximityChanges[1].timestamp
-        ));
+        expect(aoiProximityChanges[0]).toEqual(
+            aoiProximityChangeFrom(
+                aoi1,
+                GeofencingProximity.INSIDE,
+                Change.END,
+                aoiProximityChanges[0].timestamp
+            )
+        );
+        expect(aoiProximityChanges[1]).toEqual(
+            aoiProximityChangeFrom(
+                aoi2,
+                GeofencingProximity.INSIDE,
+                Change.END,
+                aoiProximityChanges[1].timestamp
+            )
+        );
         expect(state.updateProximity).toHaveBeenCalledWith(
             aoi1.id,
             GeofencingProximity.NEARBY
@@ -229,19 +253,21 @@ describe("Geofencing task", () => {
             ])
         );
 
-        const done = listenToTaskFinished(
+        const done = listenToEventTrigger(
             "movedOutsideAreaOfInterest",
             invocationEvent.id
         );
         task.run({ nearbyRange }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(1);
-        expect(aoiProximityChanges[0]).toEqual(aoiProximityChangeFrom(
-            aoi1,
-            GeofencingProximity.INSIDE,
-            Change.END,
-            aoiProximityChanges[0].timestamp
-        ));
+        expect(aoiProximityChanges[0]).toEqual(
+            aoiProximityChangeFrom(
+                aoi1,
+                GeofencingProximity.INSIDE,
+                Change.END,
+                aoiProximityChanges[0].timestamp
+            )
+        );
         expect(state.updateProximity).toHaveBeenCalledWith(
             aoi1.id,
             GeofencingProximity.NEARBY
@@ -267,18 +293,21 @@ describe("Geofencing task", () => {
             return Promise.reject(`Unexpected id: ${id}`);
         });
 
-        const done = listenToTaskFinished(
+        const done = listenToEventTrigger(
             "movedCloseToAreaOfInterest",
             invocationEvent.id
         );
         task.run({ nearbyRange }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(1);
-        expect(aoiProximityChanges[0]).toEqual(aoiProximityChangeFrom(aoi1,
-            GeofencingProximity.NEARBY,
-            Change.START,
-            aoiProximityChanges[0].timestamp
-        ));
+        expect(aoiProximityChanges[0]).toEqual(
+            aoiProximityChangeFrom(
+                aoi1,
+                GeofencingProximity.NEARBY,
+                Change.START,
+                aoiProximityChanges[0].timestamp
+            )
+        );
         expect(state.updateProximity).toHaveBeenCalledWith(
             aoi1.id,
             GeofencingProximity.NEARBY
@@ -304,25 +333,29 @@ describe("Geofencing task", () => {
             return Promise.reject(`Unexpected id: ${id}`);
         });
 
-        const done = listenToTaskFinished(
+        const done = listenToEventTrigger(
             "movedCloseToAreaOfInterest",
             invocationEvent.id
         );
         task.run({ nearbyRange }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(2);
-        expect(aoiProximityChanges[0]).toEqual(aoiProximityChangeFrom(
-            aoi1,
-            GeofencingProximity.NEARBY,
-            Change.START,
-            aoiProximityChanges[0].timestamp
-        ));
-        expect(aoiProximityChanges[1]).toEqual(aoiProximityChangeFrom(
-            aoi2,
-            GeofencingProximity.NEARBY,
-            Change.START,
-            aoiProximityChanges[1].timestamp
-        ));
+        expect(aoiProximityChanges[0]).toEqual(
+            aoiProximityChangeFrom(
+                aoi1,
+                GeofencingProximity.NEARBY,
+                Change.START,
+                aoiProximityChanges[0].timestamp
+            )
+        );
+        expect(aoiProximityChanges[1]).toEqual(
+            aoiProximityChangeFrom(
+                aoi2,
+                GeofencingProximity.NEARBY,
+                Change.START,
+                aoiProximityChanges[1].timestamp
+            )
+        );
         expect(state.updateProximity).toHaveBeenCalledWith(
             aoi1.id,
             GeofencingProximity.NEARBY
@@ -348,19 +381,21 @@ describe("Geofencing task", () => {
             return Promise.reject(`Unexpected id: ${id}`);
         });
 
-        const done = listenToTaskFinished(
+        const done = listenToEventTrigger(
             "movedInsideAreaOfInterest",
             invocationEvent.id
         );
         task.run({ nearbyRange }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(1);
-        expect(aoiProximityChanges[0]).toEqual(aoiProximityChangeFrom(
-            aoi1,
-            GeofencingProximity.INSIDE,
-            Change.START,
-            aoiProximityChanges[0].timestamp
-        ));
+        expect(aoiProximityChanges[0]).toEqual(
+            aoiProximityChangeFrom(
+                aoi1,
+                GeofencingProximity.INSIDE,
+                Change.START,
+                aoiProximityChanges[0].timestamp
+            )
+        );
         expect(state.updateProximity).toHaveBeenCalledWith(
             aoi1.id,
             GeofencingProximity.INSIDE
@@ -386,25 +421,29 @@ describe("Geofencing task", () => {
             return Promise.reject(`Unexpected id: ${id}`);
         });
 
-        const done = listenToTaskFinished(
+        const done = listenToEventTrigger(
             "movedInsideAreaOfInterest",
             invocationEvent.id
         );
         task.run({ nearbyRange }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(2);
-        expect(aoiProximityChanges[0]).toEqual(aoiProximityChangeFrom(
-            aoi1,
-            GeofencingProximity.INSIDE,
-            Change.START,
-            aoiProximityChanges[0].timestamp
-        ));
-        expect(aoiProximityChanges[1]).toEqual(aoiProximityChangeFrom(
-            aoi2,
-            GeofencingProximity.INSIDE,
-            Change.START,
-            aoiProximityChanges[1].timestamp
-        ));
+        expect(aoiProximityChanges[0]).toEqual(
+            aoiProximityChangeFrom(
+                aoi1,
+                GeofencingProximity.INSIDE,
+                Change.START,
+                aoiProximityChanges[0].timestamp
+            )
+        );
+        expect(aoiProximityChanges[1]).toEqual(
+            aoiProximityChangeFrom(
+                aoi2,
+                GeofencingProximity.INSIDE,
+                Change.START,
+                aoiProximityChanges[1].timestamp
+            )
+        );
         expect(state.updateProximity).toHaveBeenCalledWith(
             aoi1.id,
             GeofencingProximity.INSIDE
@@ -434,19 +473,21 @@ describe("Geofencing task", () => {
             return Promise.reject(`Unexpected id: ${id}`);
         });
 
-        const done = listenToTaskFinished(
+        const done = listenToEventTrigger(
             "movedInsideAreaOfInterest",
             invocationEvent.id
         );
         task.run({ nearbyRange }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(1);
-        expect(aoiProximityChanges[0]).toEqual(aoiProximityChangeFrom(
-            aoi1,
-            GeofencingProximity.INSIDE,
-            Change.START,
-            aoiProximityChanges[0].timestamp
-        ));
+        expect(aoiProximityChanges[0]).toEqual(
+            aoiProximityChangeFrom(
+                aoi1,
+                GeofencingProximity.INSIDE,
+                Change.START,
+                aoiProximityChanges[0].timestamp
+            )
+        );
         expect(state.updateProximity).toHaveBeenCalledWith(
             aoi1.id,
             GeofencingProximity.INSIDE
@@ -472,19 +513,21 @@ describe("Geofencing task", () => {
             return Promise.reject(`Unexpected id: ${id}`);
         });
 
-        const done = listenToTaskFinished(
+        const done = listenToEventTrigger(
             "movedOutsideAreaOfInterest",
             invocationEvent.id
         );
         task.run({ nearbyRange }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(1);
-        expect(aoiProximityChanges[0]).toEqual(aoiProximityChangeFrom(
-            aoi1,
-            GeofencingProximity.INSIDE,
-            Change.END,
-            aoiProximityChanges[0].timestamp
-        ));
+        expect(aoiProximityChanges[0]).toEqual(
+            aoiProximityChangeFrom(
+                aoi1,
+                GeofencingProximity.INSIDE,
+                Change.END,
+                aoiProximityChanges[0].timestamp
+            )
+        );
         expect(state.updateProximity).toHaveBeenCalledWith(
             aoi1.id,
             GeofencingProximity.NEARBY
@@ -510,25 +553,29 @@ describe("Geofencing task", () => {
             return Promise.reject(`Unexpected id: ${id}`);
         });
 
-        const done = listenToTaskFinished(
+        const done = listenToEventTrigger(
             "movedOutsideAreaOfInterest",
             invocationEvent.id
         );
         task.run({ nearbyRange }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(2);
-        expect(aoiProximityChanges[0]).toEqual(aoiProximityChangeFrom(
-            aoi1,
-            GeofencingProximity.INSIDE,
-            Change.END,
-            aoiProximityChanges[0].timestamp
-        ));
-        expect(aoiProximityChanges[1]).toEqual(aoiProximityChangeFrom(
-            aoi2,
-            GeofencingProximity.INSIDE,
-            Change.END,
-            aoiProximityChanges[1].timestamp
-        ));
+        expect(aoiProximityChanges[0]).toEqual(
+            aoiProximityChangeFrom(
+                aoi1,
+                GeofencingProximity.INSIDE,
+                Change.END,
+                aoiProximityChanges[0].timestamp
+            )
+        );
+        expect(aoiProximityChanges[1]).toEqual(
+            aoiProximityChangeFrom(
+                aoi2,
+                GeofencingProximity.INSIDE,
+                Change.END,
+                aoiProximityChanges[1].timestamp
+            )
+        );
         expect(state.updateProximity).toHaveBeenCalledWith(
             aoi1.id,
             GeofencingProximity.NEARBY
@@ -558,19 +605,21 @@ describe("Geofencing task", () => {
             return Promise.reject(`Unexpected id: ${id}`);
         });
 
-        const done = listenToTaskFinished(
+        const done = listenToEventTrigger(
             "movedOutsideAreaOfInterest",
             invocationEvent.id
         );
         task.run({ nearbyRange }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(1);
-        expect(aoiProximityChanges[0]).toEqual(aoiProximityChangeFrom(
-            aoi1,
-            GeofencingProximity.INSIDE,
-            Change.END,
-            aoiProximityChanges[0].timestamp
-        ));
+        expect(aoiProximityChanges[0]).toEqual(
+            aoiProximityChangeFrom(
+                aoi1,
+                GeofencingProximity.INSIDE,
+                Change.END,
+                aoiProximityChanges[0].timestamp
+            )
+        );
         expect(state.updateProximity).toHaveBeenCalledWith(
             aoi1.id,
             GeofencingProximity.NEARBY
@@ -596,7 +645,7 @@ describe("Geofencing task", () => {
             return Promise.reject(`Unexpected id: ${id}`);
         });
 
-        const done = listenToTaskFinished(
+        const done = listenToEventTrigger(
             "checkAreaOfInterestProximityFinished",
             invocationEvent.id
         );
@@ -619,7 +668,7 @@ describe("Geofencing task", () => {
             return Promise.reject(`Unexpected id: ${id}`);
         });
 
-        const done = listenToTaskFinished(
+        const done = listenToEventTrigger(
             "checkAreaOfInterestProximityFinished",
             invocationEvent.id
         );
@@ -627,17 +676,6 @@ describe("Geofencing task", () => {
         await done;
     });
 });
-
-function listenToTaskFinished(eventName: string, id: string): Promise<any> {
-    return new Promise((resolve) => {
-        const listenerId = on(eventName, (evt) => {
-            if (evt.id === id) {
-                off(eventName, listenerId);
-                resolve(evt.data);
-            }
-        });
-    });
-}
 
 function createFakeLocation(): Geolocation {
     return new Geolocation(39.9938, -0.0736, 50, 10, 10, 0, 0, new Date());
@@ -664,6 +702,6 @@ function aoiProximityChangeFrom(
         timestamp,
         change,
         aoi,
-        proximity
+        proximity,
     };
 }

@@ -1,13 +1,11 @@
 import { PullProvider } from "nativescript-emai-framework/internal/providers";
 import { SinglePullProviderTask } from "nativescript-emai-framework/internal/tasks/data-collection/pull-based";
 import { createPullProviderMock } from "./index";
-
-import {
-    on,
-    createEvent,
-    off,
-} from "nativescript-task-dispatcher/internal/events";
 import { Geolocation } from "nativescript-emai-framework/internal/providers/geolocation/geolocation";
+import {
+    createEvent,
+    listenToEventTrigger,
+} from "nativescript-task-dispatcher/testing/events";
 
 describe("Single pull-based provider task", () => {
     let provider: PullProvider;
@@ -40,14 +38,7 @@ describe("Single pull-based provider task", () => {
 
         const igniter = createEvent("fake");
         const outputEventName = "geolocationAcquired";
-        const done = new Promise((resolve) => {
-            const listenerId = on(outputEventName, (evt) => {
-                if (evt.id === igniter.id) {
-                    off(outputEventName, listenerId);
-                    resolve(evt.data);
-                }
-            });
-        });
+        const done = listenToEventTrigger(outputEventName, igniter.id);
 
         task.run({}, igniter);
         const acquiredData = (await done) as Geolocation;

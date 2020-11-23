@@ -2,13 +2,12 @@ import { PullProvider } from "nativescript-emai-framework/internal/providers";
 import { BatchPullProviderTask } from "nativescript-emai-framework/internal/tasks/data-collection/pull-based";
 import { createPullProviderMock } from "./index";
 import { Geolocation } from "nativescript-emai-framework/internal/providers/geolocation/geolocation";
-import {
-    createEvent,
-    off,
-    on,
-} from "nativescript-task-dispatcher/internal/events";
 import { RecordType } from "nativescript-emai-framework/internal/providers/base-record";
 import { ProviderInterrupter } from "nativescript-emai-framework/internal/providers/provider-interrupter";
+import {
+    createEvent,
+    listenToEventTrigger,
+} from "nativescript-task-dispatcher/testing/events";
 
 describe("Batch pull-based provider task", () => {
     let provider: PullProvider;
@@ -147,15 +146,9 @@ function createFakeGeolocation(): Geolocation {
     return new Geolocation(0.0, 0.0, 0, 0, 0, 0, 0, new Date());
 }
 
-function listenToGeolocationAcquiredEvent(
+async function listenToGeolocationAcquiredEvent(
     id: string
 ): Promise<Array<Geolocation>> {
-    return new Promise((resolve) => {
-        const listenerId = on("geolocationAcquired", (evt) => {
-            if (evt.id === id) {
-                off("geolocationAcquired", listenerId);
-                resolve(evt.data as Array<Geolocation>);
-            }
-        });
-    });
+    const data = await listenToEventTrigger("geolocationAcquired", id);
+    return data as Array<Geolocation>;
 }

@@ -1,16 +1,15 @@
 import { EventTrackerTask } from "nativescript-emai-framework/internal/tasks/tracing/event-tracker";
-import {
-    createEvent,
-    DispatchableEvent,
-    off,
-    on,
-} from "nativescript-task-dispatcher/internal/events";
+import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 import { TracesStore } from "nativescript-emai-framework/internal/persistence/stores/traces";
 import { createTracesStoreMock } from "./index";
 import {
     TraceResult,
     TraceType,
 } from "nativescript-emai-framework/internal/tasks/tracing";
+import {
+    createEvent,
+    listenToEventTrigger,
+} from "nativescript-task-dispatcher/testing/events";
 
 describe("Event tracker task", () => {
     const taskName = "trackEvent";
@@ -79,12 +78,5 @@ describe("Event tracker task", () => {
 });
 
 function listenToTaskFinished(source: DispatchableEvent) {
-    return new Promise((resolve) => {
-        const listenerId = on("trackEventFinished", (evt) => {
-            if (evt.id === source.id) {
-                off("trackEventFinished", listenerId);
-                resolve();
-            }
-        });
-    });
+    return listenToEventTrigger("trackEventFinished", source.id);
 }
