@@ -11,12 +11,19 @@
         </StackLayout>
         <StackLayout class="m-8 p-x-12" visibility="{{ content.type === 'questions' ? 'visible' : 'collapsed' }}">
             <Label text="{{ content.description }}" textWrap="true" class="body"/>
-            <Label text="{{ 'Q1: ' + content.questions[0].title }}" class="h2" textWrap="true"/>
-            <Slider
-                    value="{{ Math.round(content.questions[0].start + content.questions[0].end / 2) }}"
-                    minValue="{{ content.questions[0].start }}"
-                    maxValue="{{ content.questions[0].end }}"
-                    loaded="onSliderLoaded" />
+            <ListView items="{{ questions }}" rowHeight="200">
+                <ListView.itemTemplate>
+                    <StackLayout>
+                        <Label text="{{ title, 'Q1: ' + title }}" class="h2" textWrap="true"/>
+                        <Slider id="{{ title }}"
+                                value="{{ Math.round(start + end / 2) }}"
+                                minValue="{{ start }}"
+                                maxValue="{{ end }}"
+                                loaded="onSliderLoaded"/>
+                    </StackLayout>
+                </ListView.itemTemplate>
+            </ListView>
+
             <Button class="btn btn-primary" text="Submit answers" tap="submit"/>
         </StackLayout>
     </StackLayout>
