@@ -14,14 +14,24 @@ import { AoIProximityChange } from "@geotecinit/emai-framework/internal/tasks/ge
 import { GeofencingProximity } from "@geotecinit/emai-framework/internal/tasks/geofencing/geofencing-state";
 
 import { first, last, take } from "rxjs/operators";
+import {
+    QuestionnaireAnswers,
+    ScaleAnswer
+} from "@geotecinit/emai-framework/internal/tasks/notifications/questionnaire-answers";
 
 describe("Records store", () => {
     const store: RecordsStore = recordsStoreDB;
 
+    const answers : Array<ScaleAnswer> = [{
+        title: "Answer 1",
+        millisecondsToAnswer: 1000,
+        answer: 3
+    }]
+
     const records: Array<Record> = [
-        new Geolocation(39.1, -0.1, 122, 10.1, 10.1, 12.4, 175.9, nowMinus(4)),
-        new HumanActivityChange(HumanActivity.STILL, Change.START, nowMinus(3)),
-        new Geolocation(39.2, -0.2, 120, 13.1, 13.1, 10.4, 60.7, nowMinus(2)),
+        new Geolocation(39.1, -0.1, 122, 10.1, 10.1, 12.4, 175.9, nowMinus(5)),
+        new HumanActivityChange(HumanActivity.STILL, Change.START, nowMinus(4)),
+        new Geolocation(39.2, -0.2, 120, 13.1, 13.1, 10.4, 60.7, nowMinus(3)),
         new AoIProximityChange(
             {
                 id: "aoi1",
@@ -32,8 +42,12 @@ describe("Records store", () => {
             },
             GeofencingProximity.INSIDE,
             Change.START,
-            nowMinus(1)
+            nowMinus(2)
         ),
+        new QuestionnaireAnswers(
+            answers,
+            nowMinus(1)
+        )
     ];
 
     beforeAll(async () => {
@@ -51,11 +65,12 @@ describe("Records store", () => {
 
         const storedRecords = await store.list().pipe(first()).toPromise();
 
-        expect(storedRecords.length).toBe(4);
-        expect(storedRecords[0]).toEqual(records[3]);
-        expect(storedRecords[1]).toEqual(records[2]);
-        expect(storedRecords[2]).toEqual(records[1]);
-        expect(storedRecords[3]).toEqual(records[0]);
+        expect(storedRecords.length).toBe(5);
+        expect(storedRecords[0]).toEqual(records[4]);
+        expect(storedRecords[1]).toEqual(records[3]);
+        expect(storedRecords[2]).toEqual(records[2]);
+        expect(storedRecords[3]).toEqual(records[1]);
+        expect(storedRecords[4]).toEqual(records[0]);
     });
 
     it("allows to listen to stored records changes", async () => {
@@ -90,11 +105,12 @@ describe("Records store", () => {
 
         const storedRecords = await store.getAll();
 
-        expect(storedRecords.length).toBe(4);
+        expect(storedRecords.length).toBe(5);
         expect(storedRecords[0]).toEqual(records[0]);
         expect(storedRecords[1]).toEqual(records[1]);
         expect(storedRecords[2]).toEqual(records[2]);
         expect(storedRecords[3]).toEqual(records[3]);
+        expect(storedRecords[4]).toEqual(records[4]);
     });
 
     afterEach(async () => {
