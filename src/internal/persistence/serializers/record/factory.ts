@@ -3,6 +3,7 @@ import { RecordSerializer } from "./record-serializer";
 import { GeolocationSerializer } from "./types/geolocation";
 import { HumanActivityChangeSerializer } from "./types/human-activity-change";
 import { AoiProximityChangeSerializer } from "./types/aoi-proximity-change";
+import { QuestionnaireAnswersSerializer } from "./types/questionnaire-answers";
 
 export class RecordSerializerFactory {
   public static createSerializer<T extends Record>(
@@ -15,6 +16,8 @@ export class RecordSerializerFactory {
         return new HumanActivityChangeSerializer();
       case RecordType.AoIProximityChange:
         return new AoiProximityChangeSerializer();
+      case RecordType.QuestinnaireAnswers:
+        return new QuestionnaireAnswersSerializer();
       default:
         throw new Error(
           `No serializer has been implemented for (${recordType}) record type`
