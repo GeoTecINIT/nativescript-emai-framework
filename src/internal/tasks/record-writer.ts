@@ -10,6 +10,11 @@ export class RecordWriterTask extends Task {
     invocationEvent: DispatchableEvent
   ): Promise<void> {
     const data = invocationEvent.data;
+
+    if (!data) {
+      throw new Error("RecordWriterTask was called without data to record");
+    }
+
     if (Array.isArray(data)) {
       for (let record of data as Array<Record>) {
         await this.storeRecord(record);
