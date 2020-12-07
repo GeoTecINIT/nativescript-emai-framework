@@ -18,11 +18,12 @@ export function onSliderLoaded(args: EventData) {
     let slider = <Slider>args.object;
     slider.on("valueChange", (args) => {
         slider = <Slider>args.object;
-        if (vm.answers.length === 0) {
-            vm.answers.push(slider.value);
-        } else {
-            vm.answers[0] = slider.value;
-        }
+
+        vm.answers.set(slider.id, {
+            title: slider.id,
+            answer: slider.value,
+            answerTime: new Date().getTime()
+        });
     });
 }
 

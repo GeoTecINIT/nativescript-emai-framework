@@ -78,6 +78,7 @@ class DemoTaskGraph implements TaskGraph {
         );
 
         on("questionsAnswered", run("trackEvent"));
+        on("questionsAnswered", run("writeRecords"));
 
         on(
             "movedOutsideAreaOfInterest",

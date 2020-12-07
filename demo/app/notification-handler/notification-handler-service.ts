@@ -1,15 +1,19 @@
 import { Notification } from "@geotecinit/emai-framework/notifications";
 
 class NotificationHandlerService {
-    private _tappedNotification: Notification;
+    private _tappedNotification: TappedNotification;
 
-    get tappedNotification(): Notification {
+    get tappedNotification(): TappedNotification {
         return this._tappedNotification;
     }
 
-    set tappedNotification(notification: Notification) {
-        this._tappedNotification = notification;
+    set tappedNotification(notification: TappedNotification) {
+        this._tappedNotification = notification
     }
+}
+
+export interface TappedNotification extends Notification {
+    tappingTimestamp: number;
 }
 
 let _service: NotificationHandlerService;
