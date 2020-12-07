@@ -16,7 +16,7 @@ export class RecordSerializerFactory {
         return new HumanActivityChangeSerializer();
       case RecordType.AoIProximityChange:
         return new AoiProximityChangeSerializer();
-      case RecordType.QuestinnaireAnswers:
+      case RecordType.QuestionnaireAnswers:
         return new QuestionnaireAnswersSerializer();
       default:
         throw new Error(

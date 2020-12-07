@@ -5,14 +5,13 @@ export class QuestionnaireAnswers extends Record {
     public answers: Array<QuestionnaireAnswer>,
     answeredAt = new Date()
   ) {
-    super(RecordType.QuestinnaireAnswers, answeredAt);
+    super(RecordType.QuestionnaireAnswers, answeredAt);
   }
 }
 
 interface QuestionnaireAnswer {
   title: string;
   millisecondsToAnswer: number;
-  // answer: number;
 }
 
 export interface ScaleAnswer extends QuestionnaireAnswer {

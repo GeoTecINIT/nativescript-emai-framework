@@ -14,7 +14,7 @@
             <ListView items="{{ questions }}" rowHeight="200">
                 <ListView.itemTemplate>
                     <StackLayout>
-                        <Label text="{{ title, 'Q1: ' + title }}" class="h2" textWrap="true"/>
+                        <Label text="{{ title, 'Q: ' + title }}" class="h2" textWrap="true"/>
                         <Slider id="{{ title }}"
                                 value="{{ Math.round(start + end / 2) }}"
                                 minValue="{{ start }}"
