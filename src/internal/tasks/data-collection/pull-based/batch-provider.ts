@@ -20,9 +20,11 @@ export class BatchPullProviderTask extends SinglePullProviderTask {
     const records: Array<Record> = [];
     let executionTimes = [];
     while (
-      executionTimes.length === 0 ||
-      average(executionTimes) < this.remainingTime()
+      this.remainingTime() > 0 &&
+      (executionTimes.length === 0 ||
+        average(executionTimes) < this.remainingTime())
     ) {
+      this.log(`Remaining time: ${this.remainingTime()}`);
       const { record, executionTime } = await this.acquireSingleRecord(
         taskParams,
         invocationEvent
@@ -46,15 +48,26 @@ export class BatchPullProviderTask extends SinglePullProviderTask {
       const taskOutcome = await super.onTracedRun(taskParams, invocationEvent);
       record = taskOutcome.result;
       if (maxInterval && Date.now() - start < maxInterval) {
-        await forMillis(maxInterval - (Date.now() - start));
+        await this.doNothingDuring(maxInterval - (Date.now() - start));
       }
     } catch (err) {
       this.log(`Provider has thrown an error while collecting data: ${err}`);
+      await this.doNothingDuring(1000);
     }
     return {
       record,
       executionTime: Date.now() - start,
     };
+  }
+
+  private doNothingDuring(millis: number): Promise<void> {
+    return new Promise((resolve) => {
+      const timeoutId = setTimeout(resolve, millis);
+      this.setCancelFunction(() => {
+        clearTimeout(timeoutId);
+        resolve();
+      });
+    });
   }
 }
 
@@ -63,12 +76,6 @@ function average(executionTimes: Array<number>) {
     executionTimes.reduce((prev, curr) => prev + curr, 0) /
     executionTimes.length
   );
-}
-
-function forMillis(millis: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, millis);
-  });
 }
 
 interface SingleExecutionResult {

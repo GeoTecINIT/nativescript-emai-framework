@@ -108,27 +108,6 @@ async function setupAreasOfInterest() {
 
     const newAoIs: Array<AreaOfInterest> = [
         // Add your areas of interest here
-        {
-            id: "ayunt",
-            name: "Ayuntamiento de Moró",
-            latitude: 40.060119294751814,
-            longitude: -0.1395660638809204,
-            radius: 45,
-        },
-        {
-            id: "correos",
-            name: "Oficina de correos",
-            latitude: 40.061375646418675,
-            longitude: -0.13784945011138916,
-            radius: 30,
-        },
-        {
-            id: "plaza-alcalde",
-            name: "Plaza del alcalde Andreu",
-            latitude: 40.059889371677656,
-            longitude: -0.13769656419754028,
-            radius: 30,
-        },
     ];
     if (aois.length === newAoIs.length) {
         console.log("Areas already set up!");
