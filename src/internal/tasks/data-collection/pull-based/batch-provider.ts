@@ -24,7 +24,6 @@ export class BatchPullProviderTask extends SinglePullProviderTask {
       (executionTimes.length === 0 ||
         average(executionTimes) < this.remainingTime())
     ) {
-      this.log(`Remaining time: ${this.remainingTime()}`);
       const { record, executionTime } = await this.acquireSingleRecord(
         taskParams,
         invocationEvent
