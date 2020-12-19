@@ -161,6 +161,13 @@ class Database {
 }
 
 function typeId(docType: string, id: string) {
+  if (
+    /^[a-f0-9]{8}-[a-f0-9]{4}-[1-9][a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}$/.test(
+      id
+    )
+  ) {
+    return id; // It is an UUID
+  }
   return `${docType}#${id}`;
 }
 
