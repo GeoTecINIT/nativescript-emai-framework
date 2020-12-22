@@ -16,17 +16,19 @@ import { GeofencingProximity } from "@geotecinit/emai-framework/internal/tasks/g
 import { first, last, take } from "rxjs/operators";
 import {
     QuestionnaireAnswers,
-    ScaleAnswer
+    QuestionnaireAnswer,
 } from "@geotecinit/emai-framework/internal/tasks/notifications/questionnaire-answers";
 
 describe("Records store", () => {
     const store: RecordsStore = recordsStoreDB;
 
-    const answers : Array<ScaleAnswer> = [{
-        title: "Answer 1",
-        millisecondsToAnswer: 1000,
-        answer: 3
-    }]
+    const answers: Array<QuestionnaireAnswer> = [
+        {
+            title: "Answer 1",
+            millisecondsToAnswer: 1000,
+            answer: 3,
+        },
+    ];
 
     const records: Array<Record> = [
         new Geolocation(39.1, -0.1, 122, 10.1, 10.1, 12.4, 175.9, nowMinus(5)),
@@ -44,10 +46,7 @@ describe("Records store", () => {
             Change.START,
             nowMinus(2)
         ),
-        new QuestionnaireAnswers(
-            answers,
-            nowMinus(1)
-        )
+        new QuestionnaireAnswers(answers, nowMinus(1)),
     ];
 
     beforeAll(async () => {

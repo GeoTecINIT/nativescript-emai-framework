@@ -1,4 +1,4 @@
-import { Record, RecordType } from "../../providers/base-record";
+import { Record, RecordType } from "../../providers";
 
 export class QuestionnaireAnswers extends Record {
   constructor(
@@ -9,11 +9,8 @@ export class QuestionnaireAnswers extends Record {
   }
 }
 
-interface QuestionnaireAnswer {
+export interface QuestionnaireAnswer {
   title: string;
   millisecondsToAnswer: number;
-}
-
-export interface ScaleAnswer extends QuestionnaireAnswer {
-  answer: number;
+  answer: number | string | boolean;
 }

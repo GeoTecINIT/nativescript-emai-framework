@@ -2,7 +2,7 @@ import { ProviderTask } from "../provider-task";
 import { PullProvider } from "../../../providers";
 import { TracerConfig } from "../../tracing";
 
-import { pascalCase } from "../../../utils/string";
+import { camelCase, pascalCase } from "../../../utils/string";
 import { TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 
@@ -16,8 +16,8 @@ export class SinglePullProviderTask extends ProviderTask<PullProvider> {
       ...taskConfig,
       // Override declared output events with:
       // {recordType}Acquired
-      // Where recordType is the provider output type
-      outputEventNames: [`${provider.provides}Acquired`],
+      // Where recordType is the provider output type (turned into camel case)
+      outputEventNames: [`${camelCase(provider.provides)}Acquired`],
     });
   }
 
