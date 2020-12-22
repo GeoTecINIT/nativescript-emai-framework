@@ -8,6 +8,7 @@ import {
     createEvent,
     listenToEventTrigger,
 } from "nativescript-task-dispatcher/testing/events";
+import { TaskDispatcherEvent } from "nativescript-task-dispatcher/internal/events";
 
 describe("Batch pull-based provider task", () => {
     let provider: PullProvider;
@@ -68,7 +69,7 @@ describe("Batch pull-based provider task", () => {
         }
     });
 
-    it("returns an empty list when the provider is not able to collect measurements", async () => {
+    it("throws an error and finishes the task chain when no record is obtained", async () => {
         spyOn(provider, "next").and.callFake(() => {
             return [
                 new Promise((_, reject) =>
@@ -81,11 +82,11 @@ describe("Batch pull-based provider task", () => {
         const igniter = createEvent("fake", {
             expirationTimestamp: Date.now() + 1000,
         });
-        const done = listenToGeolocationAcquiredEvent(igniter.id);
 
-        task.run({}, igniter);
-        const acquiredData = await done;
-        expect(acquiredData.length).toBe(0);
+        const runPromise = task.run({}, igniter);
+        await expectAsync(runPromise).toBeRejectedWithError(
+            "Provider failed to report any records!"
+        );
     });
 
     it("gracefully finishes when timeout rises", async () => {
@@ -109,10 +110,16 @@ describe("Batch pull-based provider task", () => {
             expirationTimestamp: Date.now() + 1000,
         });
 
-        const runPromise = task.run({}, igniter);
+        const done = listenToEventTrigger(
+            TaskDispatcherEvent.TaskChainFinished,
+            igniter.id
+        );
+
+        task.run({}, igniter);
         await new Promise((resolve) => setTimeout(() => resolve(), 1000));
         task.cancel();
-        await runPromise;
+
+        await done;
     });
 
     it("indicates the underlying provider to stop collecting data on cancel", async () => {

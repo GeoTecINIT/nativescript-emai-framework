@@ -33,6 +33,9 @@ export class BatchPullProviderTask extends SinglePullProviderTask {
       }
       executionTimes.push(executionTime);
     }
+    if (records.length === 0) {
+      throw new Error("Provider failed to report any records!");
+    }
     return { result: records };
   }
 
