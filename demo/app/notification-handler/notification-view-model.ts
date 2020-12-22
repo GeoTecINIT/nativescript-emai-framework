@@ -3,8 +3,8 @@ import { TapContentType } from "@geotecinit/emai-framework/notifications";
 import { emaiFramework } from "@geotecinit/emai-framework";
 import {
     QuestionnaireAnswers,
-    ScaleAnswer,
-} from "@geotecinit/emai-framework/internal/tasks/notifications/questionnaire-answers";
+    QuestionnaireAnswer,
+} from "@geotecinit/emai-framework/entities/answers";
 import { TappedNotification } from "~/notification-handler/notification-handler-service";
 
 export class NotificationViewModel extends Observable {
@@ -46,7 +46,7 @@ export class NotificationViewModel extends Observable {
         const sortedAnswers = questionAnswers.sort(
             (a, b) => a.answerTime - b.answerTime
         );
-        const qas: Array<ScaleAnswer> = sortedAnswers.map(
+        const qas: Array<QuestionnaireAnswer> = sortedAnswers.map(
             (questionAnswer, i) => ({
                 title: questionAnswer.title,
                 millisecondsToAnswer:

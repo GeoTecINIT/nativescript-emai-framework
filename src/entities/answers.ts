@@ -1,4 +1,4 @@
 export {
   QuestionnaireAnswers,
-  ScaleAnswer,
+  QuestionnaireAnswer,
 } from "../internal/tasks/notifications/questionnaire-answers";
