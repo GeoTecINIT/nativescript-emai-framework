@@ -6,3 +6,8 @@ export function pascalCase(str: string): string {
   }
   return words.join("");
 }
+
+export function camelCase(str: string): string {
+  const inPascal = pascalCase(str);
+  return inPascal.charAt(0).toLowerCase() + inPascal.slice(1);
+}
