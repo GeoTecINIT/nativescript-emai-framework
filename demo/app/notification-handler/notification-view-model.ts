@@ -1,10 +1,10 @@
 import { Observable } from "tns-core-modules/data/observable";
-import {
-    Notification,
-    TapContentType,
-} from "@geotecinit/emai-framework/notifications";
+import { TapContentType } from "@geotecinit/emai-framework/notifications";
 import { emaiFramework } from "@geotecinit/emai-framework";
-import { QuestionnaireAnswers, ScaleAnswer } from "@geotecinit/emai-framework/internal/tasks/notifications/questionnaire-answers";
+import {
+    QuestionnaireAnswers,
+    ScaleAnswer,
+} from "@geotecinit/emai-framework/internal/tasks/notifications/questionnaire-answers";
 import { TappedNotification } from "~/notification-handler/notification-handler-service";
 
 export class NotificationViewModel extends Observable {
@@ -43,16 +43,24 @@ export class NotificationViewModel extends Observable {
         }
 
         const questionAnswers = [...this.answers.values()];
-        const sortedAnswers = questionAnswers.sort((a, b) => a.answerTime - b.answerTime);
+        const sortedAnswers = questionAnswers.sort(
+            (a, b) => a.answerTime - b.answerTime
+        );
         const qas: Array<ScaleAnswer> = sortedAnswers.map(
             (questionAnswer, i) => ({
                 title: questionAnswer.title,
-                millisecondsToAnswer: questionAnswer.answerTime - (i === 0 ? this.notification.tappingTimestamp : sortedAnswers[i-1].answerTime),
-                answer: questionAnswer.answer
+                millisecondsToAnswer:
+                    questionAnswer.answerTime -
+                    (i === 0
+                        ? this.notification.tappingTimestamp
+                        : sortedAnswers[i - 1].answerTime),
+                answer: questionAnswer.answer,
             })
-        )
-        emaiFramework.emitEvent("questionsAnswered",
-            new QuestionnaireAnswers(qas));
+        );
+        emaiFramework.emitEvent(
+            "questionnaireAnswersAcquired",
+            new QuestionnaireAnswers(qas)
+        );
     }
 }
 
@@ -118,7 +126,7 @@ function createExampleQuestionSet(): QuestionSet {
                 title: "From 1 to 10, how anxious do you feel?",
                 start: 1,
                 end: 10,
-            }
+            },
         ],
     };
 }
