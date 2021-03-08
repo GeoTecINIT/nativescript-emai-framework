@@ -52,10 +52,10 @@ describe("Records store", () => {
         const storedRecords = await store.list().pipe(first()).toPromise();
 
         expect(storedRecords.length).toBe(4);
-        expect(storedRecords[0]).toEqual(records[3]);
-        expect(storedRecords[1]).toEqual(records[2]);
-        expect(storedRecords[2]).toEqual(records[1]);
-        expect(storedRecords[3]).toEqual(records[0]);
+        expect({...storedRecords[0]}).toEqual({...records[3]});
+        expect({...storedRecords[1]}).toEqual({...records[2]});
+        expect({...storedRecords[2]}).toEqual({...records[1]});
+        expect({...storedRecords[3]}).toEqual({...records[0]});
     });
 
     it("allows to listen to stored records changes", async () => {
@@ -67,7 +67,7 @@ describe("Records store", () => {
         const storedRecords = await lastUpdate;
 
         expect(storedRecords.length).toBe(3);
-        expect(storedRecords[0]).toEqual(records[2]);
+        expect({...storedRecords[0]}).toEqual({...records[2]});
     });
 
     it("allows to limit the amount of records to be listed", async () => {
@@ -79,8 +79,8 @@ describe("Records store", () => {
         const storedRecords = await lastUpdate;
 
         expect(storedRecords.length).toBe(2);
-        expect(storedRecords[0]).toEqual(records[2]);
-        expect(storedRecords[1]).toEqual(records[1]);
+        expect({...storedRecords[0]}).toEqual({...records[2]});
+        expect({...storedRecords[1]}).toEqual({...records[1]});
     });
 
     it("allows to recover all the stored records from the oldest to the newest", async () => {
@@ -91,10 +91,10 @@ describe("Records store", () => {
         const storedRecords = await store.getAll();
 
         expect(storedRecords.length).toBe(4);
-        expect(storedRecords[0]).toEqual(records[0]);
-        expect(storedRecords[1]).toEqual(records[1]);
-        expect(storedRecords[2]).toEqual(records[2]);
-        expect(storedRecords[3]).toEqual(records[3]);
+        expect({...storedRecords[0]}).toEqual({...records[0]});
+        expect({...storedRecords[1]}).toEqual({...records[1]});
+        expect({...storedRecords[2]}).toEqual({...records[2]});
+        expect({...storedRecords[3]}).toEqual({...records[3]});
     });
 
     afterEach(async () => {

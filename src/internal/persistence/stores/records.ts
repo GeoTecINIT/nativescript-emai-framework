@@ -1,6 +1,5 @@
 import { Record } from "../../providers/base-record";
 import { Observable } from "rxjs";
-import { RecordSerializerFactory } from "../serializers/record/factory";
 import { EMAIStore } from "./emai-store";
 
 export interface RecordsStore {
@@ -68,27 +67,43 @@ class RecordsStoreDB implements RecordsStore {
 }
 
 function docFrom(record: Record): any {
-  const serializer = RecordSerializerFactory.createSerializer(record.type);
-  const serializedRecord = serializer.serialize(record);
+  const stringifiedRecord = JSON.stringify(record, replacer);
 
   return {
-    ...serializedRecord,
-    timestamp: serializedRecord.timestamp.getTime(),
+    stringifiedRecord,
+    timestamp: record.timestamp.getTime(),
   };
 }
 
 function recordFrom(doc: any): Record {
-  const serializedRecord = {
-    type: doc.type,
-    timestamp: new Date(doc.timestamp),
-    change: doc.change,
-    extraProperties: doc.extraProperties,
-  };
+  const record = JSON.parse(doc.stringifiedRecord, reviver);
+  Object.keys(record).forEach(key => {
+    if (!record[key]) {
+      record[key] = undefined;
+    }
+  });
 
-  const serializer = RecordSerializerFactory.createSerializer(
-    serializedRecord.type
-  );
-  return serializer.deserialize(serializedRecord);
+  return record as Record;
+}
+
+function replacer(key: string, value: any): any {
+  if (!value) {
+    return null;
+  }
+
+  if (value instanceof Date) {
+    return value.toUTCString();
+  }
+
+  return value;
+}
+
+function reviver(key: string, value: any): any {
+  if (key === 'timestamp') {
+    return new Date(value);
+  }
+
+  return value;
 }
 
 export const recordsStoreDB = new RecordsStoreDB();
