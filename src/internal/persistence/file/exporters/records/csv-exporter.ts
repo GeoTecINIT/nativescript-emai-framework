@@ -2,7 +2,6 @@ import { CSVExporter } from "../csv-exporter";
 
 import { Record } from "../../../../providers/base-record";
 import { RecordsStore, recordsStoreDB } from "../../../stores/records";
-import { RecordSerializerFactory } from "../../../serializers/record/factory";
 
 export class CSVRecordsExporter extends CSVExporter<Record> {
   constructor(
@@ -22,13 +21,12 @@ export class CSVRecordsExporter extends CSVExporter<Record> {
   }
 
   protected formatRow(record: Record): Array<number | string | boolean> {
-    const serializer = RecordSerializerFactory.createSerializer(record.type);
-    const serializedRecord = serializer.serialize(record);
+    const { timestamp, type, change, ...extraProperties } = record;
     return [
-      serializedRecord.timestamp.getTime(),
-      serializedRecord.type,
-      serializedRecord.change,
-      JSON.stringify(serializedRecord.extraProperties),
+      timestamp.getTime(),
+      type,
+      change,
+      JSON.stringify(extraProperties),
     ];
   }
 }
