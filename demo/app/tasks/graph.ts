@@ -77,7 +77,8 @@ class DemoTaskGraph implements TaskGraph {
                 .cancelOn("movedOutsideAreaOfInterest")
         );
 
-        on("questionsAnswered", run("trackEvent"));
+        on("questionnaireAnswersAcquired", run("trackEvent"));
+        on("questionnaireAnswersAcquired", run("writeRecords"));
 
         on(
             "movedOutsideAreaOfInterest",

@@ -1,21 +1,25 @@
 import { Observable } from "tns-core-modules/data/observable";
-import {
-    Notification,
-    TapContentType,
-} from "@geotecinit/emai-framework/notifications";
+import { TapContentType } from "@geotecinit/emai-framework/notifications";
 import { emaiFramework } from "@geotecinit/emai-framework";
+import {
+    QuestionnaireAnswers,
+    QuestionnaireAnswer,
+} from "@geotecinit/emai-framework/entities/answers";
+import { TappedNotification } from "~/notification-handler/notification-handler-service";
 
 export class NotificationViewModel extends Observable {
     private readonly _content: NotificationContent;
-    private readonly _answers: Array<Answer>;
+    private readonly _answers: Map<string, QuestionAnswer>;
+    private readonly _questions: Array<Question>;
 
-    constructor(private notification: Notification) {
+    constructor(private notification: TappedNotification) {
         super();
         if (notification.tapContent.type === TapContentType.RICH_TEXT) {
             this._content = createExampleRichText();
         } else {
             this._content = createExampleQuestionSet();
-            this._answers = [];
+            this._answers = new Map<string, QuestionAnswer>();
+            this._questions = (<QuestionSet>this._content).questions;
         }
     }
 
@@ -23,7 +27,11 @@ export class NotificationViewModel extends Observable {
         return this._content;
     }
 
-    get answers(): Array<Answer> {
+    get questions(): Array<Question> {
+        return this._questions;
+    }
+
+    get answers(): Map<string, QuestionAnswer> {
         return this._answers;
     }
 
@@ -34,13 +42,25 @@ export class NotificationViewModel extends Observable {
             );
         }
 
-        const qas: Array<QuestionAnswer> = this.content.questions.map(
-            (question, i) => ({
-                title: question.title,
-                answer: this.answers[i],
+        const questionAnswers = [...this.answers.values()];
+        const sortedAnswers = questionAnswers.sort(
+            (a, b) => a.answerTime - b.answerTime
+        );
+        const qas: Array<QuestionnaireAnswer> = sortedAnswers.map(
+            (questionAnswer, i) => ({
+                title: questionAnswer.title,
+                millisecondsToAnswer:
+                    questionAnswer.answerTime -
+                    (i === 0
+                        ? this.notification.tappingTimestamp
+                        : sortedAnswers[i - 1].answerTime),
+                answer: questionAnswer.answer,
             })
         );
-        emaiFramework.emitEvent("questionsAnswered", { answers: qas });
+        emaiFramework.emitEvent(
+            "questionnaireAnswersAcquired",
+            new QuestionnaireAnswers(qas)
+        );
     }
 }
 
@@ -73,6 +93,7 @@ export type Answer = number;
 export interface QuestionAnswer {
     title: string;
     answer: Answer;
+    answerTime: number;
 }
 
 function createExampleRichText(): RichText {
@@ -97,6 +118,12 @@ function createExampleQuestionSet(): QuestionSet {
             {
                 type: "scale",
                 title: "From 1 to 10, how clear are your thoughts?",
+                start: 1,
+                end: 10,
+            },
+            {
+                type: "scale",
+                title: "From 1 to 10, how anxious do you feel?",
                 start: 1,
                 end: 10,
             },
