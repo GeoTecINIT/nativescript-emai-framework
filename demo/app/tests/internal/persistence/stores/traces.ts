@@ -28,6 +28,7 @@ describe("Traces store", () => {
             {
                 invokedBy: "taskSchedulerRun",
                 took: 15000,
+                timestamp: new Date(),
                 output: { someLocationData: {} },
             }
         ),
