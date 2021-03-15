@@ -84,6 +84,31 @@ class RecordsStoreDB implements LocalTimeSeriesStore<Record> {
     await this.store.clear();
   }
 
+  async clearOld(minAgeHours: number): Promise<void> {
+    const minAgeMs = minAgeHours * 3.6e6;
+    const threshold = new Date(Date.now() - minAgeMs).getTime();
+    const deletableRecords = await this.store.fetch({
+      select: [],
+      where: [
+        {
+          property: "timestamp",
+          comparison: "lessThanOrEqualTo",
+          value: threshold,
+        },
+        {
+          logical: QueryLogicalOperator.AND,
+          property: "synchronized",
+          comparison: "is",
+          value: true,
+        },
+      ],
+    });
+
+    for (let record of deletableRecords) {
+      await this.store.delete(record.id);
+    }
+  }
+
   private async getDBRecordFrom(record: Record): Promise<DBRecord> {
     const { timestamp, type, change, ...extraProperties } = record;
 

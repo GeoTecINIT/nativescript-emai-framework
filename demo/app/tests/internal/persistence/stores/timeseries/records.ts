@@ -142,6 +142,38 @@ describe("Records store", () => {
         expect({ ...storedRecords[4] }).toEqual({ ...records[4] });
     });
 
+    it("allows to clear old records given a min age", async () => {
+        const oldRecord1 = new HumanActivityChange(
+            HumanActivity.RUNNING,
+            Change.END,
+            nowMinus(60 * 60 + 1)
+        );
+        const oldRecord2 = new HumanActivityChange(
+            HumanActivity.STILL,
+            Change.START,
+            nowMinus(60 * 60 + 1)
+        );
+        const oldRecord3 = new HumanActivityChange(
+            HumanActivity.RUNNING,
+            Change.START,
+            nowMinus(60 * 60 - 1)
+        );
+
+        await store.insert(oldRecord1);
+        await store.markAsSynchronized(oldRecord1);
+        await store.insert(oldRecord2);
+        await store.insert(oldRecord3);
+        await store.insert(records[0]);
+
+        await store.clearOld(1);
+
+        const remainingRecords = await store.getAll();
+        expect(remainingRecords.length).toBe(3);
+        expect({ ...remainingRecords[0] }).toEqual({ ...oldRecord2 });
+        expect({ ...remainingRecords[1] }).toEqual({ ...oldRecord3 });
+        expect({ ...remainingRecords[2] }).toEqual({ ...records[0] });
+    });
+
     afterEach(async () => {
         await store.clear();
     });
