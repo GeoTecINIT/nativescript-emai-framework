@@ -1,4 +1,7 @@
-export {
+import {
   RecordsStore,
-  recordsStoreDB as recordsDB,
-} from "../internal/persistence/stores/records";
+  syncedRecordsStore,
+} from "../internal/persistence/stores/timeseries";
+
+export { RecordsStore };
+export const recordsStore: RecordsStore = syncedRecordsStore;

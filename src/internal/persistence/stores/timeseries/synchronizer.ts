@@ -16,6 +16,12 @@ export class TimeSeriesSyncedStore<T extends TimeSeriesRecord>
   }
 
   setExternalStore(store: TimeSeriesStore<T>) {
+    if (store === this.localStore) {
+      this.logger.error(
+        "You cannot use the local store as an external store... (¬_¬ )"
+      );
+      return;
+    }
     this.externalStore = store;
   }
 

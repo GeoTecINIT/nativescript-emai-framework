@@ -1,27 +1,16 @@
-import { Record } from "../../providers/base-record";
+import { Record } from "../../../providers";
 import { Observable } from "rxjs";
-import { EMAIStore } from "./emai-store";
+import { EMAIStore } from "../emai-store";
 import {
   deserialize,
   serialize,
 } from "nativescript-task-dispatcher/internal/utils/serialization";
-import { QueryLogicalOperator } from "./db";
-
-export interface RecordsStore {
-  insert(record: Record): Promise<void>;
-  list(size?: number): Observable<Array<Record>>;
-  getAll(): Promise<Array<Record>>;
-  clear(): Promise<void>;
-}
-
-export interface LocalRecordsStore extends RecordsStore {
-  getNotSynchronized(): Promise<Array<Record>>;
-  markAsSynchronized(record: Record): Promise<void>;
-}
+import { QueryLogicalOperator } from "../db";
+import { LocalTimeSeriesStore } from "./common";
 
 const DOC_TYPE = "record";
 
-class RecordsStoreDB implements LocalRecordsStore {
+class RecordsStoreDB implements LocalTimeSeriesStore<Record> {
   private readonly store: EMAIStore<DBRecord>;
 
   constructor() {
@@ -190,4 +179,4 @@ function dbRecordFrom(doc: any): DBRecord {
   return dbRecord as DBRecord;
 }
 
-export const recordsStoreDB = new RecordsStoreDB();
+export const localRecordsStore = new RecordsStoreDB();

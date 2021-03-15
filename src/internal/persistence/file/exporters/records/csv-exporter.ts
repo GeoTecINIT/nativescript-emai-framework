@@ -1,14 +1,20 @@
 import { CSVExporter } from "../csv-exporter";
 
-import { Record } from "../../../../providers/base-record";
-import { RecordsStore, recordsStoreDB } from "../../../stores/records";
-import { toTimestampWithTimezoneOffset, jsonDateReplacer } from "../../../../utils/date";
+import { Record } from "../../../../providers";
+import {
+  RecordsStore,
+  syncedRecordsStore,
+} from "../../../stores/timeseries";
+import {
+  toTimestampWithTimezoneOffset,
+  jsonDateReplacer,
+} from "../../../../utils/date";
 
 export class CSVRecordsExporter extends CSVExporter<Record> {
   constructor(
     folder: string,
     file?: string,
-    private recordsStore: RecordsStore = recordsStoreDB
+    private recordsStore: RecordsStore = syncedRecordsStore
   ) {
     super(folder, file);
   }
@@ -18,7 +24,13 @@ export class CSVRecordsExporter extends CSVExporter<Record> {
   }
 
   protected formatHeaders(): Array<string> {
-    return ["timestamp", "timezoneOffset", "type", "change", "extra_properties"];
+    return [
+      "timestamp",
+      "timezoneOffset",
+      "type",
+      "change",
+      "extra_properties",
+    ];
   }
 
   protected formatRow(record: Record): Array<number | string | boolean> {

@@ -1,7 +1,4 @@
-import {
-    recordsStoreDB,
-    LocalRecordsStore,
-} from "@geotecinit/emai-framework/internal/persistence/stores/records";
+import { localRecordsStore as store } from "@geotecinit/emai-framework/internal/persistence/stores/timeseries/records";
 import { Record } from "@geotecinit/emai-framework/internal/providers/base-record";
 
 import { Geolocation } from "@geotecinit/emai-framework/internal/providers/geolocation/geolocation";
@@ -20,8 +17,6 @@ import {
 } from "@geotecinit/emai-framework/internal/tasks/notifications/questionnaire-answers";
 
 describe("Records store", () => {
-    const store: LocalRecordsStore = recordsStoreDB;
-
     const answers: Array<QuestionnaireAnswer> = [
         {
             title: "Answer 1",
