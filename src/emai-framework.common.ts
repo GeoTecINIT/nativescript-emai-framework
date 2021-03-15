@@ -10,6 +10,8 @@ import { EventData } from "./events";
 import { builtInTasks } from "./internal/tasks";
 import { enableLogging, setLoggerCreator } from "./internal/utils/logger";
 import { notificationsManager } from "./internal/notifications/manager";
+import { RecordsStore } from "./storage/records";
+import { syncedRecordsStore } from "./internal/persistence/stores/timeseries";
 
 export class Common extends Observable {
   public async init(
@@ -25,6 +27,7 @@ export class Common extends Observable {
     );
     this.initializeListeners();
     await contextApis.init();
+    await this.syncStores();
   }
 
   public isReady(): Promise<boolean> {
@@ -47,6 +50,10 @@ export class Common extends Observable {
     HumanActivityProvider.setup();
   }
 
+  private async syncStores() {
+    await syncedRecordsStore.sync();
+  }
+
   private configure(config: ConfigParams) {
     if (config.customLogger) {
       setLoggerCreator(config.customLogger);
@@ -57,9 +64,13 @@ export class Common extends Observable {
     if (config.notificationsChannelName) {
       notificationsManager.setChannelName(config.notificationsChannelName);
     }
+    if (config.externalRecordsStore) {
+      syncedRecordsStore.setExternalStore(config.externalRecordsStore);
+    }
   }
 }
 
 export interface ConfigParams extends TDConfigParams {
   notificationsChannelName?: string;
+  externalRecordsStore?: RecordsStore;
 }
