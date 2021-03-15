@@ -16,14 +16,15 @@ export interface RecordsStore {
 const DOC_TYPE = "record";
 
 class RecordsStoreDB implements RecordsStore {
-  private readonly store: EMAIStore<Record>;
+  private readonly store: EMAIStore<DBRecord>;
 
   constructor() {
-    this.store = new EMAIStore<Record>(DOC_TYPE, docFrom, recordFrom);
+    this.store = new EMAIStore<DBRecord>(DOC_TYPE, docFrom, dbRecordFrom);
   }
 
   async insert(record: Record): Promise<void> {
-    await this.store.create(record);
+    const dbRecord = { ...record, synchronized: false };
+    await this.store.create(dbRecord);
   }
 
   list(size = 100): Observable<Array<Record>> {
@@ -56,13 +57,14 @@ class RecordsStoreDB implements RecordsStore {
     reverseOrder?: boolean,
     limitSize?: number
   ): Promise<Array<Record>> {
-    return this.store.fetch({
+    const dbRecords = await this.store.fetch({
       select: [],
       order: [
         { property: "timestamp", direction: !reverseOrder ? "asc" : "desc" },
       ],
       limit: limitSize,
     });
+    return dbRecords.map(recordFrom);
   }
 
   async clear(): Promise<void> {
@@ -70,28 +72,45 @@ class RecordsStoreDB implements RecordsStore {
   }
 }
 
-function docFrom(record: Record): any {
-  const { timestamp, type, change, ...extraProperties } = record;
+function recordFrom(dbRecord: DBRecord): Record {
+  const { synchronized, ...recordProps } = dbRecord;
+  return recordProps;
+}
+
+interface DBRecord extends Record {
+  synchronized: boolean;
+}
+
+function docFrom(dbRecord: DBRecord): any {
+  const {
+    timestamp,
+    type,
+    change,
+    synchronized,
+    ...extraProperties
+  } = dbRecord;
   const serializedProperties = serialize(extraProperties);
 
   return {
-    timestamp: record.timestamp.getTime(),
+    timestamp: timestamp.getTime(),
     type,
     change,
+    synchronized,
     serializedProperties,
   };
 }
 
-function recordFrom(doc: any): Record {
-  const { timestamp, type, change, serializedProperties } = doc;
-  const record = {
+function dbRecordFrom(doc: any): DBRecord {
+  const { timestamp, type, change, synchronized, serializedProperties } = doc;
+  const dbRecord = {
     ...deserialize(serializedProperties),
     timestamp: new Date(timestamp),
     type,
     change,
+    synchronized,
   };
 
-  return record as Record;
+  return dbRecord as DBRecord;
 }
 
 export const recordsStoreDB = new RecordsStoreDB();
