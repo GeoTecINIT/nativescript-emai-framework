@@ -28,6 +28,7 @@ export class Common extends Observable {
     this.initializeListeners();
     await contextApis.init();
     await this.syncStores();
+    await this.clearOldData();
   }
 
   public isReady(): Promise<boolean> {
@@ -54,6 +55,10 @@ export class Common extends Observable {
     await syncedRecordsStore.sync();
   }
 
+  private async clearOldData() {
+    await syncedRecordsStore.clearOld();
+  }
+
   private configure(config: ConfigParams) {
     if (config.customLogger) {
       setLoggerCreator(config.customLogger);
@@ -67,10 +72,14 @@ export class Common extends Observable {
     if (config.externalRecordsStore) {
       syncedRecordsStore.setExternalStore(config.externalRecordsStore);
     }
+    if (config.clearOldRecordsThreshold) {
+      syncedRecordsStore.setClearOldThreshold(config.clearOldRecordsThreshold);
+    }
   }
 }
 
 export interface ConfigParams extends TDConfigParams {
   notificationsChannelName?: string;
   externalRecordsStore?: RecordsStore;
+  clearOldRecordsThreshold?: number;
 }
