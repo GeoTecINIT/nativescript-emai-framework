@@ -72,8 +72,8 @@ export class Common extends Observable {
     if (config.externalRecordsStore) {
       syncedRecordsStore.setExternalStore(config.externalRecordsStore);
     }
-    if (config.clearOldRecordsThreshold) {
-      syncedRecordsStore.setClearOldThreshold(config.clearOldRecordsThreshold);
+    if (config.oldRecordsMaxAge) {
+      syncedRecordsStore.setClearOldThreshold(config.oldRecordsMaxAge);
     }
   }
 }
@@ -81,5 +81,5 @@ export class Common extends Observable {
 export interface ConfigParams extends TDConfigParams {
   notificationsChannelName?: string;
   externalRecordsStore?: RecordsStore;
-  clearOldRecordsThreshold?: number;
+  oldRecordsMaxAge?: number;
 }
