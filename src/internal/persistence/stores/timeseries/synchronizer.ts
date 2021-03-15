@@ -9,6 +9,7 @@ import { getLogger, Logger } from "../../../utils/logger";
 export class TimeSeriesSyncedStore<T extends TimeSeriesRecord>
   implements TimeSeriesStore<T> {
   private externalStore?: TimeSeriesStore<T>;
+  private clearOldThreshold = -1;
   private logger: Logger;
 
   constructor(name: string, private localStore: LocalTimeSeriesStore<T>) {
@@ -17,12 +18,18 @@ export class TimeSeriesSyncedStore<T extends TimeSeriesRecord>
 
   setExternalStore(store: TimeSeriesStore<T>) {
     if (store === this.localStore) {
-      this.logger.error(
-        "You cannot use the local store as an external store... (¬_¬ )"
+      throw new Error(
+        "You cannot use a local store as an external store... (¬_¬ )"
       );
-      return;
     }
     this.externalStore = store;
+  }
+
+  setClearOldThreshold(minAgeHours: number) {
+    if (minAgeHours <= 0) {
+      throw Error("Old data cleaning threshold must be higher than 0");
+    }
+    this.clearOldThreshold = minAgeHours;
   }
 
   async insert(record: T): Promise<void> {
@@ -46,6 +53,13 @@ export class TimeSeriesSyncedStore<T extends TimeSeriesRecord>
         await this.localStore.markAsSynchronized(record);
       }
     }
+  }
+
+  async clearOld(): Promise<void> {
+    if (this.clearOldThreshold === -1) {
+      return;
+    }
+    await this.localStore.clearOld(this.clearOldThreshold);
   }
 
   getAll(): Promise<Array<T>> {

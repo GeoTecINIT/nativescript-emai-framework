@@ -4,7 +4,7 @@ import {
     TimeSeriesRecord,
     TimeSeriesStore,
 } from "@geotecinit/emai-framework/internal/persistence/stores/timeseries/common";
-import { TimeSeriesSyncedStore } from "../../../../../../../src/internal/persistence/stores/timeseries/synchronizer";
+import { TimeSeriesSyncedStore } from "@geotecinit/emai-framework/internal/persistence/stores/timeseries/synchronizer";
 
 describe("Time series synced store", () => {
     let localStoreMock: LocalTimeSeriesStore<TimeSeriesRecord>;
@@ -67,6 +67,19 @@ describe("Time series synced store", () => {
         expect(localStoreMock.markAsSynchronized).toHaveBeenCalledTimes(2);
     });
 
+    it("does nothing when no clear old data threshold has been specified", async () => {
+        spyOn(localStoreMock, "clearOld");
+        await syncedStore.clearOld();
+        expect(localStoreMock.clearOld).not.toHaveBeenCalled();
+    });
+
+    it("clears old data when threshold has been specified", async () => {
+        spyOn(localStoreMock, "clearOld");
+        syncedStore.setClearOldThreshold(1);
+        await syncedStore.clearOld();
+        expect(localStoreMock.clearOld).toHaveBeenCalledWith(1);
+    });
+
     it("propagates list call to local store", () => {
         spyOn(localStoreMock, "list");
         syncedStore.list(10);
@@ -107,6 +120,9 @@ function createLocalStoreMock(): LocalTimeSeriesStore<TimeSeriesRecord> {
             record: TimeSeriesRecord,
             synchronized?: boolean
         ): Promise<void> {
+            return Promise.resolve(undefined);
+        },
+        clearOld(minAgeHours: number): Promise<void> {
             return Promise.resolve(undefined);
         },
     };

@@ -16,4 +16,5 @@ export interface LocalTimeSeriesStore<T extends TimeSeriesRecord>
   insert(record: T, synchronized?: boolean): Promise<void>;
   getNotSynchronized(): Promise<Array<T>>;
   markAsSynchronized(record: T): Promise<void>;
+  clearOld(minAgeHours: number): Promise<void>;
 }
