@@ -1,6 +1,7 @@
 import { Trace } from "../../tasks/tracing";
 import { Observable } from "rxjs";
 import { EMAIStore } from "./emai-store";
+import { deserialize, serialize } from "nativescript-task-dispatcher/internal/utils/serialization";
 
 export interface TracesStore {
   insert(trace: Trace): Promise<void>;
@@ -63,18 +64,20 @@ class TracesStoreDB implements TracesStore {
 
 function docFrom(trace: Trace): any {
   const { timestamp, id, type, name, result, content } = trace;
+  const stringifiedContent = serialize(content);
   return {
     timestamp: timestamp.getTime(),
     traceId: id,
     type,
     name,
     result,
-    content,
+    stringifiedContent,
   };
 }
 
 function traceFrom(doc: any): Trace {
-  const { timestamp, traceId, type, name, result, content } = doc;
+  const { timestamp, traceId, type, name, result, stringifiedContent } = doc;
+  const content = deserialize(stringifiedContent);
   return {
     timestamp: new Date(timestamp),
     id: traceId,

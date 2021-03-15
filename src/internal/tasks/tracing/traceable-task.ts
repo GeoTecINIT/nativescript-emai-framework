@@ -9,6 +9,7 @@ import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 import { Trace } from "./trace";
 import { TraceType } from "./trace-type";
 import { TraceResult } from "./trace-result";
+import { flatten } from "nativescript-task-dispatcher/internal/utils/serialization";
 
 export abstract class TraceableTask extends Task {
   private readonly sensibleData: boolean;
@@ -45,7 +46,7 @@ export abstract class TraceableTask extends Task {
           ? taskOutcome.eventName
           : this.outputEventNames[0];
       trace.content.outcome =
-        this.sensibleData || !taskOutcome ? {} : taskOutcome.result;
+        this.sensibleData || !taskOutcome ? {} : flatten(taskOutcome.result);
     } catch (err) {
       execError = err;
       trace.result = TraceResult.ERROR;

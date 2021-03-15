@@ -1,7 +1,7 @@
 import { Record } from "../../providers/base-record";
 import { Observable } from "rxjs";
-import { RecordSerializerFactory } from "../serializers/record/factory";
 import { EMAIStore } from "./emai-store";
+import { deserialize, serialize } from "nativescript-task-dispatcher/internal/utils/serialization";
 
 export interface RecordsStore {
   insert(record: Record): Promise<void>;
@@ -68,27 +68,18 @@ class RecordsStoreDB implements RecordsStore {
 }
 
 function docFrom(record: Record): any {
-  const serializer = RecordSerializerFactory.createSerializer(record.type);
-  const serializedRecord = serializer.serialize(record);
+  const stringifiedRecord = serialize(record);
 
   return {
-    ...serializedRecord,
-    timestamp: serializedRecord.timestamp.getTime(),
+    stringifiedRecord,
+    timestamp: record.timestamp.getTime(),
   };
 }
 
 function recordFrom(doc: any): Record {
-  const serializedRecord = {
-    type: doc.type,
-    timestamp: new Date(doc.timestamp),
-    change: doc.change,
-    extraProperties: doc.extraProperties,
-  };
+  const record = deserialize(doc.stringifiedRecord);
 
-  const serializer = RecordSerializerFactory.createSerializer(
-    serializedRecord.type
-  );
-  return serializer.deserialize(serializedRecord);
+  return record as Record;
 }
 
 export const recordsStoreDB = new RecordsStoreDB();

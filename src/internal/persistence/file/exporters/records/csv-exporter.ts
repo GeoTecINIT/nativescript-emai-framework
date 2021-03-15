@@ -2,7 +2,7 @@ import { CSVExporter } from "../csv-exporter";
 
 import { Record } from "../../../../providers/base-record";
 import { RecordsStore, recordsStoreDB } from "../../../stores/records";
-import { RecordSerializerFactory } from "../../../serializers/record/factory";
+import { toTimestampWithTimezoneOffset, jsonDateReplacer } from "../../../../utils/date";
 
 export class CSVRecordsExporter extends CSVExporter<Record> {
   constructor(
@@ -18,17 +18,18 @@ export class CSVRecordsExporter extends CSVExporter<Record> {
   }
 
   protected formatHeaders(): Array<string> {
-    return ["timestamp", "type", "change", "extra_properties"];
+    return ["timestamp", "timezoneOffset", "type", "change", "extra_properties"];
   }
 
   protected formatRow(record: Record): Array<number | string | boolean> {
-    const serializer = RecordSerializerFactory.createSerializer(record.type);
-    const serializedRecord = serializer.serialize(record);
+    const { timestamp, type, change, ...extraProperties } = record;
+    const { value, offset } = toTimestampWithTimezoneOffset(timestamp);
     return [
-      serializedRecord.timestamp.getTime(),
-      serializedRecord.type,
-      serializedRecord.change,
-      JSON.stringify(serializedRecord.extraProperties),
+      value,
+      offset,
+      type,
+      change,
+      JSON.stringify(extraProperties, jsonDateReplacer),
     ];
   }
 }

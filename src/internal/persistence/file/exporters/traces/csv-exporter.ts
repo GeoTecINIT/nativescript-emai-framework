@@ -2,6 +2,7 @@ import { CSVExporter } from "../csv-exporter";
 
 import { Trace } from "../../../../tasks/tracing";
 import { TracesStore, tracesStoreDB } from "../../../stores/traces";
+import { toTimestampWithTimezoneOffset, jsonDateReplacer } from "../../../../utils/date";
 
 export class CSVTracesExporter extends CSVExporter<Trace> {
   constructor(
@@ -17,18 +18,20 @@ export class CSVTracesExporter extends CSVExporter<Trace> {
   }
 
   protected formatHeaders(): Array<string> {
-    return ["timestamp", "id", "type", "name", "result", "content"];
+    return ["timestamp", "timezoneOffset", "id", "type", "name", "result", "content"];
   }
 
   protected formatRow(trace: Trace): Array<number | string | boolean> {
     const { timestamp, id, type, name, result, content } = trace;
+    const { value, offset } = toTimestampWithTimezoneOffset(timestamp);
     return [
-      timestamp.getTime(),
+      value,
+      offset,
       id,
       type,
       name,
       result,
-      JSON.stringify(content),
+      JSON.stringify(content, jsonDateReplacer),
     ];
   }
 }
