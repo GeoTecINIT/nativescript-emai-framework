@@ -1,6 +1,6 @@
 import {
-    RecordsStore,
     recordsStoreDB,
+    LocalRecordsStore,
 } from "@geotecinit/emai-framework/internal/persistence/stores/records";
 import { Record } from "@geotecinit/emai-framework/internal/providers/base-record";
 
@@ -20,7 +20,7 @@ import {
 } from "@geotecinit/emai-framework/internal/tasks/notifications/questionnaire-answers";
 
 describe("Records store", () => {
-    const store: RecordsStore = recordsStoreDB;
+    const store: LocalRecordsStore = recordsStoreDB;
 
     const answers: Array<QuestionnaireAnswer> = [
         {
@@ -65,11 +65,11 @@ describe("Records store", () => {
         const storedRecords = await store.list().pipe(first()).toPromise();
 
         expect(storedRecords.length).toBe(5);
-        expect({...storedRecords[0]}).toEqual({...records[4]});
-        expect({...storedRecords[1]}).toEqual({...records[3]});
-        expect({...storedRecords[2]}).toEqual({...records[2]});
-        expect({...storedRecords[3]}).toEqual({...records[1]});
-        expect({...storedRecords[4]}).toEqual({...records[0]});
+        expect({ ...storedRecords[0] }).toEqual({ ...records[4] });
+        expect({ ...storedRecords[1] }).toEqual({ ...records[3] });
+        expect({ ...storedRecords[2] }).toEqual({ ...records[2] });
+        expect({ ...storedRecords[3] }).toEqual({ ...records[1] });
+        expect({ ...storedRecords[4] }).toEqual({ ...records[0] });
     });
 
     it("allows to listen to stored records changes", async () => {
@@ -81,7 +81,7 @@ describe("Records store", () => {
         const storedRecords = await lastUpdate;
 
         expect(storedRecords.length).toBe(3);
-        expect({...storedRecords[0]}).toEqual({...records[2]});
+        expect({ ...storedRecords[0] }).toEqual({ ...records[2] });
     });
 
     it("allows to limit the amount of records to be listed", async () => {
@@ -93,8 +93,8 @@ describe("Records store", () => {
         const storedRecords = await lastUpdate;
 
         expect(storedRecords.length).toBe(2);
-        expect({...storedRecords[0]}).toEqual({...records[2]});
-        expect({...storedRecords[1]}).toEqual({...records[1]});
+        expect({ ...storedRecords[0] }).toEqual({ ...records[2] });
+        expect({ ...storedRecords[1] }).toEqual({ ...records[1] });
     });
 
     it("allows to recover all the stored records from the oldest to the newest", async () => {
@@ -105,11 +105,46 @@ describe("Records store", () => {
         const storedRecords = await store.getAll();
 
         expect(storedRecords.length).toBe(5);
-        expect({...storedRecords[0]}).toEqual({...records[0]});
-        expect({...storedRecords[1]}).toEqual({...records[1]});
-        expect({...storedRecords[2]}).toEqual({...records[2]});
-        expect({...storedRecords[3]}).toEqual({...records[3]});
-        expect({...storedRecords[4]}).toEqual({...records[4]});
+        expect({ ...storedRecords[0] }).toEqual({ ...records[0] });
+        expect({ ...storedRecords[1] }).toEqual({ ...records[1] });
+        expect({ ...storedRecords[2] }).toEqual({ ...records[2] });
+        expect({ ...storedRecords[3] }).toEqual({ ...records[3] });
+        expect({ ...storedRecords[4] }).toEqual({ ...records[4] });
+    });
+
+    it("allows to query unsynced records sorted by ascending timestamp", async () => {
+        await store.insert(records[0]);
+        await store.insert(records[1]);
+
+        const unsyncedRecords: Array<Record> = await store.getNotSynchronized();
+
+        expect(unsyncedRecords.length).toBe(2);
+        expect({ ...unsyncedRecords[0] }).toEqual({ ...records[0] });
+        expect({ ...unsyncedRecords[1] }).toEqual({ ...records[1] });
+    });
+
+    it("allows to mark records as synced", async () => {
+        for (let record of records) {
+            await store.insert(record);
+        }
+
+        const unsyncedRecords = await store.getNotSynchronized();
+
+        for (let unsyncedRecord of unsyncedRecords) {
+            await store.markAsSynchronized(unsyncedRecord);
+        }
+
+        const empty = await store.getNotSynchronized();
+        expect(empty.length).toBe(0);
+
+        const storedRecords = await store.getAll();
+
+        expect(storedRecords.length).toBe(5);
+        expect({ ...storedRecords[0] }).toEqual({ ...records[0] });
+        expect({ ...storedRecords[1] }).toEqual({ ...records[1] });
+        expect({ ...storedRecords[2] }).toEqual({ ...records[2] });
+        expect({ ...storedRecords[3] }).toEqual({ ...records[3] });
+        expect({ ...storedRecords[4] }).toEqual({ ...records[4] });
     });
 
     afterEach(async () => {
