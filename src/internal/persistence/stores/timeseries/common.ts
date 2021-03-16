@@ -3,6 +3,7 @@ import { EMAIStore } from "../emai-store";
 import { QueryLogicalOperator, QueryWhereItem } from "../db";
 
 export interface TimeSeriesEntity {
+  id?: string;
   timestamp: Date;
 }
 
@@ -28,7 +29,8 @@ export abstract class AbstractTimeSeriesStore<T extends TimeSeriesEntity>
   protected constructor(
     docType: string,
     private serialize: (entity: T) => any,
-    deserialize: (doc: any) => T
+    deserialize: (doc: any) => T,
+    private keepId = false
   ) {
     const serializer = (entity: T & DBEntityProps) => {
       const serializedEntity = serialize(this.removeDBEntityProps(entity));
@@ -56,7 +58,7 @@ export abstract class AbstractTimeSeriesStore<T extends TimeSeriesEntity>
 
   async insert(entity: T, synchronized = false): Promise<void> {
     const dbEntity = { ...entity, synchronized };
-    await this.store.create(dbEntity);
+    await this.store.create(dbEntity, entity.id);
   }
 
   list(size = 100): Observable<Array<T>> {
@@ -144,6 +146,10 @@ export abstract class AbstractTimeSeriesStore<T extends TimeSeriesEntity>
   }
 
   private async getDBEntityFrom(entity: T): Promise<T & DBEntityProps> {
+    if (entity.id) {
+      return this.store.get(entity.id);
+    }
+
     const serializedEntity = this.serialize(entity);
     const where = Object.keys(serializedEntity).map((key, index) => {
       const conditional =
@@ -176,7 +182,9 @@ export abstract class AbstractTimeSeriesStore<T extends TimeSeriesEntity>
   private removeDBEntityProps(dbEntity: T & DBEntityProps): T {
     const copy = { ...dbEntity };
 
-    delete copy["id"];
+    if (!this.keepId) {
+      delete copy["id"];
+    }
     delete copy["synchronized"];
 
     return copy;
