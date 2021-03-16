@@ -4,7 +4,7 @@ import {
   TaskParams,
 } from "nativescript-task-dispatcher/tasks";
 import { TracerConfig } from "./tracer-config";
-import { TracesStore, tracesStoreDB } from "../../persistence/stores/traces";
+import { TracesStore, tracesStoreDB } from "../../persistence/stores/timeseries/traces";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 import { Trace } from "./trace";
 import { TraceType } from "./trace-type";

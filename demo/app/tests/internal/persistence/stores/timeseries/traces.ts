@@ -7,7 +7,7 @@ import {
 import {
     TracesStore,
     tracesStoreDB,
-} from "@geotecinit/emai-framework/internal/persistence/stores/traces";
+} from "@geotecinit/emai-framework/internal/persistence/stores/timeseries/traces";
 import { first, last, take } from "rxjs/operators";
 
 describe("Traces store", () => {

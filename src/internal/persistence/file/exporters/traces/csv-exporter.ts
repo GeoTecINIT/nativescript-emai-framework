@@ -1,7 +1,7 @@
 import { CSVExporter } from "../csv-exporter";
 
 import { Trace } from "../../../../tasks/tracing";
-import { TracesStore, tracesStoreDB } from "../../../stores/traces";
+import { TracesStore, tracesStoreDB } from "../../../stores/timeseries/traces";
 import { toTimestampWithTimezoneOffset, jsonDateReplacer } from "../../../../utils/date";
 
 export class CSVTracesExporter extends CSVExporter<Trace> {

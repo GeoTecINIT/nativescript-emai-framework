@@ -1,7 +1,10 @@
-import { Trace } from "../../tasks/tracing";
+import { Trace } from "../../../tasks/tracing";
 import { Observable } from "rxjs";
-import { EMAIStore } from "./emai-store";
-import { deserialize, serialize } from "nativescript-task-dispatcher/internal/utils/serialization";
+import { EMAIStore } from "../emai-store";
+import {
+  deserialize,
+  serialize,
+} from "nativescript-task-dispatcher/internal/utils/serialization";
 
 export interface TracesStore {
   insert(trace: Trace): Promise<void>;

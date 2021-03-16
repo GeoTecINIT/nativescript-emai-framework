@@ -1,4 +1,4 @@
-import { TracesStore } from "@geotecinit/emai-framework/internal/persistence/stores/traces";
+import { TracesStore } from "@geotecinit/emai-framework/internal/persistence/stores/timeseries/traces";
 import { Trace } from "@geotecinit/emai-framework/internal/tasks/tracing";
 import { Observable, of } from "rxjs";
 
