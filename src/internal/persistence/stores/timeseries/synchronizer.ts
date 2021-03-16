@@ -1,12 +1,12 @@
 import {
   LocalTimeSeriesStore,
-  TimeSeriesRecord,
+  TimeSeriesEntity,
   TimeSeriesStore,
 } from "./common";
 import { Observable } from "rxjs";
 import { getLogger, Logger } from "../../../utils/logger";
 
-export class TimeSeriesSyncedStore<T extends TimeSeriesRecord>
+export class TimeSeriesSyncedStore<T extends TimeSeriesEntity>
   implements TimeSeriesStore<T> {
   private externalStore?: TimeSeriesStore<T>;
   private clearOldThreshold = -1;
@@ -32,9 +32,9 @@ export class TimeSeriesSyncedStore<T extends TimeSeriesRecord>
     this.clearOldThreshold = minAgeHours;
   }
 
-  async insert(record: T): Promise<void> {
-    let synchronized = await this.storeRemotely(record);
-    await this.localStore.insert(record, synchronized);
+  async insert(entity: T): Promise<void> {
+    let synchronized = await this.storeRemotely(entity);
+    await this.localStore.insert(entity, synchronized);
   }
 
   async sync(): Promise<void> {
@@ -42,15 +42,15 @@ export class TimeSeriesSyncedStore<T extends TimeSeriesRecord>
       return;
     }
 
-    const unsyncedRecords = await this.localStore.getNotSynchronized();
-    if (unsyncedRecords.length === 0) {
+    const unsyncedEntities = await this.localStore.getNotSynchronized();
+    if (unsyncedEntities.length === 0) {
       return;
     }
 
-    for (let record of unsyncedRecords) {
-      const synced = await this.storeRemotely(record);
+    for (let entity of unsyncedEntities) {
+      const synced = await this.storeRemotely(entity);
       if (synced) {
-        await this.localStore.markAsSynchronized(record);
+        await this.localStore.markAsSynchronized(entity);
       }
     }
   }
@@ -74,13 +74,13 @@ export class TimeSeriesSyncedStore<T extends TimeSeriesRecord>
     return this.localStore.clear();
   }
 
-  private async storeRemotely(record: T): Promise<boolean> {
+  private async storeRemotely(entity: T): Promise<boolean> {
     if (!this.externalStore) {
       return false;
     }
 
     try {
-      await this.externalStore.insert(record);
+      await this.externalStore.insert(entity);
       return true;
     } catch (e) {
       this.logger.warn(`Could not store data remotely: ${e}`);

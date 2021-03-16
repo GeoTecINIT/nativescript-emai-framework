@@ -1,27 +1,27 @@
 import { Observable } from "rxjs";
 import {
     LocalTimeSeriesStore,
-    TimeSeriesRecord,
+    TimeSeriesEntity,
     TimeSeriesStore,
 } from "@geotecinit/emai-framework/internal/persistence/stores/timeseries/common";
 import { TimeSeriesSyncedStore } from "@geotecinit/emai-framework/internal/persistence/stores/timeseries/synchronizer";
 
 describe("Time series synced store", () => {
-    let localStoreMock: LocalTimeSeriesStore<TimeSeriesRecord>;
-    let externalStoreMock: TimeSeriesStore<TimeSeriesRecord>;
-    let syncedStore: TimeSeriesSyncedStore<TimeSeriesRecord>;
+    let localStoreMock: LocalTimeSeriesStore<TimeSeriesEntity>;
+    let externalStoreMock: TimeSeriesStore<TimeSeriesEntity>;
+    let syncedStore: TimeSeriesSyncedStore<TimeSeriesEntity>;
 
-    const fakeRecord1: TimeSeriesRecord = {
+    const fakeEntity1: TimeSeriesEntity = {
         timestamp: new Date(),
     };
-    const fakeRecord2: TimeSeriesRecord = {
+    const fakeEntity2: TimeSeriesEntity = {
         timestamp: new Date(),
     };
 
     beforeEach(() => {
         localStoreMock = createLocalStoreMock();
         externalStoreMock = createExternalStoreMock();
-        syncedStore = new TimeSeriesSyncedStore<TimeSeriesRecord>(
+        syncedStore = new TimeSeriesSyncedStore<TimeSeriesEntity>(
             "TimeSeriesStore",
             localStoreMock
         );
@@ -29,24 +29,24 @@ describe("Time series synced store", () => {
         spyOn(localStoreMock, "insert");
     });
 
-    it("inserts a record only locally", async () => {
-        await syncedStore.insert(fakeRecord1);
-        expect(localStoreMock.insert).toHaveBeenCalledWith(fakeRecord1, false);
+    it("inserts an entity only locally", async () => {
+        await syncedStore.insert(fakeEntity1);
+        expect(localStoreMock.insert).toHaveBeenCalledWith(fakeEntity1, false);
     });
 
-    it("marks a record as synced when stored both locally and externally", async () => {
+    it("marks an entity as synced when stored both locally and externally", async () => {
         spyOn(externalStoreMock, "insert");
         syncedStore.setExternalStore(externalStoreMock);
-        await syncedStore.insert(fakeRecord1);
-        expect(externalStoreMock.insert).toHaveBeenCalledWith(fakeRecord1);
-        expect(localStoreMock.insert).toHaveBeenCalledWith(fakeRecord1, true);
+        await syncedStore.insert(fakeEntity1);
+        expect(externalStoreMock.insert).toHaveBeenCalledWith(fakeEntity1);
+        expect(localStoreMock.insert).toHaveBeenCalledWith(fakeEntity1, true);
     });
 
-    it("marks a record as not synced when external storage fails", async () => {
+    it("marks an entity as not synced when external storage fails", async () => {
         spyOn(externalStoreMock, "insert").and.rejectWith("Could not store");
         syncedStore.setExternalStore(externalStoreMock);
-        await syncedStore.insert(fakeRecord1);
-        expect(localStoreMock.insert).toHaveBeenCalledWith(fakeRecord1, false);
+        await syncedStore.insert(fakeEntity1);
+        expect(localStoreMock.insert).toHaveBeenCalledWith(fakeEntity1, false);
     });
 
     it("does not perform sync actions when no external store is provided", async () => {
@@ -55,9 +55,9 @@ describe("Time series synced store", () => {
         expect(localStoreMock.getNotSynchronized).not.toHaveBeenCalled();
     });
 
-    it("syncs pending unsynced records when required", async () => {
+    it("syncs pending unsynced entities when required", async () => {
         spyOn(localStoreMock, "getNotSynchronized").and.returnValue(
-            Promise.resolve([fakeRecord1, fakeRecord2])
+            Promise.resolve([fakeEntity1, fakeEntity2])
         );
         spyOn(localStoreMock, "markAsSynchronized");
         spyOn(externalStoreMock, "insert");
@@ -99,25 +99,25 @@ describe("Time series synced store", () => {
     });
 });
 
-function createLocalStoreMock(): LocalTimeSeriesStore<TimeSeriesRecord> {
+function createLocalStoreMock(): LocalTimeSeriesStore<TimeSeriesEntity> {
     return {
-        getAll(): Promise<Array<TimeSeriesRecord>> {
+        getAll(): Promise<Array<TimeSeriesEntity>> {
             return Promise.resolve(undefined);
         },
-        getNotSynchronized(): Promise<Array<TimeSeriesRecord>> {
+        getNotSynchronized(): Promise<Array<TimeSeriesEntity>> {
             return Promise.resolve(undefined);
         },
-        list(size?: number): Observable<Array<TimeSeriesRecord>> {
+        list(size?: number): Observable<Array<TimeSeriesEntity>> {
             return undefined;
         },
-        markAsSynchronized(record: TimeSeriesRecord): Promise<void> {
+        markAsSynchronized(entity: TimeSeriesEntity): Promise<void> {
             return Promise.resolve(undefined);
         },
         clear(): Promise<void> {
             return Promise.resolve(undefined);
         },
         insert(
-            record: TimeSeriesRecord,
+            entity: TimeSeriesEntity,
             synchronized?: boolean
         ): Promise<void> {
             return Promise.resolve(undefined);
@@ -128,15 +128,15 @@ function createLocalStoreMock(): LocalTimeSeriesStore<TimeSeriesRecord> {
     };
 }
 
-function createExternalStoreMock(): TimeSeriesStore<TimeSeriesRecord> {
+function createExternalStoreMock(): TimeSeriesStore<TimeSeriesEntity> {
     return {
-        getAll(): Promise<Array<TimeSeriesRecord>> {
+        getAll(): Promise<Array<TimeSeriesEntity>> {
             return Promise.resolve(undefined);
         },
-        insert(record: TimeSeriesRecord): Promise<void> {
+        insert(entity: TimeSeriesEntity): Promise<void> {
             return Promise.resolve(undefined);
         },
-        list(size?: number): Observable<Array<TimeSeriesRecord>> {
+        list(size?: number): Observable<Array<TimeSeriesEntity>> {
             return undefined;
         },
         clear(): Promise<void> {
