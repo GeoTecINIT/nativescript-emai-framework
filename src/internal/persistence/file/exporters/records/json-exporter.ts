@@ -1,13 +1,16 @@
 import { JSONExporter } from "../json-exporter";
 
-import { Record } from "../../../../providers/base-record";
-import { RecordsStore, recordsStoreDB } from "../../../stores/records";
+import { Record } from "../../../../providers";
+import {
+  RecordsStore,
+  syncedRecordsStore,
+} from "../../../stores/timeseries";
 
 export class JSONRecordsExporter extends JSONExporter<Record> {
   constructor(
     folder: string,
     file?: string,
-    private recordsStore: RecordsStore = recordsStoreDB
+    private recordsStore: RecordsStore = syncedRecordsStore
   ) {
     super(folder, file);
   }

@@ -1,8 +1,8 @@
 import { Task, TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 
-import { Record } from "../providers/base-record";
-import { recordsStoreDB } from "../persistence/stores/records";
+import { Record } from "../providers";
+import { syncedRecordsStore } from "../persistence/stores/timeseries";
 
 export class RecordWriterTask extends Task {
   protected async onRun(
@@ -25,7 +25,7 @@ export class RecordWriterTask extends Task {
   }
 
   private async storeRecord(record: Record): Promise<void> {
-    await recordsStoreDB.insert(record);
+    await syncedRecordsStore.insert(record);
     this.log(`A new record has been logged: ${JSON.stringify(record)}`);
   }
 }
