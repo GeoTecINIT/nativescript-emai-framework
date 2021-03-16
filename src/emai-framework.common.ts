@@ -11,10 +11,10 @@ import { builtInTasks } from "./internal/tasks";
 import { enableLogging, setLoggerCreator } from "./internal/utils/logger";
 import { notificationsManager } from "./internal/notifications/manager";
 import { RecordsStore } from "./storage/records";
+import { TracesStore} from "./storage/traces";
 import {
   syncedRecordsStore,
   syncedTracesStore,
-  TracesStore,
 } from "./internal/persistence/stores/timeseries";
 
 export class Common extends Observable {
