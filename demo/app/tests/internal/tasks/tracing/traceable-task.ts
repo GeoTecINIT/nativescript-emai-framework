@@ -1,4 +1,4 @@
-import { TracesStore } from "@geotecinit/emai-framework/internal/persistence/stores/timeseries/traces";
+import { TracesStore } from "@geotecinit/emai-framework/internal/persistence/stores/timeseries";
 import { createTracesStoreMock } from "./index";
 import {
     TraceableTask,

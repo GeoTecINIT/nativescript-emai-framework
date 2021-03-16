@@ -1,13 +1,13 @@
 import { JSONExporter } from "../json-exporter";
 
 import { Trace } from "../../../../tasks/tracing";
-import { TracesStore, tracesStoreDB } from "../../../stores/timeseries/traces";
+import { TracesStore, syncedTracesStore } from "../../../stores/timeseries";
 
 export class JSONTracesExporter extends JSONExporter<Trace> {
   constructor(
     folder: string,
     file?: string,
-    private tracesStore: TracesStore = tracesStoreDB
+    private tracesStore: TracesStore = syncedTracesStore
   ) {
     super(folder, file);
   }

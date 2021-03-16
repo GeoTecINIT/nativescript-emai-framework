@@ -1,67 +1,15 @@
 import { Trace } from "../../../tasks/tracing";
-import { Observable } from "rxjs";
-import { EMAIStore } from "../emai-store";
 import {
   deserialize,
   serialize,
 } from "nativescript-task-dispatcher/internal/utils/serialization";
-
-export interface TracesStore {
-  insert(trace: Trace): Promise<void>;
-  list(size?: number): Observable<Array<Trace>>;
-  getAll(): Promise<Array<Trace>>;
-  clear(): Promise<void>;
-}
+import { AbstractTimeSeriesStore } from "./common";
 
 const DOC_TYPE = "trace";
 
-class TracesStoreDB implements TracesStore {
-  private readonly store: EMAIStore<Trace>;
-
+class TracesStoreDB extends AbstractTimeSeriesStore<Trace> {
   constructor() {
-    this.store = new EMAIStore<Trace>(DOC_TYPE, docFrom, traceFrom);
-  }
-
-  async insert(trace: Trace): Promise<void> {
-    await this.store.create(trace);
-  }
-
-  list(size = 100): Observable<Array<Trace>> {
-    return new Observable<Array<Trace>>((subscriber) => {
-      const subscription = this.store.changes.subscribe(() => {
-        this.getAll(true, size)
-          .then((traces) => {
-            subscriber.next(traces);
-          })
-          .catch((err) => subscriber.error(err));
-      });
-      this.getAll(true, size)
-        .then((traces) => {
-          subscriber.next(traces);
-        })
-        .catch((err) => subscriber.error(err));
-
-      return () => {
-        subscription.unsubscribe();
-      };
-    });
-  }
-
-  async getAll(
-    reverseOrder?: boolean,
-    limitSize?: number
-  ): Promise<Array<Trace>> {
-    return this.store.fetch({
-      select: [],
-      order: [
-        { property: "timestamp", direction: !reverseOrder ? "asc" : "desc" },
-      ],
-      limit: limitSize,
-    });
-  }
-
-  async clear(): Promise<void> {
-    await this.store.clear();
+    super(DOC_TYPE, docFrom, traceFrom, true);
   }
 }
 
@@ -70,7 +18,7 @@ function docFrom(trace: Trace): any {
   const stringifiedContent = serialize(content);
   return {
     timestamp: timestamp.getTime(),
-    traceId: id,
+    id,
     type,
     name,
     result,
@@ -79,11 +27,11 @@ function docFrom(trace: Trace): any {
 }
 
 function traceFrom(doc: any): Trace {
-  const { timestamp, traceId, type, name, result, stringifiedContent } = doc;
+  const { timestamp, id, type, name, result, stringifiedContent } = doc;
   const content = deserialize(stringifiedContent);
   return {
     timestamp: new Date(timestamp),
-    id: traceId,
+    id,
     type,
     name,
     result,
@@ -91,4 +39,4 @@ function traceFrom(doc: any): Trace {
   };
 }
 
-export const tracesStoreDB = new TracesStoreDB();
+export const localTracesStore = new TracesStoreDB();

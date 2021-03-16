@@ -1,6 +1,6 @@
 import { EventTrackerTask } from "@geotecinit/emai-framework/internal/tasks/tracing/event-tracker";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
-import { TracesStore } from "@geotecinit/emai-framework/internal/persistence/stores/timeseries/traces";
+import { TracesStore } from "@geotecinit/emai-framework/internal/persistence/stores/timeseries";
 import { createTracesStoreMock } from "./index";
 import {
     TraceResult,

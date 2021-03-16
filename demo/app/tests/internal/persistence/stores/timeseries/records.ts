@@ -111,7 +111,7 @@ describe("Records store", () => {
         await store.insert(records[0]);
         await store.insert(records[1]);
 
-        const unsyncedRecords: Array<Record> = await store.getNotSynchronized();
+        const unsyncedRecords = await store.getNotSynchronized();
 
         expect(unsyncedRecords.length).toBe(2);
         expect({ ...unsyncedRecords[0] }).toEqual({ ...records[0] });
@@ -163,6 +163,7 @@ describe("Records store", () => {
         await store.markAsSynchronized(oldRecord1);
         await store.insert(oldRecord2);
         await store.insert(oldRecord3);
+        await store.markAsSynchronized(oldRecord3);
         await store.insert(records[0]);
 
         await store.clearOld(1);

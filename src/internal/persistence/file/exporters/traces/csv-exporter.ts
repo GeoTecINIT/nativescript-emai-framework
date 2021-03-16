@@ -1,14 +1,14 @@
 import { CSVExporter } from "../csv-exporter";
 
 import { Trace } from "../../../../tasks/tracing";
-import { TracesStore, tracesStoreDB } from "../../../stores/timeseries/traces";
+import { TracesStore, syncedTracesStore } from "../../../stores/timeseries";
 import { toTimestampWithTimezoneOffset, jsonDateReplacer } from "../../../../utils/date";
 
 export class CSVTracesExporter extends CSVExporter<Trace> {
   constructor(
     folder: string,
     file?: string,
-    private tracesStore: TracesStore = tracesStoreDB
+    private tracesStore: TracesStore = syncedTracesStore
   ) {
     super(folder, file);
   }

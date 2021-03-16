@@ -4,7 +4,7 @@ import {
   TaskParams,
 } from "nativescript-task-dispatcher/tasks";
 import { TracerConfig } from "./tracer-config";
-import { TracesStore, tracesStoreDB } from "../../persistence/stores/timeseries/traces";
+import { TracesStore, syncedTracesStore } from "../../persistence/stores/timeseries";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 import { Trace } from "./trace";
 import { TraceType } from "./trace-type";
@@ -17,7 +17,7 @@ export abstract class TraceableTask extends Task {
   constructor(
     name: string,
     taskConfig?: TracerConfig,
-    private tracesStore: TracesStore = tracesStoreDB
+    private tracesStore: TracesStore = syncedTracesStore
   ) {
     super(name, taskConfig);
     this.sensibleData = taskConfig && taskConfig.sensitiveData;
