@@ -38,7 +38,7 @@ describe("Notifications store", () => {
     it("allows to recover a notification by its given id", async () => {
         await store.insert(notification1Id, expectedNotification1);
         const notification = await store.get(notification1Id);
-        console.log(`Notification --> `, JSON.stringify(notification));
+
         expect(notification).toEqual(expectedNotification1);
     });
 
