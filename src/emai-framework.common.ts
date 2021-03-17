@@ -11,7 +11,11 @@ import { builtInTasks } from "./internal/tasks";
 import { enableLogging, setLoggerCreator } from "./internal/utils/logger";
 import { notificationsManager } from "./internal/notifications/manager";
 import { RecordsStore } from "./storage/records";
-import { syncedRecordsStore } from "./internal/persistence/stores/timeseries";
+import { TracesStore } from "./storage/traces";
+import {
+  syncedRecordsStore,
+  syncedTracesStore,
+} from "./internal/persistence/stores/timeseries";
 
 export class Common extends Observable {
   public async init(
@@ -72,8 +76,14 @@ export class Common extends Observable {
     if (config.externalRecordsStore) {
       syncedRecordsStore.setExternalStore(config.externalRecordsStore);
     }
+    if (config.externalTracesStore) {
+      syncedTracesStore.setExternalStore(config.externalTracesStore);
+    }
     if (config.oldRecordsMaxAgeHours) {
       syncedRecordsStore.setClearOldThreshold(config.oldRecordsMaxAgeHours);
+    }
+    if (config.oldTracesMaxAgeHours) {
+      syncedTracesStore.setClearOldThreshold(config.oldTracesMaxAgeHours);
     }
   }
 }
@@ -82,4 +92,6 @@ export interface ConfigParams extends TDConfigParams {
   notificationsChannelName?: string;
   externalRecordsStore?: RecordsStore;
   oldRecordsMaxAgeHours?: number;
+  externalTracesStore?: TracesStore;
+  oldTracesMaxAgeHours?: number;
 }

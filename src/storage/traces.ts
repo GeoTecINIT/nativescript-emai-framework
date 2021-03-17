@@ -1,6 +1,6 @@
 export { Trace, TraceType, TraceResult } from "../internal/tasks/tracing";
 
-export {
-  TracesStore,
-  tracesStoreDB as tracesDB,
-} from "../internal/persistence/stores/traces";
+import {syncedTracesStore, TracesStore} from "../internal/persistence/stores/timeseries";
+
+export {TracesStore};
+export const tracesStore: TracesStore = syncedTracesStore;

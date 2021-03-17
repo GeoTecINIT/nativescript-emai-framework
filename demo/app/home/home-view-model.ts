@@ -6,7 +6,7 @@ import { debounceTime, map, switchMap } from "rxjs/operators";
 import {
     Trace,
     TracesStore,
-    tracesDB,
+    tracesStore,
 } from "@geotecinit/emai-framework/storage/traces";
 
 import {
@@ -32,7 +32,7 @@ export class HomeViewModel extends Observable {
     private _fetchOrders: Subject<number>;
     private _subscription: Subscription;
 
-    constructor(private store: TracesStore = tracesDB) {
+    constructor(private store: TracesStore = tracesStore) {
         super();
         this.subscribeToDatabaseChanges();
         this.loadMore();

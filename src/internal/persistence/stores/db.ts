@@ -189,4 +189,4 @@ export class NotUniqueErr extends Error {
   }
 }
 
-export { Query, QueryLogicalOperator };
+export { Query, QueryLogicalOperator, QueryWhereItem };
