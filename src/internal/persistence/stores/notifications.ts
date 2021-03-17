@@ -1,5 +1,6 @@
 import { Notification } from "../../notifications";
 import { EMAIStore } from "./emai-store";
+import { Observable } from "rxjs";
 
 export interface NotificationsStore {
   insert(id: number, notification: Notification): Promise<void>;
@@ -35,6 +36,41 @@ class NotificationsStoreDB implements NotificationsStore {
       throw new Error(`Notification not found (id=${id})`);
     }
     return notification;
+  }
+
+  list(): Observable<Array<Notification>> {
+    return new Observable<Array<Notification>>((subscriber) => {
+      const subscription = this.store.changes.subscribe(() => {
+        this.getAll()
+          .then((notifications) => {
+            subscriber.next(notifications);
+          })
+          .catch((error) => {
+            subscriber.error(error);
+          });
+      });
+
+      this.getAll()
+        .then((notifications) => {
+          subscriber.next(notifications);
+        })
+        .catch((error) => {
+          subscriber.error(error);
+        });
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    });
+  }
+
+  async getAll(): Promise<Array<Notification>> {
+    return await this.store.fetch({
+      select: [],
+      order: [
+        { property: "timestamp", direction: "desc"},
+      ],
+    });
   }
 
   async delete(id: number): Promise<void> {
