@@ -8,6 +8,7 @@ import { first, last, take } from "rxjs/internal/operators";
 describe("Notifications store", () => {
     const notification1Id = 1;
     const expectedNotification1: Notification = {
+        notificationId: notification1Id,
         title: "Notification title",
         tapContent: {
             type: TapContentType.QUESTIONS,
@@ -19,6 +20,7 @@ describe("Notifications store", () => {
 
     const notification2Id = 2;
     const expectedNotification2: Notification = {
+        notificationId: notification2Id,
         title: "Notification title",
         tapContent: {
             type: TapContentType.RICH_TEXT,

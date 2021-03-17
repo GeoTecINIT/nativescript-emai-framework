@@ -43,15 +43,14 @@ class NotificationsManagerImpl
   }
 
   public async display(notification: Notification): Promise<void> {
-    const { title, body, bigTextStyle } = notification;
+    const { notificationId, title, body, bigTextStyle } = notification;
 
-    const id = NotificationsManagerImpl.generateNotificationId();
-    await this.store.insert(id, notification);
+    await this.store.insert(notificationId, notification);
 
     this.fixAndroidChannel();
     await LocalNotifications.schedule([
       {
-        id,
+        id: notificationId,
         title,
         body,
         bigTextStyle,
@@ -119,12 +118,6 @@ class NotificationsManagerImpl
     channel.enableVibration(true);
     channel.setVibrationPattern([0, 1000, 500, 1000]);
     notificationManager.createNotificationChannel(channel);
-  }
-
-  private static generateNotificationId(): number {
-    // From nativescript-local-notifications
-    // https://github.com/EddyVerbruggen/nativescript-local-notifications/blob/master/src/local-notifications-common.ts
-    return Math.round((Date.now() + Math.round(100000 * Math.random())) / 1000);
   }
 }
 

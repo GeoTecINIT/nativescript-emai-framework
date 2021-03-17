@@ -5,7 +5,7 @@ import {
 } from "../../notifications/manager";
 import { TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
-import { Notification, TapContentType } from "../../notifications";
+import { generateNotificationId, Notification, TapContentType } from "../../notifications";
 
 export const notificationPermissionMissingErr = new Error(
   "Notification permission has not been granted"
@@ -78,6 +78,7 @@ export class NotificationSenderTask extends TraceableTask {
     const bigTextStyle = body.length >= 25;
 
     return {
+      notificationId: generateNotificationId(),
       title,
       body,
       tapContent: tapContent
