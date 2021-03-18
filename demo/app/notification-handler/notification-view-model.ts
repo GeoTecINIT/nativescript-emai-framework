@@ -6,6 +6,7 @@ import {
     QuestionnaireAnswer,
 } from "@geotecinit/emai-framework/entities/answers";
 import { TappedNotification } from "~/notification-handler/notification-handler-service";
+import { notificationsManager } from "@geotecinit/emai-framework/notifications";
 
 export class NotificationViewModel extends Observable {
     private readonly _content: NotificationContent;
@@ -21,6 +22,8 @@ export class NotificationViewModel extends Observable {
             this._answers = new Map<string, QuestionAnswer>();
             this._questions = (<QuestionSet>this._content).questions;
         }
+
+        notificationsManager.markAsSeen(notification.id);
     }
 
     get content(): NotificationContent {
