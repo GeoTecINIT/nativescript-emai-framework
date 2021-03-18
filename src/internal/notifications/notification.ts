@@ -1,5 +1,5 @@
 export interface Notification {
-  notificationId: number;
+  id: number;
   title: string;
   tapContent: {
     type: TapContentType;

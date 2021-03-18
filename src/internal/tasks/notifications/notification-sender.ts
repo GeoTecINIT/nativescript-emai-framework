@@ -78,7 +78,7 @@ export class NotificationSenderTask extends TraceableTask {
     const bigTextStyle = body.length >= 25;
 
     return {
-      notificationId: generateNotificationId(),
+      id: generateNotificationId(),
       title,
       body,
       tapContent: tapContent

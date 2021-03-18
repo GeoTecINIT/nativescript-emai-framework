@@ -79,9 +79,8 @@ class NotificationsStoreDB implements NotificationsStore {
 }
 
 function docFrom(notification: Notification): any {
-  const { notificationId, title, tapContent, body, timestamp } = notification;
+  const { title, tapContent, body, timestamp } = notification;
   return {
-    notificationId,
     title,
     tapContentType: tapContent.type,
     tapContentId: tapContent.id,
@@ -91,9 +90,9 @@ function docFrom(notification: Notification): any {
 }
 
 function notificationFrom(doc: any): Notification {
-  const { notificationId, title, tapContentType, tapContentId, body, timestamp } = doc;
+  const { id, title, tapContentType, tapContentId, body, timestamp } = doc;
   return {
-    notificationId,
+    id: parseInt(id),
     title,
     tapContent: {
       type: tapContentType,

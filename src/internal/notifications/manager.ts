@@ -43,14 +43,14 @@ class NotificationsManagerImpl
   }
 
   public async display(notification: Notification): Promise<void> {
-    const { notificationId, title, body, bigTextStyle } = notification;
+    const { id, title, body, bigTextStyle } = notification;
 
-    await this.store.insert(notificationId, notification);
+    await this.store.insert(id, notification);
 
     this.fixAndroidChannel();
     await LocalNotifications.schedule([
       {
-        id: notificationId,
+        id,
         title,
         body,
         bigTextStyle,
