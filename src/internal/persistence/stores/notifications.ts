@@ -3,7 +3,7 @@ import { EMAIStore } from "./emai-store";
 import { Observable } from "rxjs";
 
 export interface NotificationsStore {
-  insert(id: number, notification: Notification): Promise<void>;
+  insert(notification: Notification): Promise<void>;
   get(id: number): Promise<Notification>;
   delete(id: number): Promise<void>;
 }
@@ -21,7 +21,8 @@ class NotificationsStoreDB implements NotificationsStore {
     );
   }
 
-  async insert(id: number, notification: Notification): Promise<void> {
+  async insert(notification: Notification): Promise<void> {
+    const id = notification.id;
     try {
       await this.get(id);
       return;
@@ -74,6 +75,7 @@ class NotificationsStoreDB implements NotificationsStore {
   }
 
   async delete(id: number): Promise<void> {
+    console.log(`Notifications deleted --> ${id}`);
     await this.store.delete(`${id}`);
   }
 }
