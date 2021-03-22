@@ -3,14 +3,28 @@ import {
     TapContentType,
 } from "@geotecinit/emai-framework/internal/notifications";
 import { notificationsStoreDB } from "@geotecinit/emai-framework/internal/persistence/stores/notifications";
+import { first, last, take } from "rxjs/internal/operators";
 
 describe("Notifications store", () => {
-    const notificationId = 1;
-    const expectedNotification: Notification = {
+    const notification1Id = 1;
+    const expectedNotification1: Notification = {
+        id: notification1Id,
         title: "Notification title",
         tapContent: {
             type: TapContentType.QUESTIONS,
             id: "qs1",
+        },
+        body: "Notification body",
+        timestamp: new Date(Date.now() - 60000),
+    };
+
+    const notification2Id = 2;
+    const expectedNotification2: Notification = {
+        id: notification2Id,
+        title: "Notification title",
+        tapContent: {
+            type: TapContentType.RICH_TEXT,
+            id: "rtc1",
         },
         body: "Notification body",
         timestamp: new Date(),
@@ -18,24 +32,55 @@ describe("Notifications store", () => {
     const store = notificationsStoreDB;
 
     it("allows to persist a notification without error", async () => {
-        await store.insert(notificationId, expectedNotification);
+        await store.insert(expectedNotification1);
     });
 
     it("allows to recover a notification by its given id", async () => {
-        await store.insert(notificationId, expectedNotification);
-        const notification = await store.get(notificationId);
-        expect(notification).toEqual(expectedNotification);
+        await store.insert(expectedNotification1);
+        const notification = await store.get(notification1Id);
+
+        expect(notification).toEqual(expectedNotification1);
     });
 
     it("allows to delete a persisted notification", async () => {
-        await store.insert(notificationId, expectedNotification);
-        await store.delete(notificationId);
-        await expectAsync(store.get(notificationId)).toBeRejectedWithError(
-            `Notification not found (id=${notificationId})`
+        await store.insert(expectedNotification1);
+        await store.delete(notification1Id);
+        await expectAsync(store.get(notification1Id)).toBeRejectedWithError(
+            `Notification not found (id=${notification1Id})`
         );
     });
 
+    it("allows to query all stored notifications" , async () => {
+       await store.insert(expectedNotification1);
+       await store.insert(expectedNotification2);
+
+       const storedNotifications = await store.list().pipe(first()).toPromise();
+
+       expect(storedNotifications.length).toBe(2);
+       expect(storedNotifications[0]).toEqual(expectedNotification2);
+       expect(storedNotifications[1]).toEqual(expectedNotification1);
+    });
+
+    it("allows to listen to stored notification changes", async () => {
+       await store.insert(expectedNotification1);
+
+       const updates = store.list().pipe(take(2), last()).toPromise();
+       store.insert(expectedNotification2);
+       const storedNotifications = await updates;
+
+       expect(storedNotifications.length).toBe(2);
+       expect(storedNotifications[0]).toEqual(expectedNotification2);
+    });
+
+    it("allows to get all the persisted notifications sorted by most recent", async () => {
+        await store.insert(expectedNotification1);
+        await store.insert(expectedNotification2);
+
+        await expectAsync(store.getAll()).toBeResolvedTo([expectedNotification2, expectedNotification1])
+    });
+
     afterEach(async () => {
-        await store.delete(notificationId);
+        await store.delete(notification1Id);
+        await store.delete(notification2Id);
     });
 });

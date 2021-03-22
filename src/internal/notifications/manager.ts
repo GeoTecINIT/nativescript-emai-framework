@@ -1,14 +1,8 @@
-import {
-  LocalNotifications,
-  ReceivedNotification,
-} from "nativescript-local-notifications";
+import { LocalNotifications, ReceivedNotification, } from "nativescript-local-notifications";
 import { android as androidApp } from "tns-core-modules/application";
 
-import { Notification } from "./notification";
-import {
-  NotificationsStore,
-  notificationsStoreDB,
-} from "../persistence/stores/notifications";
+import { Notification, TapContentType } from "./notification";
+import { NotificationsStore, notificationsStoreDB, } from "../persistence/stores/notifications";
 import { getLogger, Logger } from "../utils/logger";
 
 const DEFAULT_CHANNEL_NAME = "Mobile interventions";
@@ -22,6 +16,7 @@ export interface NotificationsManager {
 export interface NotificationActionsManager {
   onNotificationTap(tapCallback: NotificationCallback): Promise<void>;
   onNotificationCleared(clearCallback: NotificationCallback): Promise<void>;
+  markAsSeen(notificationId: number): Promise<void>;
 }
 
 class NotificationsManagerImpl
@@ -43,10 +38,9 @@ class NotificationsManagerImpl
   }
 
   public async display(notification: Notification): Promise<void> {
-    const { title, body, bigTextStyle } = notification;
+    const { id, title, body, bigTextStyle } = notification;
 
-    const id = NotificationsManagerImpl.generateNotificationId();
-    await this.store.insert(id, notification);
+    await this.store.insert(notification);
 
     this.fixAndroidChannel();
     await LocalNotifications.schedule([
@@ -84,12 +78,18 @@ class NotificationsManagerImpl
     );
   }
 
+  public async markAsSeen(notificationId: number): Promise<void> {
+    await this.store.delete(notificationId);
+  }
+
   private async processReceivedNotification(
     received: ReceivedNotification
   ): Promise<Notification> {
     const { id } = received;
     const notification = await this.store.get(id);
-    await this.store.delete(id);
+    if (notification.tapContent.type === TapContentType.NONE) {
+      await this.markAsSeen(id);
+    }
     return notification;
   }
 
@@ -119,12 +119,6 @@ class NotificationsManagerImpl
     channel.enableVibration(true);
     channel.setVibrationPattern([0, 1000, 500, 1000]);
     notificationManager.createNotificationChannel(channel);
-  }
-
-  private static generateNotificationId(): number {
-    // From nativescript-local-notifications
-    // https://github.com/EddyVerbruggen/nativescript-local-notifications/blob/master/src/local-notifications-common.ts
-    return Math.round((Date.now() + Math.round(100000 * Math.random())) / 1000);
   }
 }
 

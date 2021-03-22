@@ -81,6 +81,7 @@ class Database {
     if (!doc) {
       return null;
     }
+    doc.id = untypeId(docType, doc.id);
     return doc;
   }
 

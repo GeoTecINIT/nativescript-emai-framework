@@ -1,8 +1,9 @@
 import { Notification } from "../../notifications";
 import { EMAIStore } from "./emai-store";
+import { Observable } from "rxjs";
 
 export interface NotificationsStore {
-  insert(id: number, notification: Notification): Promise<void>;
+  insert(notification: Notification): Promise<void>;
   get(id: number): Promise<Notification>;
   delete(id: number): Promise<void>;
 }
@@ -20,7 +21,8 @@ class NotificationsStoreDB implements NotificationsStore {
     );
   }
 
-  async insert(id: number, notification: Notification): Promise<void> {
+  async insert(notification: Notification): Promise<void> {
+    const id = notification.id;
     try {
       await this.get(id);
       return;
@@ -37,7 +39,43 @@ class NotificationsStoreDB implements NotificationsStore {
     return notification;
   }
 
+  list(): Observable<Array<Notification>> {
+    return new Observable<Array<Notification>>((subscriber) => {
+      const subscription = this.store.changes.subscribe(() => {
+        this.getAll()
+          .then((notifications) => {
+            subscriber.next(notifications);
+          })
+          .catch((error) => {
+            subscriber.error(error);
+          });
+      });
+
+      this.getAll()
+        .then((notifications) => {
+          subscriber.next(notifications);
+        })
+        .catch((error) => {
+          subscriber.error(error);
+        });
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    });
+  }
+
+  async getAll(): Promise<Array<Notification>> {
+    return await this.store.fetch({
+      select: [],
+      order: [
+        { property: "timestamp", direction: "desc"},
+      ],
+    });
+  }
+
   async delete(id: number): Promise<void> {
+    console.log(`Notifications deleted --> ${id}`);
     await this.store.delete(`${id}`);
   }
 }
@@ -54,8 +92,9 @@ function docFrom(notification: Notification): any {
 }
 
 function notificationFrom(doc: any): Notification {
-  const { title, tapContentType, tapContentId, body, timestamp } = doc;
+  const { id, title, tapContentType, tapContentId, body, timestamp } = doc;
   return {
+    id: parseInt(id),
     title,
     tapContent: {
       type: tapContentType,
