@@ -1,7 +1,7 @@
 import { LocalNotifications, ReceivedNotification, } from "nativescript-local-notifications";
 import { android as androidApp } from "tns-core-modules/application";
 
-import { Notification, TapContentType } from "./notification";
+import { Notification, TapActionType } from "./notification";
 import { NotificationsStore, notificationsStoreDB, } from "../persistence/stores/notifications";
 import { getLogger, Logger } from "../utils/logger";
 
@@ -87,7 +87,7 @@ class NotificationsManagerImpl
   ): Promise<Notification> {
     const { id } = received;
     const notification = await this.store.get(id);
-    if (notification.tapContent.type === TapContentType.NONE) {
+    if (notification.tapAction.type === TapActionType.NONE) {
       await this.markAsSeen(id);
     }
     return notification;

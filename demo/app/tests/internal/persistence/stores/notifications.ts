@@ -1,6 +1,6 @@
 import {
     Notification,
-    TapContentType,
+    TapActionType
 } from "@geotecinit/emai-framework/internal/notifications";
 import { notificationsStoreDB } from "@geotecinit/emai-framework/internal/persistence/stores/notifications";
 import { first, last, take } from "rxjs/internal/operators";
@@ -10,9 +10,13 @@ describe("Notifications store", () => {
     const expectedNotification1: Notification = {
         id: notification1Id,
         title: "Notification title",
-        tapContent: {
-            type: TapContentType.QUESTIONS,
+        tapAction: {
+            type: TapActionType.QUESTIONS,
             id: "qs1",
+            metadata: {
+                param1: "Some config param",
+                param2: false,
+            }
         },
         body: "Notification body",
         timestamp: new Date(Date.now() - 60000),
@@ -22,8 +26,8 @@ describe("Notifications store", () => {
     const expectedNotification2: Notification = {
         id: notification2Id,
         title: "Notification title",
-        tapContent: {
-            type: TapContentType.RICH_TEXT,
+        tapAction: {
+            type: TapActionType.RICH_TEXT,
             id: "rtc1",
         },
         body: "Notification body",

@@ -1,4 +1,4 @@
-export { Notification, TapContentType } from "./notification";
+export { Notification, TapActionType } from "./notification";
 
 export function generateNotificationId(): number {
   // From nativescript-local-notifications

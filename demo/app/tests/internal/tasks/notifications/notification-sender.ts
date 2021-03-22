@@ -2,11 +2,12 @@ import { NotificationsManager } from "@geotecinit/emai-framework/internal/notifi
 import { createNotificationsManagerMock } from "./index";
 import { NotificationSenderTask } from "@geotecinit/emai-framework/internal/tasks/notifications/notification-sender";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
-import { TapContentType } from "@geotecinit/emai-framework/internal/notifications";
+import { TapActionType } from "@geotecinit/emai-framework/notifications";
 import {
     createEvent,
     listenToEventTrigger,
 } from "nativescript-task-dispatcher/testing/events";
+
 
 describe("Notification sender task", () => {
     let manager: NotificationsManager;
@@ -90,8 +91,8 @@ describe("Notification sender task", () => {
             jasmine.objectContaining({
                 title,
                 body,
-                tapContent: {
-                    type: TapContentType.NONE,
+                tapAction: {
+                    type: TapActionType.NONE,
                     id: null,
                 },
                 timestamp: jasmine.any(Date),
@@ -122,8 +123,8 @@ describe("Notification sender task", () => {
             jasmine.objectContaining({
                 title,
                 body: JSON.stringify(data),
-                tapContent: {
-                    type: TapContentType.NONE,
+                tapAction: {
+                    type: TapActionType.NONE,
                     id: null,
                 },
                 timestamp: jasmine.any(Date),
@@ -155,8 +156,8 @@ describe("Notification sender task", () => {
             jasmine.objectContaining({
                 title,
                 body: data.body,
-                tapContent: {
-                    type: TapContentType.NONE,
+                tapAction: {
+                    type: TapActionType.NONE,
                     id: null,
                 },
                 timestamp: jasmine.any(Date),
@@ -168,8 +169,8 @@ describe("Notification sender task", () => {
     it("displays a notification with a parameterized title and body and a reference to some rich-text content", async () => {
         const title = "Test notification";
         const body = "Parameterized content";
-        const tapContent = {
-            type: TapContentType.RICH_TEXT,
+        const tapAction = {
+            type: TapActionType.RICH_TEXT,
             id: "rtc1",
         };
 
@@ -181,7 +182,7 @@ describe("Notification sender task", () => {
             {
                 title,
                 body,
-                tapContent,
+                tapAction,
             },
             invocationEvent
         );
@@ -191,7 +192,7 @@ describe("Notification sender task", () => {
             jasmine.objectContaining({
                 title,
                 body,
-                tapContent,
+                tapAction,
                 timestamp: jasmine.any(Date),
                 bigTextStyle: false,
             })
@@ -201,8 +202,8 @@ describe("Notification sender task", () => {
     it("displays a notification with a parameterized title and body and a reference to some questions to be answered", async () => {
         const title = "Test notification";
         const body = "Some barely long parameterized content";
-        const tapContent = {
-            type: TapContentType.QUESTIONS,
+        const tapAction = {
+            type: TapActionType.QUESTIONS,
             id: "qs1",
         };
 
@@ -214,7 +215,7 @@ describe("Notification sender task", () => {
             {
                 title,
                 body,
-                tapContent,
+                tapAction,
             },
             invocationEvent
         );
@@ -224,7 +225,7 @@ describe("Notification sender task", () => {
             jasmine.objectContaining({
                 title,
                 body,
-                tapContent,
+                tapAction,
                 timestamp: jasmine.any(Date),
                 bigTextStyle: true,
             })

@@ -1,6 +1,7 @@
 import { Notification } from "../../notifications";
 import { EMAIStore } from "./emai-store";
 import { Observable } from "rxjs";
+import { deserialize, serialize } from "nativescript-task-dispatcher/internal/utils/serialization";
 
 export interface NotificationsStore {
   insert(notification: Notification): Promise<void>;
@@ -75,30 +76,31 @@ class NotificationsStoreDB implements NotificationsStore {
   }
 
   async delete(id: number): Promise<void> {
-    console.log(`Notifications deleted --> ${id}`);
     await this.store.delete(`${id}`);
   }
 }
 
 function docFrom(notification: Notification): any {
-  const { title, tapContent, body, timestamp } = notification;
+  const { title, tapAction, body, timestamp } = notification;
   return {
     title,
-    tapContentType: tapContent.type,
-    tapContentId: tapContent.id,
+    tapActionType: tapAction.type,
+    tapActionId: tapAction.id,
+    tapActionMetadata: tapAction.metadata ? serialize(tapAction.metadata) : null,
     body,
     timestamp: timestamp.getTime(),
   };
 }
 
 function notificationFrom(doc: any): Notification {
-  const { id, title, tapContentType, tapContentId, body, timestamp } = doc;
+  const { id, title, tapActionType, tapActionId, tapActionMetadata, body, timestamp } = doc;
   return {
     id: parseInt(id),
     title,
-    tapContent: {
-      type: tapContentType,
-      id: tapContentId,
+    tapAction: {
+      type: tapActionType,
+      id: tapActionId,
+      ...(tapActionMetadata !== null) && { metadata: deserialize(tapActionMetadata)},
     },
     body,
     timestamp: new Date(timestamp),

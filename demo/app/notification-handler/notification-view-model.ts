@@ -1,5 +1,5 @@
 import { Observable } from "tns-core-modules/data/observable";
-import { TapContentType } from "@geotecinit/emai-framework/notifications";
+import { TapActionType } from "@geotecinit/emai-framework/notifications";
 import { emaiFramework } from "@geotecinit/emai-framework";
 import {
     QuestionnaireAnswers,
@@ -15,7 +15,7 @@ export class NotificationViewModel extends Observable {
 
     constructor(private notification: TappedNotification) {
         super();
-        if (notification.tapContent.type === TapContentType.RICH_TEXT) {
+        if (notification.tapAction.type === TapActionType.RICH_TEXT) {
             this._content = createExampleRichText();
         } else {
             this._content = createExampleQuestionSet();
@@ -39,7 +39,7 @@ export class NotificationViewModel extends Observable {
     }
 
     submitAnswers() {
-        if (this.content.type !== TapContentType.QUESTIONS) {
+        if (this.content.type !== TapActionType.QUESTIONS) {
             throw new Error(
                 "Cannot submit answers for a not 'questions' content type"
             );
@@ -70,13 +70,13 @@ export class NotificationViewModel extends Observable {
 export type NotificationContent = RichText | QuestionSet;
 
 export interface RichText {
-    type: TapContentType.RICH_TEXT;
+    type: TapActionType.RICH_TEXT;
     title: string;
     body: string;
 }
 
 export interface QuestionSet {
-    type: TapContentType.QUESTIONS;
+    type: TapActionType.QUESTIONS;
     title: string;
     description: string;
     questions: Array<Question>;
@@ -101,7 +101,7 @@ export interface QuestionAnswer {
 
 function createExampleRichText(): RichText {
     return {
-        type: TapContentType.RICH_TEXT,
+        type: TapActionType.RICH_TEXT,
         title: "Negative thoughts",
         body:
             "Most of us spend a lot of time inside our own mind — worrying about the future, replaying events " +
@@ -113,7 +113,7 @@ function createExampleRichText(): RichText {
 
 function createExampleQuestionSet(): QuestionSet {
     return {
-        type: TapContentType.QUESTIONS,
+        type: TapActionType.QUESTIONS,
         title: "Concentration",
         description:
             "A self-assessment of your inner you can help you to identify where are your thoughts going.",
