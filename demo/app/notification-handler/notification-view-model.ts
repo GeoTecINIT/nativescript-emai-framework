@@ -62,7 +62,11 @@ export class NotificationViewModel extends Observable {
         );
         emaiFramework.emitEvent(
             "questionnaireAnswersAcquired",
-            new QuestionnaireAnswers(qas)
+            new QuestionnaireAnswers(
+                this.notification.id,
+                this.notification.tapAction.id,
+                qas,
+            )
         );
     }
 }
