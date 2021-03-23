@@ -24,6 +24,7 @@ import {
 describe("Geofencing task", () => {
     const location = createFakeLocation();
     const nearbyRange = 100;
+    const offset = 15;
     const aoi1 = createAreaOfInterest("aoi1");
     const aoi2 = createAreaOfInterest("aoi2");
 
@@ -55,7 +56,7 @@ describe("Geofencing task", () => {
 
     it("outputs a default event when no area is nearby and no area was nearby", async () => {
         spyOn(checker, "findNearby")
-            .withArgs(location, nearbyRange)
+            .withArgs(location, nearbyRange, offset)
             .and.returnValue(Promise.resolve([]));
         spyOn(state, "getKnownNearbyAreas").and.returnValue(
             Promise.resolve([])
@@ -66,14 +67,14 @@ describe("Geofencing task", () => {
             invocationEvent.id
         );
 
-        task.run({ nearbyRange }, invocationEvent);
+        task.run({ nearbyRange, offset }, invocationEvent);
         await done;
         expect(checker.findNearby).toHaveBeenCalled();
     });
 
     it("outputs a default event when no area is nearby and no area was nearby a given trajectory", async () => {
         spyOn(checker, "findNearbyTrajectory")
-            .withArgs([location, location], nearbyRange)
+            .withArgs([location, location], nearbyRange, offset)
             .and.returnValue(Promise.resolve([]));
         spyOn(state, "getKnownNearbyAreas").and.returnValue(
             Promise.resolve([])
@@ -87,14 +88,14 @@ describe("Geofencing task", () => {
             invocationEvent.id
         );
 
-        task.run({ nearbyRange }, invocationEvent);
+        task.run({ nearbyRange, offset }, invocationEvent);
         await done;
         expect(checker.findNearbyTrajectory).toHaveBeenCalled();
     });
 
     it("outputs a 'movedAwayFromAreaOfInterest' event when there was an area nearby but no longer it is", async () => {
         spyOn(checker, "findNearby")
-            .withArgs(location, nearbyRange)
+            .withArgs(location, nearbyRange, offset)
             .and.returnValue(Promise.resolve([]));
         spyOn(state, "getKnownNearbyAreas").and.returnValue(
             Promise.resolve([
@@ -106,7 +107,7 @@ describe("Geofencing task", () => {
             "movedAwayFromAreaOfInterest",
             invocationEvent.id
         );
-        task.run({ nearbyRange }, invocationEvent);
+        task.run({ nearbyRange, offset }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(1);
         expect(aoiProximityChanges[0]).toEqual(
@@ -125,7 +126,7 @@ describe("Geofencing task", () => {
 
     it("outputs a 'movedAwayFromAreaOfInterest' event when there were multiple areas nearby but they are no longer there", async () => {
         spyOn(checker, "findNearby")
-            .withArgs(location, nearbyRange)
+            .withArgs(location, nearbyRange, offset)
             .and.returnValue(Promise.resolve([]));
         spyOn(state, "getKnownNearbyAreas").and.returnValue(
             Promise.resolve([
@@ -138,7 +139,7 @@ describe("Geofencing task", () => {
             "movedAwayFromAreaOfInterest",
             invocationEvent.id
         );
-        task.run({ nearbyRange }, invocationEvent);
+        task.run({ nearbyRange, offset }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(2);
         expect(aoiProximityChanges[0]).toEqual(
@@ -169,7 +170,7 @@ describe("Geofencing task", () => {
 
     it("outputs a 'movedOutsideFromAreaOfInterest' event when it was inside an area but no longer it is", async () => {
         spyOn(checker, "findNearby")
-            .withArgs(location, nearbyRange)
+            .withArgs(location, nearbyRange, offset)
             .and.returnValue(Promise.resolve([]));
         spyOn(state, "getKnownNearbyAreas").and.returnValue(
             Promise.resolve([
@@ -181,7 +182,7 @@ describe("Geofencing task", () => {
             "movedOutsideAreaOfInterest",
             invocationEvent.id
         );
-        task.run({ nearbyRange }, invocationEvent);
+        task.run({ nearbyRange, offset }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(1);
         expect(aoiProximityChanges[0]).toEqual(
@@ -200,7 +201,7 @@ describe("Geofencing task", () => {
 
     it("outputs a 'movedOutsideFromAreaOfInterest' event when it was inside multiple areas but no longer it is", async () => {
         spyOn(checker, "findNearby")
-            .withArgs(location, nearbyRange)
+            .withArgs(location, nearbyRange, offset)
             .and.returnValue(Promise.resolve([]));
         spyOn(state, "getKnownNearbyAreas").and.returnValue(
             Promise.resolve([
@@ -213,7 +214,7 @@ describe("Geofencing task", () => {
             "movedOutsideAreaOfInterest",
             invocationEvent.id
         );
-        task.run({ nearbyRange }, invocationEvent);
+        task.run({ nearbyRange, offset }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(2);
         expect(aoiProximityChanges[0]).toEqual(
@@ -244,7 +245,7 @@ describe("Geofencing task", () => {
 
     it("outputs a 'movedOutsideFromAreaOfInterest' event when it was inside an area and nearby another but no longer it is", async () => {
         spyOn(checker, "findNearby")
-            .withArgs(location, nearbyRange)
+            .withArgs(location, nearbyRange, offset)
             .and.returnValue(Promise.resolve([]));
         spyOn(state, "getKnownNearbyAreas").and.returnValue(
             Promise.resolve([
@@ -257,7 +258,7 @@ describe("Geofencing task", () => {
             "movedOutsideAreaOfInterest",
             invocationEvent.id
         );
-        task.run({ nearbyRange }, invocationEvent);
+        task.run({ nearbyRange, offset }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(1);
         expect(aoiProximityChanges[0]).toEqual(
@@ -280,7 +281,7 @@ describe("Geofencing task", () => {
 
     it("outputs a 'movedCloseToAreaOfInterest' event when it was not close to an area but it is now", async () => {
         spyOn(checker, "findNearby")
-            .withArgs(location, nearbyRange)
+            .withArgs(location, nearbyRange, offset)
             .and.returnValue(
                 Promise.resolve([
                     { aoi: aoi1, proximity: GeofencingProximity.NEARBY },
@@ -297,7 +298,7 @@ describe("Geofencing task", () => {
             "movedCloseToAreaOfInterest",
             invocationEvent.id
         );
-        task.run({ nearbyRange }, invocationEvent);
+        task.run({ nearbyRange, offset }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(1);
         expect(aoiProximityChanges[0]).toEqual(
@@ -316,7 +317,7 @@ describe("Geofencing task", () => {
 
     it("outputs a 'movedCloseToAreaOfInterest' event when it was not close to multiple areas but it is now", async () => {
         spyOn(checker, "findNearby")
-            .withArgs(location, nearbyRange)
+            .withArgs(location, nearbyRange, offset)
             .and.returnValue(
                 Promise.resolve([
                     { aoi: aoi1, proximity: GeofencingProximity.NEARBY },
@@ -337,7 +338,7 @@ describe("Geofencing task", () => {
             "movedCloseToAreaOfInterest",
             invocationEvent.id
         );
-        task.run({ nearbyRange }, invocationEvent);
+        task.run({ nearbyRange, offset }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(2);
         expect(aoiProximityChanges[0]).toEqual(
@@ -368,7 +369,7 @@ describe("Geofencing task", () => {
 
     it("outputs a 'movedInsideAreaOfInterest' event when it was close to an area but now is inside", async () => {
         spyOn(checker, "findNearby")
-            .withArgs(location, nearbyRange)
+            .withArgs(location, nearbyRange, offset)
             .and.returnValue(
                 Promise.resolve([
                     { aoi: aoi1, proximity: GeofencingProximity.INSIDE },
@@ -385,7 +386,7 @@ describe("Geofencing task", () => {
             "movedInsideAreaOfInterest",
             invocationEvent.id
         );
-        task.run({ nearbyRange }, invocationEvent);
+        task.run({ nearbyRange, offset }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(1);
         expect(aoiProximityChanges[0]).toEqual(
@@ -404,7 +405,7 @@ describe("Geofencing task", () => {
 
     it("outputs a 'movedInsideAreaOfInterest' event when it was close to multiple areas but now is inside", async () => {
         spyOn(checker, "findNearby")
-            .withArgs(location, nearbyRange)
+            .withArgs(location, nearbyRange, offset)
             .and.returnValue(
                 Promise.resolve([
                     { aoi: aoi1, proximity: GeofencingProximity.INSIDE },
@@ -425,7 +426,7 @@ describe("Geofencing task", () => {
             "movedInsideAreaOfInterest",
             invocationEvent.id
         );
-        task.run({ nearbyRange }, invocationEvent);
+        task.run({ nearbyRange, offset }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(2);
         expect(aoiProximityChanges[0]).toEqual(
@@ -456,7 +457,7 @@ describe("Geofencing task", () => {
 
     it("outputs a 'movedInsideAreaOfInterest' event when it was close to an area but now is inside it and close to another", async () => {
         spyOn(checker, "findNearby")
-            .withArgs(location, nearbyRange)
+            .withArgs(location, nearbyRange, offset)
             .and.returnValue(
                 Promise.resolve([
                     { aoi: aoi1, proximity: GeofencingProximity.INSIDE },
@@ -477,7 +478,7 @@ describe("Geofencing task", () => {
             "movedInsideAreaOfInterest",
             invocationEvent.id
         );
-        task.run({ nearbyRange }, invocationEvent);
+        task.run({ nearbyRange, offset }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(1);
         expect(aoiProximityChanges[0]).toEqual(
@@ -500,7 +501,7 @@ describe("Geofencing task", () => {
 
     it("outputs a 'movedOutsideAreaOfInterest' event when it was inside to an area but now is nearby", async () => {
         spyOn(checker, "findNearby")
-            .withArgs(location, nearbyRange)
+            .withArgs(location, nearbyRange, offset)
             .and.returnValue(
                 Promise.resolve([
                     { aoi: aoi1, proximity: GeofencingProximity.NEARBY },
@@ -517,7 +518,7 @@ describe("Geofencing task", () => {
             "movedOutsideAreaOfInterest",
             invocationEvent.id
         );
-        task.run({ nearbyRange }, invocationEvent);
+        task.run({ nearbyRange, offset }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(1);
         expect(aoiProximityChanges[0]).toEqual(
@@ -536,7 +537,7 @@ describe("Geofencing task", () => {
 
     it("outputs a 'movedOutsideAreaOfInterest' event when it was inside multiple areas but now is nearby", async () => {
         spyOn(checker, "findNearby")
-            .withArgs(location, nearbyRange)
+            .withArgs(location, nearbyRange, offset)
             .and.returnValue(
                 Promise.resolve([
                     { aoi: aoi1, proximity: GeofencingProximity.NEARBY },
@@ -557,7 +558,7 @@ describe("Geofencing task", () => {
             "movedOutsideAreaOfInterest",
             invocationEvent.id
         );
-        task.run({ nearbyRange }, invocationEvent);
+        task.run({ nearbyRange, offset }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(2);
         expect(aoiProximityChanges[0]).toEqual(
@@ -588,7 +589,7 @@ describe("Geofencing task", () => {
 
     it("outputs a 'movedOutsideAreaOfInterest' event when it was inside an area but now is nearby and another is close", async () => {
         spyOn(checker, "findNearby")
-            .withArgs(location, nearbyRange)
+            .withArgs(location, nearbyRange, offset)
             .and.returnValue(
                 Promise.resolve([
                     { aoi: aoi1, proximity: GeofencingProximity.NEARBY },
@@ -609,7 +610,7 @@ describe("Geofencing task", () => {
             "movedOutsideAreaOfInterest",
             invocationEvent.id
         );
-        task.run({ nearbyRange }, invocationEvent);
+        task.run({ nearbyRange, offset }, invocationEvent);
         const aoiProximityChanges = await done;
         expect(aoiProximityChanges.length).toBe(1);
         expect(aoiProximityChanges[0]).toEqual(
@@ -632,7 +633,7 @@ describe("Geofencing task", () => {
 
     it("outputs a default event when it was close to an area and still it is", async () => {
         spyOn(checker, "findNearby")
-            .withArgs(location, nearbyRange)
+            .withArgs(location, nearbyRange, offset)
             .and.returnValue(
                 Promise.resolve([
                     { aoi: aoi1, proximity: GeofencingProximity.NEARBY },
@@ -649,13 +650,13 @@ describe("Geofencing task", () => {
             "checkAreaOfInterestProximityFinished",
             invocationEvent.id
         );
-        task.run({ nearbyRange }, invocationEvent);
+        task.run({ nearbyRange, offset }, invocationEvent);
         await done;
     });
 
     it("outputs a default event when it was inside an area and still it is", async () => {
         spyOn(checker, "findNearby")
-            .withArgs(location, nearbyRange)
+            .withArgs(location, nearbyRange, offset)
             .and.returnValue(
                 Promise.resolve([
                     { aoi: aoi1, proximity: GeofencingProximity.INSIDE },
@@ -672,7 +673,7 @@ describe("Geofencing task", () => {
             "checkAreaOfInterestProximityFinished",
             invocationEvent.id
         );
-        task.run({ nearbyRange }, invocationEvent);
+        task.run({ nearbyRange, offset }, invocationEvent);
         await done;
     });
 });

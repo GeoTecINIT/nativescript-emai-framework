@@ -14,9 +14,10 @@ import {
 import { Geolocation } from "../../providers/geolocation/geolocation";
 import { GeofencingProximity } from "./geofencing-state";
 import { AoIProximityChange, AreaOfInterest } from "./aoi";
-import { Change } from "../../providers/base-record";
+import { Change } from "../../providers";
 
 const DEFAULT_NEARBY_RANGE = 100;
+const DEFAULT_OFFSET = 0;
 
 const MOVED_CLOSE = "movedCloseToAreaOfInterest";
 const MOVED_INSIDE = "movedInsideAreaOfInterest";
@@ -66,15 +67,17 @@ export class GeofencingTask extends TraceableTask {
     const nearbyRange = taskParams.nearbyRange
       ? taskParams.nearbyRange
       : DEFAULT_NEARBY_RANGE;
+    const offset = taskParams.offset ? taskParams.offset : DEFAULT_OFFSET;
     const evtData = invocationEvent.data;
 
     if (Array.isArray(evtData)) {
       return this.checker.findNearbyTrajectory(
         evtData as Array<Geolocation>,
-        nearbyRange
+        nearbyRange,
+        offset
       );
     }
-    return this.checker.findNearby(evtData as Geolocation, nearbyRange);
+    return this.checker.findNearby(evtData as Geolocation, nearbyRange, offset);
   }
 
   private async handleNoNearbyAreasLeft(): Promise<TaskOutcome> {
