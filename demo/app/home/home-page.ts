@@ -50,6 +50,10 @@ export function onNavigatedTo(args: NavigatedData) {
 
         showNotificationModal(notification, page);
     });
+
+    getHomeViewModel().onNotificationCleared((notification) => {
+        console.log(`Notification with id ${notification.id} cleared`);
+    });
 }
 
 export function onExportTap() {

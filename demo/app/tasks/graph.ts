@@ -71,6 +71,10 @@ class DemoTaskGraph implements TaskGraph {
                 tapAction: {
                     type: TapActionType.QUESTIONS,
                     id: "qs1",
+                    metadata: {
+                        fakeParam: true,
+                        fakeParam2: "Some fake param"
+                    }
                 },
             })
                 .every(1, "minutes")
@@ -91,6 +95,9 @@ class DemoTaskGraph implements TaskGraph {
                 },
             })
         );
+
+        on("notificationTapped", run("trackEvent"));
+        on("notificationCleared", run("trackEvent"));
     }
 }
 

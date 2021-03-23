@@ -80,6 +80,12 @@ export class HomeViewModel extends Observable {
             );
     }
 
+    onNotificationCleared(cb: (notification: Notification) => void) {
+        notificationsManager
+            .onNotificationCleared(cb)
+            .catch((err) => console.error(`Could not subscribe to notification taps. Reason: ${err}`))
+    }
+
     private subscribeToDatabaseChanges() {
         this._fetchOrders = new Subject<number>();
 
