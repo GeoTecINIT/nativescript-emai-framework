@@ -3,7 +3,7 @@ import {
   NotificationsManager,
   notificationsManager,
 } from "../../notifications/manager";
-import { TaskParams } from "nativescript-task-dispatcher/tasks";
+import { TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 import { generateNotificationId, Notification, TapActionType } from "../../notifications";
 
@@ -42,13 +42,19 @@ export class NotificationSenderTask extends TraceableTask {
   protected async onTracedRun(
     taskParams: TaskParams,
     invocationEvent: DispatchableEvent
-  ): Promise<void> {
-    await this.manager.display(
-      NotificationSenderTask.createNotificationFromParamsOrEvent(
-        taskParams,
-        invocationEvent
-      )
+  ): Promise<TaskOutcome> {
+    const notification = NotificationSenderTask.createNotificationFromParamsOrEvent(
+      taskParams,
+      invocationEvent
     );
+    await this.manager.display(notification);
+
+    return {
+      result: {
+        id: notification.id,
+        tapAction: notification.tapAction,
+      }
+    };
   }
 
   private static createNotificationFromParamsOrEvent(
