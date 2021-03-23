@@ -49,13 +49,15 @@ export function createGeofencingCheckerMock(): GeofencingChecker {
     return {
         findNearby(
             location: Geolocation,
-            nearbyRange: number
+            nearbyRange: number,
+            offset: number
         ): Promise<Array<GeofencingResult>> {
             return Promise.resolve([]);
         },
         findNearbyTrajectory(
             locations: Array<Geolocation>,
-            nearbyRange: number
+            nearbyRange: number,
+            offset: number
         ): Promise<Array<GeofencingResult>> {
             return Promise.resolve([]);
         },

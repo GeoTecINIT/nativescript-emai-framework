@@ -10,6 +10,8 @@ describe("Geofencing checker", () => {
     let checker: GeofencingChecker;
 
     const nearbyRange = 75;
+    const offset = 0;
+    const extendedOffset = 15;
 
     const aoi1: AreaOfInterest = {
         id: "aoi1",
@@ -38,7 +40,7 @@ describe("Geofencing checker", () => {
             39.994198168578016,
             -0.07218897342681885
         );
-        const result = await checker.findNearby(point, nearbyRange);
+        const result = await checker.findNearby(point, nearbyRange, offset);
 
         expect(result.length).toBe(0);
     });
@@ -48,7 +50,7 @@ describe("Geofencing checker", () => {
             39.993602254871945,
             -0.0744849443435669
         );
-        const result = await checker.findNearby(point, nearbyRange);
+        const result = await checker.findNearby(point, nearbyRange, offset);
 
         expect(result.length).toBe(1);
         expect(result[0].proximity).toEqual(GeofencingProximity.NEARBY);
@@ -60,7 +62,7 @@ describe("Geofencing checker", () => {
             39.99395569397331,
             -0.07432937622070312
         );
-        const result = await checker.findNearby(point, nearbyRange);
+        const result = await checker.findNearby(point, nearbyRange, offset);
 
         expect(result.length).toBe(1);
         expect(result[0].proximity).toEqual(GeofencingProximity.INSIDE);
@@ -72,7 +74,7 @@ describe("Geofencing checker", () => {
             39.99377075513676,
             -0.07363736629486084
         );
-        const result = await checker.findNearby(point, nearbyRange);
+        const result = await checker.findNearby(point, nearbyRange, offset);
 
         expect(result.length).toBe(2);
         expect(result[0].proximity).toEqual(GeofencingProximity.INSIDE);
@@ -86,7 +88,7 @@ describe("Geofencing checker", () => {
             39.99363924277056,
             -0.07344961166381836
         );
-        const result = await checker.findNearby(point, nearbyRange);
+        const result = await checker.findNearby(point, nearbyRange, offset);
 
         expect(result.length).toBe(2);
         expect(result[0].proximity).toEqual(GeofencingProximity.INSIDE);
@@ -95,8 +97,44 @@ describe("Geofencing checker", () => {
         expect(result[1].aoi.id).toEqual(aoi2.id);
     });
 
+    it("takes into account the given offset to determine if a point is inside an area", async () => {
+        const point = createGeolocation(
+            39.994021449883384,
+            -0.07445275783538818
+        );
+        const result = await checker.findNearby(
+            point,
+            nearbyRange,
+            extendedOffset
+        );
+
+        expect(result.length).toBe(1);
+        expect(result[0].proximity).toEqual(GeofencingProximity.INSIDE);
+        expect(result[0].aoi.id).toEqual(aoi1.id);
+    });
+
+    it("takes into account the given offset to determine if a point is nearby an area", async () => {
+        const point = createGeolocation(
+            39.994984663966406,
+            -0.07382377982139587
+        );
+        const result = await checker.findNearby(
+            point,
+            nearbyRange,
+            extendedOffset
+        );
+
+        expect(result.length).toBe(1);
+        expect(result[0].proximity).toEqual(GeofencingProximity.NEARBY);
+        expect(result[0].aoi.id).toEqual(aoi1.id);
+    });
+
     it("returns an empty list when the given trajectory is empty", async () => {
-        const result = await checker.findNearbyTrajectory([], nearbyRange);
+        const result = await checker.findNearbyTrajectory(
+            [],
+            nearbyRange,
+            offset
+        );
         expect(result.length).toBe(0);
     });
 
@@ -107,7 +145,8 @@ describe("Geofencing checker", () => {
                 createGeolocation(39.99419816857802, -0.072188973426819),
                 createGeolocation(39.99419816857801, -0.07218897342681),
             ],
-            nearbyRange
+            nearbyRange,
+            offset
         );
         expect(result.length).toBe(0);
     });
@@ -121,7 +160,8 @@ describe("Geofencing checker", () => {
                 createGeolocation(39.994212552637705, -0.07416039705276488),
                 createGeolocation(39.9942495402058, -0.07421404123306274),
             ],
-            nearbyRange
+            nearbyRange,
+            offset
         );
         expect(result.length).toBe(1);
         expect(result[0].proximity).toEqual(GeofencingProximity.NEARBY);
@@ -135,7 +175,8 @@ describe("Geofencing checker", () => {
                 createGeolocation(39.99411186415638, -0.07409065961837769),
                 createGeolocation(39.994173510182975, -0.07411748170852661),
             ],
-            nearbyRange
+            nearbyRange,
+            offset
         );
         expect(result.length).toBe(1);
         expect(result[0].proximity).toEqual(GeofencingProximity.NEARBY);
@@ -148,7 +189,8 @@ describe("Geofencing checker", () => {
                 createGeolocation(39.99411186415638, -0.07409065961837769),
                 createGeolocation(39.994173510182975, -0.07411748170852661),
             ],
-            nearbyRange
+            nearbyRange,
+            offset
         );
         expect(result.length).toBe(1);
         expect(result[0].proximity).toEqual(GeofencingProximity.NEARBY);
@@ -158,7 +200,8 @@ describe("Geofencing checker", () => {
     it("returns a list with one item when trajectory is lacking, taking unique as truthy", async () => {
         const result = await checker.findNearbyTrajectory(
             [createGeolocation(39.994173510182975, -0.07411748170852661)],
-            nearbyRange
+            nearbyRange,
+            offset
         );
         expect(result.length).toBe(1);
         expect(result[0].proximity).toEqual(GeofencingProximity.NEARBY);
@@ -174,7 +217,8 @@ describe("Geofencing checker", () => {
                 createGeolocation(39.99393103549069, -0.07402360439300536),
                 createGeolocation(39.99417556504956, -0.07413893938064575),
             ],
-            nearbyRange
+            nearbyRange,
+            offset
         );
         expect(result.length).toBe(2);
         expect(result[0].proximity).toEqual(GeofencingProximity.INSIDE);
@@ -192,7 +236,8 @@ describe("Geofencing checker", () => {
                 createGeolocation(39.99394336473311, -0.07402360439300536),
                 createGeolocation(39.99393103549069, -0.07402360439300536),
             ],
-            nearbyRange
+            nearbyRange,
+            offset
         );
         expect(result.length).toBe(2);
         expect(result[0].proximity).toEqual(GeofencingProximity.INSIDE);
@@ -210,7 +255,8 @@ describe("Geofencing checker", () => {
                 createGeolocation(39.99409953494437, -0.0741201639175415),
                 createGeolocation(39.99406254729503, -0.07409870624542236),
             ],
-            nearbyRange
+            nearbyRange,
+            offset
         );
         expect(result.length).toBe(2);
         expect(result[0].proximity).toEqual(GeofencingProximity.INSIDE);
