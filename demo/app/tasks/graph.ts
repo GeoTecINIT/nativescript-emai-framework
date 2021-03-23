@@ -41,7 +41,10 @@ class DemoTaskGraph implements TaskGraph {
 
         on(
             "geolocationAcquired",
-            run("checkAreaOfInterestProximity", { nearbyRange: 100 })
+            run("checkAreaOfInterestProximity", {
+                nearbyRange: 100,
+                offset: 15,
+            })
         );
 
         on("movedCloseToAreaOfInterest", run("writeRecords"));
