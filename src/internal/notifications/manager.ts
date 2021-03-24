@@ -102,7 +102,7 @@ class NotificationsManagerImpl
   ): Promise<Notification> {
     const { id } = received;
     const notification = await this.store.get(id);
-    if (notification.tapAction.type === TapActionType.NONE) {
+    if (notification.tapAction.type === TapActionType.OPEN_APP) {
       await this.markAsSeen(id);
     }
     return notification;

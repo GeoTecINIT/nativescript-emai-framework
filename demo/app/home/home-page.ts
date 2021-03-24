@@ -44,7 +44,7 @@ export function onNavigatedTo(args: NavigatedData) {
     const page = <Page>args.object;
 
     getHomeViewModel().onNotificationTap((notification) => {
-        if (notification.tapAction.type === TapActionType.NONE) {
+        if (notification.tapAction.type === TapActionType.OPEN_APP) {
             return;
         }
 

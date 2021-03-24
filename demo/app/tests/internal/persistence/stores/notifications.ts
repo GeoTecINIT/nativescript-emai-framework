@@ -11,7 +11,7 @@ describe("Notifications store", () => {
         id: notification1Id,
         title: "Notification title",
         tapAction: {
-            type: TapActionType.QUESTIONS,
+            type: TapActionType.DELIVER_QUESTIONS,
             id: "qs1",
             metadata: {
                 param1: "Some config param",
@@ -27,7 +27,7 @@ describe("Notifications store", () => {
         id: notification2Id,
         title: "Notification title",
         tapAction: {
-            type: TapActionType.RICH_TEXT,
+            type: TapActionType.OPEN_CONTENT,
             id: "rtc1",
         },
         body: "Notification body",

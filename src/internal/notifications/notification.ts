@@ -19,7 +19,8 @@ export interface NotificationIdentifiers {
 }
 
 export enum TapActionType {
-  NONE = "none",
-  RICH_TEXT = "rich-text",
-  QUESTIONS = "questions",
+  OPEN_APP = "open-app",
+  OPEN_CONTENT = "open-content",
+  DELIVER_QUESTIONS = "deliver-questions",
+  ASK_FEEDBACK = "ask-feedback"
 }

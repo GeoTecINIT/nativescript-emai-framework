@@ -92,7 +92,7 @@ describe("Notification sender task", () => {
                 title,
                 body,
                 tapAction: {
-                    type: TapActionType.NONE,
+                    type: TapActionType.OPEN_APP,
                     id: null,
                 },
                 timestamp: jasmine.any(Date),
@@ -124,7 +124,7 @@ describe("Notification sender task", () => {
                 title,
                 body: JSON.stringify(data),
                 tapAction: {
-                    type: TapActionType.NONE,
+                    type: TapActionType.OPEN_APP,
                     id: null,
                 },
                 timestamp: jasmine.any(Date),
@@ -157,7 +157,7 @@ describe("Notification sender task", () => {
                 title,
                 body: data.body,
                 tapAction: {
-                    type: TapActionType.NONE,
+                    type: TapActionType.OPEN_APP,
                     id: null,
                 },
                 timestamp: jasmine.any(Date),
@@ -170,7 +170,7 @@ describe("Notification sender task", () => {
         const title = "Test notification";
         const body = "Parameterized content";
         const tapAction = {
-            type: TapActionType.RICH_TEXT,
+            type: TapActionType.OPEN_CONTENT,
             id: "rtc1",
         };
 
@@ -203,7 +203,7 @@ describe("Notification sender task", () => {
         const title = "Test notification";
         const body = "Some barely long parameterized content";
         const tapAction = {
-            type: TapActionType.QUESTIONS,
+            type: TapActionType.DELIVER_QUESTIONS,
             id: "qs1",
         };
 

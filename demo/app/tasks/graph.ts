@@ -69,7 +69,7 @@ class DemoTaskGraph implements TaskGraph {
                 title: "May I ask you some questions?",
                 body: "This will allow me know better what you feel",
                 tapAction: {
-                    type: TapActionType.QUESTIONS,
+                    type: TapActionType.DELIVER_QUESTIONS,
                     id: "qs1",
                     metadata: {
                         fakeParam: true,
@@ -90,7 +90,7 @@ class DemoTaskGraph implements TaskGraph {
                 title: "New content available",
                 body: "This information may be valuable for you",
                 tapAction: {
-                    type: TapActionType.RICH_TEXT,
+                    type: TapActionType.OPEN_CONTENT,
                     id: "rtc1",
                 },
             })

@@ -69,7 +69,7 @@ export class NotificationSenderTask extends TraceableTask {
     }
     if (
       tapAction &&
-      tapAction.type !== TapActionType.NONE &&
+      tapAction.type !== TapActionType.OPEN_APP &&
       !tapAction.id
     ) {
       throw new Error(
@@ -92,7 +92,7 @@ export class NotificationSenderTask extends TraceableTask {
       tapAction: tapAction
         ? tapAction
         : {
-            type: TapActionType.NONE,
+            type: TapActionType.OPEN_APP,
             id: null,
           },
       timestamp,
