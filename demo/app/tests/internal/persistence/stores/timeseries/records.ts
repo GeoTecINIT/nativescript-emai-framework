@@ -42,8 +42,8 @@ describe("Records store", () => {
             nowMinus(2)
         ),
         new QuestionnaireAnswers(
-            answers,
             "qs1",
+            answers,
             53,
             nowMinus(1)
         ),

@@ -2,8 +2,8 @@ import { Record, RecordType } from "../../providers";
 
 export class QuestionnaireAnswers extends Record {
   constructor(
-    public answers: Array<QuestionnaireAnswer>,
     public questionnaireId: string,
+    public answers: Array<QuestionnaireAnswer>,
     public notificationId?: number,
     answeredAt = new Date(),
   ) {
