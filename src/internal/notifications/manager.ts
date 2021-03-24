@@ -1,9 +1,12 @@
 import { LocalNotifications, ReceivedNotification, } from "nativescript-local-notifications";
 import { android as androidApp } from "tns-core-modules/application";
+import { taskDispatcher } from "nativescript-task-dispatcher";
 
-import { Notification, TapContentType } from "./notification";
+import { Notification, TapActionType } from "./notification";
 import { NotificationsStore, notificationsStoreDB, } from "../persistence/stores/notifications";
 import { getLogger, Logger } from "../utils/logger";
+import { EventData } from "nativescript-task-dispatcher/events";
+import { extractIdAndActionFrom } from "./index";
 
 const DEFAULT_CHANNEL_NAME = "Mobile interventions";
 
@@ -19,11 +22,17 @@ export interface NotificationActionsManager {
   markAsSeen(notificationId: number): Promise<void>;
 }
 
+const NOTIFICATION_TAPPED_EVENT = "notificationTapped";
+const NOTIFICATION_CLEARED_EVENT = "notificationCleared";
+
 class NotificationsManagerImpl
   implements NotificationsManager, NotificationActionsManager {
   private logger: Logger;
 
-  constructor(private store: NotificationsStore) {
+  constructor(
+    private store: NotificationsStore,
+    private emitEvent: (eventName: string, eventData?: EventData) => void
+  ) {
     this.logger = getLogger("NotificationsManager");
   }
 
@@ -63,7 +72,10 @@ class NotificationsManagerImpl
   public onNotificationTap(tapCallback: NotificationCallback): Promise<void> {
     return LocalNotifications.addOnMessageReceivedCallback((received) =>
       this.processReceivedNotification(received)
-        .then((notification) => tapCallback(notification))
+        .then((notification) => {
+          this.emitEvent(NOTIFICATION_TAPPED_EVENT, extractIdAndActionFrom(notification));
+          tapCallback(notification);
+        })
         .catch((err) => this.logger.error(err))
     );
   }
@@ -73,7 +85,10 @@ class NotificationsManagerImpl
   ): Promise<void> {
     return LocalNotifications.addOnMessageClearedCallback((received) =>
       this.processReceivedNotification(received)
-        .then((notification) => clearCallback(notification))
+        .then((notification) => {
+          this.emitEvent(NOTIFICATION_CLEARED_EVENT, extractIdAndActionFrom(notification));
+          clearCallback(notification);
+        })
         .catch((err) => this.logger.error(err))
     );
   }
@@ -87,7 +102,7 @@ class NotificationsManagerImpl
   ): Promise<Notification> {
     const { id } = received;
     const notification = await this.store.get(id);
-    if (notification.tapContent.type === TapContentType.NONE) {
+    if (notification.tapAction.type === TapActionType.OPEN_APP) {
       await this.markAsSeen(id);
     }
     return notification;
@@ -125,5 +140,6 @@ class NotificationsManagerImpl
 export type NotificationCallback = (notification: Notification) => void;
 
 export const notificationsManager = new NotificationsManagerImpl(
-  notificationsStoreDB
+  notificationsStoreDB,
+  taskDispatcher.emitEvent,
 );

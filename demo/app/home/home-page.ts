@@ -16,7 +16,7 @@ import { emaiFramework } from "@geotecinit/emai-framework";
 import { ItemEventData } from "@nativescript/core";
 import { HomeViewModel } from "./home-view-model";
 import {
-    TapContentType,
+    TapActionType,
     Notification,
 } from "@geotecinit/emai-framework/notifications";
 
@@ -44,11 +44,15 @@ export function onNavigatedTo(args: NavigatedData) {
     const page = <Page>args.object;
 
     getHomeViewModel().onNotificationTap((notification) => {
-        if (notification.tapContent.type === TapContentType.NONE) {
+        if (notification.tapAction.type === TapActionType.OPEN_APP) {
             return;
         }
 
         showNotificationModal(notification, page);
+    });
+
+    getHomeViewModel().onNotificationCleared((notification) => {
+        console.log(`Notification with id ${notification.id} cleared`);
     });
 }
 

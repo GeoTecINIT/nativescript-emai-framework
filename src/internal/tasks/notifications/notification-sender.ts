@@ -3,9 +3,14 @@ import {
   NotificationsManager,
   notificationsManager,
 } from "../../notifications/manager";
-import { TaskParams } from "nativescript-task-dispatcher/tasks";
+import { TaskOutcome, TaskParams } from "nativescript-task-dispatcher/tasks";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
-import { generateNotificationId, Notification, TapContentType } from "../../notifications";
+import {
+  extractIdAndActionFrom,
+  generateNotificationId,
+  Notification,
+  TapActionType,
+} from "../../notifications";
 
 export const notificationPermissionMissingErr = new Error(
   "Notification permission has not been granted"
@@ -42,27 +47,30 @@ export class NotificationSenderTask extends TraceableTask {
   protected async onTracedRun(
     taskParams: TaskParams,
     invocationEvent: DispatchableEvent
-  ): Promise<void> {
-    await this.manager.display(
-      NotificationSenderTask.createNotificationFromParamsOrEvent(
-        taskParams,
-        invocationEvent
-      )
+  ): Promise<TaskOutcome> {
+    const notification = NotificationSenderTask.createNotificationFromParamsOrEvent(
+      taskParams,
+      invocationEvent
     );
+    await this.manager.display(notification);
+
+    return {
+      result: extractIdAndActionFrom(notification)
+    };
   }
 
   private static createNotificationFromParamsOrEvent(
     params: TaskParams,
     evt: DispatchableEvent
   ): Notification {
-    const { title, tapContent } = params;
+    const { title, tapAction } = params;
     if (!title) {
       throw new Error("A title must be included as a task parameter!");
     }
     if (
-      tapContent &&
-      tapContent.type !== TapContentType.NONE &&
-      !tapContent.id
+      tapAction &&
+      tapAction.type !== TapActionType.OPEN_APP &&
+      !tapAction.id
     ) {
       throw new Error(
         "When tap content is declared as !NONE an id must be provided!"
@@ -81,10 +89,10 @@ export class NotificationSenderTask extends TraceableTask {
       id: generateNotificationId(),
       title,
       body,
-      tapContent: tapContent
-        ? tapContent
+      tapAction: tapAction
+        ? tapAction
         : {
-            type: TapContentType.NONE,
+            type: TapActionType.OPEN_APP,
             id: null,
           },
       timestamp,

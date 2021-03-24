@@ -41,7 +41,12 @@ describe("Records store", () => {
             Change.START,
             nowMinus(2)
         ),
-        new QuestionnaireAnswers(answers, nowMinus(1)),
+        new QuestionnaireAnswers(
+            "qs1",
+            answers,
+            53,
+            nowMinus(1)
+        ),
     ];
 
     beforeAll(async () => {

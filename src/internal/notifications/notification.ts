@@ -1,17 +1,26 @@
+type TapAction = {
+  type: TapActionType | string;
+  id: string;
+  metadata?: { [key: string]: any }
+};
+
 export interface Notification {
   id: number;
   title: string;
-  tapContent: {
-    type: TapContentType;
-    id: string;
-  };
+  tapAction: TapAction;
   timestamp: Date;
   body?: string;
   bigTextStyle?: boolean;
 }
 
-export enum TapContentType {
-  NONE = "none",
-  RICH_TEXT = "rich-text",
-  QUESTIONS = "questions",
+export interface NotificationIdentifiers {
+  id: number;
+  tapAction: TapAction;
+}
+
+export enum TapActionType {
+  OPEN_APP = "open-app",
+  OPEN_CONTENT = "open-content",
+  DELIVER_QUESTIONS = "deliver-questions",
+  ASK_FEEDBACK = "ask-feedback"
 }
