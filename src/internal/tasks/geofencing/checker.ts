@@ -13,7 +13,8 @@ export class GeofencingChecker {
 
   async findNearby(
     location: Geolocation,
-    nearbyRange: number
+    nearbyRange: number,
+    offset: number
   ): Promise<Array<GeofencingResult>> {
     const aois = await this.store.getAll();
     const results = aois.map((aoi) => ({
@@ -21,7 +22,8 @@ export class GeofencingChecker {
       proximity: GeofencingChecker.calculateProximity(
         location,
         aoi,
-        nearbyRange
+        nearbyRange,
+        offset
       ),
     }));
 
@@ -32,7 +34,8 @@ export class GeofencingChecker {
 
   async findNearbyTrajectory(
     locations: Array<Geolocation>,
-    nearbyRange: number
+    nearbyRange: number,
+    offset: number
   ): Promise<Array<GeofencingResult>> {
     if (locations.length === 0) {
       return [];
@@ -40,7 +43,7 @@ export class GeofencingChecker {
 
     const sometimeNearby: Array<Array<GeofencingResult>> = [];
     for (let location of locations) {
-      const nearby = await this.findNearby(location, nearbyRange);
+      const nearby = await this.findNearby(location, nearbyRange, offset);
       sometimeNearby.push(nearby);
     }
     if (sometimeNearby.every((result) => result.length === 0)) {
@@ -61,16 +64,17 @@ export class GeofencingChecker {
   private static calculateProximity(
     location: Geolocation,
     aoi: AreaOfInterest,
-    distanceOffset: number
+    nearbyRange: number,
+    offset: number
   ): GeofencingProximity {
     const loc = point([location.longitude, location.latitude]);
     const aoiCentroid = point([aoi.longitude, aoi.latitude]);
     const dst = distance(loc, aoiCentroid, { units: "kilometers" }) * 1000;
 
-    if (dst <= aoi.radius) {
+    if (dst <= aoi.radius + offset) {
       return GeofencingProximity.INSIDE;
     }
-    if (dst <= aoi.radius + distanceOffset) {
+    if (dst <= aoi.radius + nearbyRange + offset) {
       return GeofencingProximity.NEARBY;
     }
     return GeofencingProximity.OUTSIDE;
