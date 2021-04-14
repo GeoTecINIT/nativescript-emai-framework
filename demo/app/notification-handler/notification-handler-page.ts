@@ -1,7 +1,4 @@
-import { View } from "tns-core-modules/ui/core/view";
-import { Page } from "tns-core-modules/ui/page";
-import { Slider } from "tns-core-modules/ui/slider";
-import { EventData } from "tns-core-modules/data/observable";
+import { EventData, Page, Slider, View } from "@nativescript/core";
 import { getNotificationHandlerService } from "~/notification-handler/notification-handler-service";
 import { NotificationViewModel } from "./notification-view-model";
 
@@ -22,7 +19,7 @@ export function onSliderLoaded(args: EventData) {
         vm.answers.set(slider.id, {
             title: slider.id,
             answer: slider.value,
-            answerTime: new Date().getTime()
+            answerTime: new Date().getTime(),
         });
     });
 }

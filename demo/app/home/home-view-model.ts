@@ -1,4 +1,4 @@
-import { Observable } from "tns-core-modules/data/observable";
+import { Observable } from "@nativescript/core";
 
 import { Subject, Subscription } from "rxjs";
 import { debounceTime, map, switchMap } from "rxjs/operators";
@@ -83,7 +83,11 @@ export class HomeViewModel extends Observable {
     onNotificationCleared(cb: (notification: Notification) => void) {
         notificationsManager
             .onNotificationCleared(cb)
-            .catch((err) => console.error(`Could not subscribe to notification taps. Reason: ${err}`))
+            .catch((err) =>
+                console.error(
+                    `Could not subscribe to notification taps. Reason: ${err}`
+                )
+            );
     }
 
     private subscribeToDatabaseChanges() {

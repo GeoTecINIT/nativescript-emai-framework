@@ -76,8 +76,8 @@ class DemoTaskGraph implements TaskGraph {
                     id: "qs1",
                     metadata: {
                         fakeParam: true,
-                        fakeParam2: "Some fake param"
-                    }
+                        fakeParam2: "Some fake param",
+                    },
                 },
             })
                 .every(1, "minutes")
