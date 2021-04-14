@@ -1,6 +1,6 @@
 {
 	"name": "@geotecinit/emai-framework",
-	"version": "1.2.0",
+	"version": "2.0.0",
 	"description": "Easing the development of Ecological Momentary Assessment and Intervention apps",
 	"main": "emai-framework",
 	"typings": "index.d.ts",
@@ -17,7 +17,7 @@
 	"scripts": {
 		"tsc": "npm i && tsc",
 		"build": "npm run tsc && npm run build.native",
-		"build.native": "node scripts/build-native.js",
+		"build.native": "tns plugin build",
 		"tslint": "cd .. && tslint \"**/*.ts\" --config tslint.json --exclude \"**/node_modules/**\"",
 		"ci.tslint": "npm i && tslint '**/*.ts' --config ../tslint.json --exclude '**/node_modules/**' --exclude '**/platforms/**'",
 		"prepack": "npm run build.native",
