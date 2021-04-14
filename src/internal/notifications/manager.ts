@@ -1,9 +1,15 @@
-import { LocalNotifications, ReceivedNotification, } from "nativescript-local-notifications";
-import { android as androidApp } from "tns-core-modules/application";
+import {
+  LocalNotifications,
+  ReceivedNotification,
+} from "nativescript-local-notifications";
+import { Application, isAndroid } from "@nativescript/core";
 import { taskDispatcher } from "nativescript-task-dispatcher";
 
 import { Notification, TapActionType } from "./notification";
-import { NotificationsStore, notificationsStoreDB, } from "../persistence/stores/notifications";
+import {
+  NotificationsStore,
+  notificationsStoreDB,
+} from "../persistence/stores/notifications";
 import { getLogger, Logger } from "../utils/logger";
 import { EventData } from "nativescript-task-dispatcher/events";
 import { extractIdAndActionFrom } from "./index";
@@ -51,7 +57,9 @@ class NotificationsManagerImpl
 
     await this.store.insert(notification);
 
-    this.fixAndroidChannel();
+    if (isAndroid) {
+      this.fixAndroidChannel();
+    }
     await LocalNotifications.schedule([
       {
         id,
@@ -73,7 +81,10 @@ class NotificationsManagerImpl
     return LocalNotifications.addOnMessageReceivedCallback((received) =>
       this.processReceivedNotification(received)
         .then((notification) => {
-          this.emitEvent(NOTIFICATION_TAPPED_EVENT, extractIdAndActionFrom(notification));
+          this.emitEvent(
+            NOTIFICATION_TAPPED_EVENT,
+            extractIdAndActionFrom(notification)
+          );
           tapCallback(notification);
         })
         .catch((err) => this.logger.error(err))
@@ -86,7 +97,10 @@ class NotificationsManagerImpl
     return LocalNotifications.addOnMessageClearedCallback((received) =>
       this.processReceivedNotification(received)
         .then((notification) => {
-          this.emitEvent(NOTIFICATION_CLEARED_EVENT, extractIdAndActionFrom(notification));
+          this.emitEvent(
+            NOTIFICATION_CLEARED_EVENT,
+            extractIdAndActionFrom(notification)
+          );
           clearCallback(notification);
         })
         .catch((err) => this.logger.error(err))
@@ -115,7 +129,7 @@ class NotificationsManagerImpl
     ) {
       return;
     }
-    const notificationManager = androidApp.context.getSystemService(
+    const notificationManager = Application.android.context.getSystemService(
       android.content.Context.NOTIFICATION_SERVICE
     );
     if (
@@ -141,5 +155,5 @@ export type NotificationCallback = (notification: Notification) => void;
 
 export const notificationsManager = new NotificationsManagerImpl(
   notificationsStoreDB,
-  taskDispatcher.emitEvent,
+  taskDispatcher.emitEvent
 );

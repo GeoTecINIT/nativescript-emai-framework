@@ -1,5 +1,5 @@
 import { ExportResult, Exporter } from "./index";
-import { Folder, knownFolders } from "tns-core-modules/file-system";
+import { Folder, knownFolders } from "@nativescript/core";
 
 export abstract class AbstractExporter<T> implements Exporter {
   protected readonly folder: Folder;
