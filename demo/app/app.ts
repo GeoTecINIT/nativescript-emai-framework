@@ -1,4 +1,4 @@
-import * as app from "tns-core-modules/application";
+import { Application } from "@nativescript/core";
 import { emaiFramework } from "@geotecinit/emai-framework";
 import { demoTaskGraph } from "~/tasks/graph";
 
@@ -14,7 +14,7 @@ emaiFramework
         );
     });
 
-app.run({ moduleName: "app-root" });
+Application.run({ moduleName: "app-root" });
 
 /*
 Do not place any code after the application has been started as it will not

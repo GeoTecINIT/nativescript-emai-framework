@@ -1,4 +1,4 @@
-import { Observable } from "tns-core-modules/data/observable";
+import { Observable } from "@nativescript/core";
 
 import { ConfigParams as TDConfigParams } from "nativescript-task-dispatcher/task-dispatcher.common";
 import { Task } from "./tasks";

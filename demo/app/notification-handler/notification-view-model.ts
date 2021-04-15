@@ -1,4 +1,4 @@
-import { Observable } from "tns-core-modules/data/observable";
+import { Observable } from "@nativescript/core";
 import { TapActionType } from "@geotecinit/emai-framework/notifications";
 import { emaiFramework } from "@geotecinit/emai-framework";
 import {
@@ -65,7 +65,7 @@ export class NotificationViewModel extends Observable {
             new QuestionnaireAnswers(
                 this.notification.tapAction.id,
                 qas,
-                this.notification.id,
+                this.notification.id
             )
         );
     }
