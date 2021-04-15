@@ -59,7 +59,7 @@
 		"nativescript-context-apis": "^2.0.0",
 		"nativescript-couchbase-plugin": "^0.9.6",
 		"nativescript-local-notifications": "^4.2.1",
-		"nativescript-task-dispatcher": "file:../vendor/nativescript-task-dispatcher-2.0.0.tgz",
+		"nativescript-task-dispatcher": "^2.0.0",
 		"rxjs": "^6.6.0"
 	},
 	"bootstrapper": "nativescript-plugin-seed"
