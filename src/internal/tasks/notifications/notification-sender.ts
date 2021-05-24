@@ -55,7 +55,7 @@ export class NotificationSenderTask extends TraceableTask {
     await this.manager.display(notification);
 
     return {
-      result: extractIdAndActionFrom(notification)
+      result: extractIdAndActionFrom(notification),
     };
   }
 
@@ -73,19 +73,15 @@ export class NotificationSenderTask extends TraceableTask {
       !tapAction.id
     ) {
       throw new Error(
-        "When tap content is declared as !NONE an id must be provided!"
+        "When tap action is not declared as OPEN_APP an id must be provided!"
       );
     }
 
-    const body = params.body
-      ? params.body
-      : evt.data.body
-      ? evt.data.body
-      : JSON.stringify(evt.data);
+    const body = params.body ? params.body : evt.data.body ? evt.data.body : "";
     const timestamp = new Date();
     const bigTextStyle = body.length >= 25;
 
-    return {
+    const notification = {
       id: generateNotificationId(),
       title,
       body,
@@ -98,5 +94,7 @@ export class NotificationSenderTask extends TraceableTask {
       timestamp,
       bigTextStyle,
     };
+    notification.tapAction.metadata = evt.data;
+    return notification;
   }
 }
