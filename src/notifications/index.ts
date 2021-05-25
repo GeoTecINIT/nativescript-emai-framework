@@ -1,4 +1,8 @@
-export { Notification, TapActionType } from "../internal/notifications";
+export {
+  Notification,
+  TapAction,
+  TapActionType,
+} from "../internal/notifications";
 
 import {
   notificationsManager as nm,

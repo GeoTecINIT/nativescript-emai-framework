@@ -1,9 +1,3 @@
-type TapAction = {
-  type: TapActionType | string;
-  id: string;
-  metadata?: { [key: string]: any }
-};
-
 export interface Notification {
   id: number;
   title: string;
@@ -18,9 +12,15 @@ export interface NotificationIdentifiers {
   tapAction: TapAction;
 }
 
+export interface TapAction {
+  type: TapActionType | string;
+  id: string;
+  metadata?: { [key: string]: any };
+}
+
 export enum TapActionType {
   OPEN_APP = "open-app",
   OPEN_CONTENT = "open-content",
   DELIVER_QUESTIONS = "deliver-questions",
-  ASK_FEEDBACK = "ask-feedback"
+  ASK_FEEDBACK = "ask-feedback",
 }

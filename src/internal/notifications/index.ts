@@ -1,5 +1,5 @@
 import { Notification, NotificationIdentifiers } from "./notification";
-export { Notification, TapActionType } from "./notification";
+export { Notification, TapAction, TapActionType } from "./notification";
 
 export function generateNotificationId(): number {
   // From nativescript-local-notifications
@@ -7,10 +7,12 @@ export function generateNotificationId(): number {
   return Math.round((Date.now() + Math.round(100000 * Math.random())) / 1000);
 }
 
-export function extractIdAndActionFrom(notification: Notification): NotificationIdentifiers {
+export function extractIdAndActionFrom(
+  notification: Notification
+): NotificationIdentifiers {
   const { id, tapAction } = notification;
   return {
     id,
-    tapAction
+    tapAction,
   };
 }
