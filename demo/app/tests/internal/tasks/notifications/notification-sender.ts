@@ -8,7 +8,6 @@ import {
     listenToEventTrigger,
 } from "nativescript-task-dispatcher/testing/events";
 
-
 describe("Notification sender task", () => {
     let manager: NotificationsManager;
     let notificationSender: NotificationSenderTask;
@@ -94,6 +93,7 @@ describe("Notification sender task", () => {
                 tapAction: {
                     type: TapActionType.OPEN_APP,
                     id: null,
+                    metadata: {},
                 },
                 timestamp: jasmine.any(Date),
                 bigTextStyle: false,
@@ -101,7 +101,7 @@ describe("Notification sender task", () => {
         );
     });
 
-    it("displays a notification with a parameterized title and the data of the invocation event as a body", async () => {
+    it("displays a notification with a parameterized title and no body", async () => {
         const title = "Test notification";
         const data = { result: "Some result" };
 
@@ -122,10 +122,11 @@ describe("Notification sender task", () => {
         expect(manager.display).toHaveBeenCalledWith(
             jasmine.objectContaining({
                 title,
-                body: JSON.stringify(data),
+                body: "",
                 tapAction: {
                     type: TapActionType.OPEN_APP,
                     id: null,
+                    metadata: data,
                 },
                 timestamp: jasmine.any(Date),
                 bigTextStyle: false,
@@ -159,6 +160,7 @@ describe("Notification sender task", () => {
                 tapAction: {
                     type: TapActionType.OPEN_APP,
                     id: null,
+                    metadata: data,
                 },
                 timestamp: jasmine.any(Date),
                 bigTextStyle: false,
