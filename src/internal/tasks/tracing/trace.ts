@@ -3,7 +3,7 @@ import { TraceResult } from "./trace-result";
 
 export interface Trace {
   timestamp: Date;
-  id: string;
+  chainId: string;
   type: TraceType;
   name: string;
   result: TraceResult;

@@ -43,7 +43,7 @@ describe("Traceable task", () => {
 
         expect(tracesStore.insert).toHaveBeenCalledWith(
             jasmine.objectContaining({
-                id: invocationEvent.id,
+                chainId: invocationEvent.id,
                 type: TraceType.TASK,
                 name: dummyTaskName,
                 result: TraceResult.OK,
@@ -73,7 +73,7 @@ describe("Traceable task", () => {
 
         expect(tracesStore.insert).toHaveBeenCalledWith(
             jasmine.objectContaining({
-                id: invocationEvent.id,
+                chainId: invocationEvent.id,
                 type: TraceType.TASK,
                 name: dummyTaskName,
                 result: TraceResult.OK,
@@ -99,7 +99,7 @@ describe("Traceable task", () => {
 
         expect(tracesStore.insert).toHaveBeenCalledWith(
             jasmine.objectContaining({
-                id: invocationEvent.id,
+                chainId: invocationEvent.id,
                 type: TraceType.TASK,
                 name: dummyTaskName,
                 result: TraceResult.ERROR,

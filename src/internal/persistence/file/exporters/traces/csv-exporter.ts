@@ -2,7 +2,10 @@ import { CSVExporter } from "../csv-exporter";
 
 import { Trace } from "../../../../tasks/tracing";
 import { TracesStore, syncedTracesStore } from "../../../stores/timeseries";
-import { toTimestampWithTimezoneOffset, jsonDateReplacer } from "../../../../utils/date";
+import {
+  toTimestampWithTimezoneOffset,
+  jsonDateReplacer,
+} from "../../../../utils/date";
 
 export class CSVTracesExporter extends CSVExporter<Trace> {
   constructor(
@@ -18,16 +21,24 @@ export class CSVTracesExporter extends CSVExporter<Trace> {
   }
 
   protected formatHeaders(): Array<string> {
-    return ["timestamp", "timezoneOffset", "id", "type", "name", "result", "content"];
+    return [
+      "timestamp",
+      "timezoneOffset",
+      "chainId",
+      "type",
+      "name",
+      "result",
+      "content",
+    ];
   }
 
   protected formatRow(trace: Trace): Array<number | string | boolean> {
-    const { timestamp, id, type, name, result, content } = trace;
+    const { timestamp, chainId, type, name, result, content } = trace;
     const { value, offset } = toTimestampWithTimezoneOffset(timestamp);
     return [
       value,
       offset,
-      id,
+      chainId,
       type,
       name,
       result,
