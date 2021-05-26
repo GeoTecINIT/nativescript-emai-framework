@@ -38,7 +38,7 @@ describe("Event tracker task", () => {
 
         expect(tracesStore.insert).toHaveBeenCalledWith(
             jasmine.objectContaining({
-                id: fakeEvent.id,
+                chainId: fakeEvent.id,
                 type: TraceType.EVENT,
                 name: fakeEvent.name,
                 result: TraceResult.OK,
@@ -67,7 +67,7 @@ describe("Event tracker task", () => {
 
         expect(tracesStore.insert).toHaveBeenCalledWith(
             jasmine.objectContaining({
-                id: fakeEvent.id,
+                chainId: fakeEvent.id,
                 type: TraceType.EVENT,
                 name: fakeEvent.name,
                 result: TraceResult.OK,

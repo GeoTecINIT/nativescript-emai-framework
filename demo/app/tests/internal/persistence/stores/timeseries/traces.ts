@@ -187,7 +187,7 @@ function fakeTraceCreator() {
     ): Trace => {
         return {
             timestamp: new Date(Date.now() + recordCount++ * 1000),
-            id: uuid(),
+            chainId: uuid(),
             type,
             name,
             result,

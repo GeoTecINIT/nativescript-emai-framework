@@ -9,16 +9,16 @@ const DOC_TYPE = "trace";
 
 class TracesStoreDB extends AbstractTimeSeriesStore<Trace> {
   constructor() {
-    super(DOC_TYPE, docFrom, traceFrom, true);
+    super(DOC_TYPE, docFrom, traceFrom);
   }
 }
 
 function docFrom(trace: Trace): any {
-  const { timestamp, id, type, name, result, content } = trace;
+  const { timestamp, chainId, type, name, result, content } = trace;
   const stringifiedContent = serialize(content);
   return {
     timestamp: timestamp.getTime(),
-    id,
+    chainId,
     type,
     name,
     result,
@@ -27,11 +27,11 @@ function docFrom(trace: Trace): any {
 }
 
 function traceFrom(doc: any): Trace {
-  const { timestamp, id, type, name, result, stringifiedContent } = doc;
+  const { timestamp, chainId, type, name, result, stringifiedContent } = doc;
   const content = deserialize(stringifiedContent);
   return {
     timestamp: new Date(timestamp),
-    id,
+    chainId,
     type,
     name,
     result,

@@ -4,7 +4,10 @@ import {
   TaskParams,
 } from "nativescript-task-dispatcher/tasks";
 import { TracerConfig } from "./tracer-config";
-import { TracesStore, syncedTracesStore } from "../../persistence/stores/timeseries";
+import {
+  TracesStore,
+  syncedTracesStore,
+} from "../../persistence/stores/timeseries";
 import { DispatchableEvent } from "nativescript-task-dispatcher/events";
 import { Trace } from "./trace";
 import { TraceType } from "./trace-type";
@@ -30,7 +33,7 @@ export abstract class TraceableTask extends Task {
     const { id, name } = invocationEvent;
     const trace: Trace = {
       timestamp: new Date(),
-      id,
+      chainId: id,
       type: TraceType.TASK,
       result: TraceResult.OK,
       name: this.name,
