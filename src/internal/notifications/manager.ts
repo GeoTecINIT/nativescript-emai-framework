@@ -13,6 +13,8 @@ import {
 import { getLogger, Logger } from "../utils/logger";
 import { EventData } from "nativescript-task-dispatcher/events";
 import { extractIdAndActionFrom } from "./index";
+import { NotificationTapRecord } from "../tasks/notifications/notification-tap";
+import { NotificationDiscardRecord } from "../tasks/notifications/notification-discard";
 
 const DEFAULT_CHANNEL_NAME = "Mobile interventions";
 
@@ -81,9 +83,13 @@ class NotificationsManagerImpl
     return LocalNotifications.addOnMessageReceivedCallback((received) =>
       this.processReceivedNotification(received)
         .then((notification) => {
+          const { id, tapAction } = extractIdAndActionFrom(notification);
           this.emitEvent(
             NOTIFICATION_TAPPED_EVENT,
-            extractIdAndActionFrom(notification)
+            new NotificationTapRecord(
+              id,
+              tapAction
+            )
           );
           tapCallback(notification);
         })
@@ -97,9 +103,13 @@ class NotificationsManagerImpl
     return LocalNotifications.addOnMessageClearedCallback((received) =>
       this.processReceivedNotification(received)
         .then((notification) => {
+          const { id, tapAction } = extractIdAndActionFrom(notification);
           this.emitEvent(
             NOTIFICATION_CLEARED_EVENT,
-            extractIdAndActionFrom(notification)
+            new NotificationDiscardRecord(
+              id,
+              tapAction
+            )
           );
           clearCallback(notification);
         })
