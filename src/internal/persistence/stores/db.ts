@@ -140,14 +140,14 @@ class Database {
     });
   }
 
-  async deleteAll(docType: string): Promise<Array<string>> {
+  async deleteAll(docType?: string): Promise<Array<string>> {
     return new Promise((resolve) => {
       this.db.inBatch(() => {
         const docs = this.db.query({
           select: [QueryMeta.ID],
-          where: [
-            { property: "docType", comparison: "equalTo", value: docType },
-          ],
+          where: docType
+            ? [{ property: "docType", comparison: "equalTo", value: docType }]
+            : [],
         });
         const ids: Array<string> = [];
         for (let doc of docs) {
