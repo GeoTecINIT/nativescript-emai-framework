@@ -1,9 +1,10 @@
+import { Folder } from "@nativescript/core";
 import { Exporter, ExportResult, ExportFormats } from "../index";
 import { CSVRecordsExporter } from "./csv-exporter";
 import { JSONRecordsExporter } from "./json-exporter";
 
 export function createRecordsExporter(
-  folder: string,
+  folder: Folder,
   format: ExportFormats = "csv",
   fileName?: string
 ): Exporter {

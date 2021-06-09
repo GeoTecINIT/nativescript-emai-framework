@@ -1,4 +1,4 @@
-import { Observable } from "@nativescript/core";
+import { knownFolders, Observable } from "@nativescript/core";
 
 import { Subject, Subscription } from "rxjs";
 import { debounceTime, map, switchMap } from "rxjs/operators";
@@ -21,7 +21,7 @@ import {
 
 const SIZE_INCREMENT = 10;
 
-const EXPORT_FOLDER = "Record logs";
+const EXPORT_FOLDER = knownFolders.documents().getFolder("Record logs");
 
 export class HomeViewModel extends Observable {
     private _traces = [];

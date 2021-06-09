@@ -1,8 +1,4 @@
-export {
-  Exporter,
-  ExportFormats,
-  ExportResult,
-} from "../internal/persistence/file/exporters";
+export { Exporter, ExportResult } from "../internal/persistence/file/exporters";
 
 export { createRecordsExporter } from "../internal/persistence/file/exporters/records";
 

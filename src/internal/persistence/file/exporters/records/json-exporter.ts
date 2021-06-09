@@ -1,18 +1,16 @@
-import { JSONExporter } from "../json-exporter";
+import { Folder } from "@nativescript/core";
 
+import { JSONExporter } from "../json-exporter";
 import { Record } from "../../../../providers";
-import {
-  RecordsStore,
-  syncedRecordsStore,
-} from "../../../stores/timeseries";
+import { RecordsStore, syncedRecordsStore } from "../../../stores/timeseries";
 
 export class JSONRecordsExporter extends JSONExporter<Record> {
   constructor(
-    folder: string,
-    file?: string,
+    folder: Folder,
+    fileName?: string,
     private recordsStore: RecordsStore = syncedRecordsStore
   ) {
-    super(folder, file);
+    super(folder, fileName);
   }
 
   protected getItemsToExport(): Promise<Array<Record>> {

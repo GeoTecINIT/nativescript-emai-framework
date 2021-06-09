@@ -1,14 +1,14 @@
 import { ExportResult, Exporter } from "./index";
-import { Folder, knownFolders } from "@nativescript/core";
+import { Folder } from "@nativescript/core";
 
 export abstract class AbstractExporter<T> implements Exporter {
-  protected readonly folder: Folder;
   protected readonly fileName: string;
 
-  protected constructor(folder: string, fileExtension: string, file?: string) {
-    const documents = knownFolders.documents();
-    this.folder = documents.getFolder(folder);
-    const fileName = file ? file : Date.now().toString();
+  protected constructor(
+    protected readonly folder: Folder,
+    fileExtension: string,
+    fileName: string = Date.now().toString()
+  ) {
     this.fileName = `${fileName}.${fileExtension}`;
   }
 

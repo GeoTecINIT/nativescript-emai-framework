@@ -1,3 +1,4 @@
+import { Folder } from "@nativescript/core";
 import { AbstractExporter } from "./abstract-exporter";
 import { ExportResult } from "./index";
 
@@ -6,8 +7,8 @@ const SEPARATOR = ",";
 export abstract class CSVExporter<T> extends AbstractExporter<T> {
   private textToWrite = "";
 
-  protected constructor(folder: string, file?: string) {
-    super(folder, "csv", file);
+  protected constructor(folder: Folder, fileName?: string) {
+    super(folder, "csv", fileName);
   }
 
   async export(): Promise<ExportResult> {

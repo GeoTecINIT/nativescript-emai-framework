@@ -1,15 +1,16 @@
-import { JSONExporter } from "../json-exporter";
+import { Folder } from "@nativescript/core";
 
+import { JSONExporter } from "../json-exporter";
 import { Trace } from "../../../../tasks/tracing";
 import { TracesStore, syncedTracesStore } from "../../../stores/timeseries";
 
 export class JSONTracesExporter extends JSONExporter<Trace> {
   constructor(
-    folder: string,
-    file?: string,
+    folder: Folder,
+    fileName?: string,
     private tracesStore: TracesStore = syncedTracesStore
   ) {
-    super(folder, file);
+    super(folder, fileName);
   }
 
   protected getItemsToExport(): Promise<Array<Trace>> {
