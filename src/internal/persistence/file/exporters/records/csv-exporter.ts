@@ -1,10 +1,8 @@
-import { CSVExporter } from "../csv-exporter";
+import { Folder } from "@nativescript/core";
 
+import { CSVExporter } from "../csv-exporter";
 import { Record } from "../../../../providers";
-import {
-  RecordsStore,
-  syncedRecordsStore,
-} from "../../../stores/timeseries";
+import { RecordsStore, syncedRecordsStore } from "../../../stores/timeseries";
 import {
   toTimestampWithTimezoneOffset,
   jsonDateReplacer,
@@ -12,11 +10,11 @@ import {
 
 export class CSVRecordsExporter extends CSVExporter<Record> {
   constructor(
-    folder: string,
-    file?: string,
+    folder: Folder,
+    fileName?: string,
     private recordsStore: RecordsStore = syncedRecordsStore
   ) {
-    super(folder, file);
+    super(folder, fileName);
   }
 
   protected getItemsToExport(): Promise<Array<Record>> {
