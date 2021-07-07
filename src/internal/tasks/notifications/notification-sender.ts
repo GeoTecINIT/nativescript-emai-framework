@@ -16,6 +16,8 @@ export const notificationPermissionMissingErr = new Error(
   "Notification permission has not been granted"
 );
 
+const NOTIFICATION_DELIVERY_DELAY = 1000;
+
 export class NotificationSenderTask extends TraceableTask {
   constructor(
     name: string,
@@ -52,6 +54,7 @@ export class NotificationSenderTask extends TraceableTask {
       taskParams,
       invocationEvent
     );
+    await this.delayNotificationDelivery();
     await this.manager.display(notification);
 
     return {
@@ -96,5 +99,15 @@ export class NotificationSenderTask extends TraceableTask {
     };
     notification.tapAction.metadata = evt.data;
     return notification;
+  }
+
+  private delayNotificationDelivery(): Promise<void> {
+    return new Promise<void>((resolve) => {
+      const timeoutId = setTimeout(resolve, NOTIFICATION_DELIVERY_DELAY);
+      this.setCancelFunction(() => {
+        clearTimeout(timeoutId);
+        resolve();
+      });
+    });
   }
 }
