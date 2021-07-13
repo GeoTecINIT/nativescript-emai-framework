@@ -83,7 +83,9 @@ export class TimeSeriesSyncedStore<T extends TimeSeriesEntity>
       await this.externalStore.insert(entity);
       return true;
     } catch (e) {
-      this.logger.warn(`Could not store data remotely: ${e}`);
+      this.logger.warn(
+        `Could not store data remotely. Reason: ${JSON.stringify(e)}`
+      );
       return false;
     }
   }
