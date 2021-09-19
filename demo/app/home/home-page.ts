@@ -29,7 +29,10 @@ import {
 export function onNavigatingTo(args: NavigatedData) {
     const page = <Page>args.object;
 
-    page.bindingContext = getHomeViewModel();
+    const vm = getHomeViewModel();
+    vm.listenToNotificationTaps();
+
+    page.bindingContext = vm;
 
     setupAreasOfInterest()
         .then(() => emitStartEvent())
@@ -44,15 +47,18 @@ export function onNavigatingTo(args: NavigatedData) {
 export function onNavigatedTo(args: NavigatedData) {
     const page = <Page>args.object;
 
-    getHomeViewModel().onNotificationTap((notification) => {
+    const vm = getHomeViewModel();
+
+    const notification = vm.getLastUnhandledNotification();
+    if (notification) {
         if (notification.tapAction.type === TapActionType.OPEN_APP) {
             return;
         }
 
         showNotificationModal(notification, page);
-    });
+    }
 
-    getHomeViewModel().onNotificationCleared((notification) => {
+    vm.onNotificationCleared((notification) => {
         console.log(`Notification with id ${notification.id} cleared`);
     });
 }
@@ -113,6 +119,13 @@ async function setupAreasOfInterest() {
 
     const newAoIs: Array<AreaOfInterest> = [
         // Add your areas of interest here
+        {
+            id: "casa",
+            name: "Casa",
+            latitude: 40.062656608580205,
+            longitude: -0.13733983039855957,
+            radius: 30,
+        },
     ];
     if (aois.length === newAoIs.length) {
         console.log("Areas already set up!");

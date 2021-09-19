@@ -1,7 +1,7 @@
 import {
-  LocalNotifications,
+  simpleNotifications,
   ReceivedNotification,
-} from "nativescript-local-notifications";
+} from "nativescript-simple-notifications";
 import { Application, isAndroid } from "@nativescript/core";
 import { taskDispatcher } from "nativescript-task-dispatcher";
 
@@ -25,7 +25,8 @@ export interface NotificationsManager {
 }
 
 export interface NotificationActionsManager {
-  onNotificationTap(tapCallback: NotificationCallback): Promise<void>;
+  listenToNotificationTaps(): Promise<void>;
+  getLastUnhandledNotification(): Notification;
   onNotificationCleared(clearCallback: NotificationCallback): Promise<void>;
   markAsSeen(notificationId: number): Promise<void>;
 }
@@ -35,6 +36,9 @@ const NOTIFICATION_CLEARED_EVENT = "notificationCleared";
 
 class NotificationsManagerImpl
   implements NotificationsManager, NotificationActionsManager {
+  private initialized: boolean;
+  private lastUnhandledNotification: Notification;
+
   private logger: Logger;
 
   constructor(
@@ -47,11 +51,11 @@ class NotificationsManagerImpl
   private channelName = DEFAULT_CHANNEL_NAME;
 
   public hasPermission(): Promise<boolean> {
-    return LocalNotifications.hasPermission();
+    return simpleNotifications.hasPermission();
   }
 
   public requestPermission(): Promise<boolean> {
-    return LocalNotifications.requestPermission();
+    return simpleNotifications.requestPermission();
   }
 
   public async display(notification: Notification): Promise<void> {
@@ -62,7 +66,7 @@ class NotificationsManagerImpl
     if (isAndroid) {
       this.fixAndroidChannel();
     }
-    await LocalNotifications.schedule([
+    await simpleNotifications.schedule([
       {
         id,
         title,
@@ -79,37 +83,41 @@ class NotificationsManagerImpl
     this.channelName = name;
   }
 
-  public onNotificationTap(tapCallback: NotificationCallback): Promise<void> {
-    return LocalNotifications.addOnMessageReceivedCallback((received) =>
+  public listenToNotificationTaps(): Promise<void> {
+    if (this.initialized) return Promise.resolve();
+    this.initialized = true;
+
+    return simpleNotifications.addOnMessageReceivedCallback((received) =>
       this.processReceivedNotification(received)
         .then((notification) => {
           const { id, tapAction } = extractIdAndActionFrom(notification);
           this.emitEvent(
             NOTIFICATION_TAPPED_EVENT,
-            new NotificationTapRecord(
-              id,
-              tapAction
-            )
+            new NotificationTapRecord(id, tapAction)
           );
-          tapCallback(notification);
+          this.lastUnhandledNotification = notification;
         })
         .catch((err) => this.logger.error(err))
     );
   }
 
+  public getLastUnhandledNotification(): Notification {
+    if (!this.lastUnhandledNotification) return null;
+    const notification = this.lastUnhandledNotification;
+    this.lastUnhandledNotification = undefined;
+    return notification;
+  }
+
   public onNotificationCleared(
     clearCallback: NotificationCallback
   ): Promise<void> {
-    return LocalNotifications.addOnMessageClearedCallback((received) =>
+    return simpleNotifications.addOnMessageClearedCallback((received) =>
       this.processReceivedNotification(received)
         .then((notification) => {
           const { id, tapAction } = extractIdAndActionFrom(notification);
           this.emitEvent(
             NOTIFICATION_CLEARED_EVENT,
-            new NotificationDiscardRecord(
-              id,
-              tapAction
-            )
+            new NotificationDiscardRecord(id, tapAction)
           );
           clearCallback(notification);
         })

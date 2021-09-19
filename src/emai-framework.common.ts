@@ -6,6 +6,7 @@ import { TaskGraph } from "./tasks/graph";
 import { HumanActivityProvider } from "./internal/providers/activity-recognition/provider";
 import { taskDispatcher } from "nativescript-task-dispatcher";
 import { contextApis } from "nativescript-context-apis";
+import { simpleNotifications } from "nativescript-simple-notifications";
 import { EventData } from "./events";
 import { builtInTasks } from "./internal/tasks";
 import { enableLogging, setLoggerCreator } from "./internal/utils/logger";
@@ -31,6 +32,7 @@ export class Common extends Observable {
     );
     this.initializeListeners();
     await contextApis.init();
+    await simpleNotifications.init();
     await this.syncStores();
     await this.clearOldData();
   }
