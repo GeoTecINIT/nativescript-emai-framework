@@ -70,16 +70,6 @@ export class HomeViewModel extends Observable {
         this.store.clear();
     }
 
-    listenToNotificationTaps() {
-        notificationsManager
-            .listenToNotificationTaps()
-            .catch((err) =>
-                console.error(
-                    `Could not subscribe to notification taps. Reason: ${err}`
-                )
-            );
-    }
-
     getLastUnhandledNotification(): Notification {
         return notificationsManager.getLastUnhandledNotification();
     }

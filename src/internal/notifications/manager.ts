@@ -25,7 +25,6 @@ export interface NotificationsManager {
 }
 
 export interface NotificationActionsManager {
-  listenToNotificationTaps(): Promise<void>;
   getLastUnhandledNotification(): Notification;
   onNotificationCleared(clearCallback: NotificationCallback): Promise<void>;
   markAsSeen(notificationId: number): Promise<void>;

@@ -17,8 +17,8 @@ import {
 import { emaiFramework } from "@geotecinit/emai-framework";
 import { HomeViewModel } from "./home-view-model";
 import {
-    TapActionType,
     Notification,
+    TapActionType,
 } from "@geotecinit/emai-framework/notifications";
 
 import {
@@ -29,10 +29,7 @@ import {
 export function onNavigatingTo(args: NavigatedData) {
     const page = <Page>args.object;
 
-    const vm = getHomeViewModel();
-    vm.listenToNotificationTaps();
-
-    page.bindingContext = vm;
+    page.bindingContext = getHomeViewModel();
 
     setupAreasOfInterest()
         .then(() => emitStartEvent())

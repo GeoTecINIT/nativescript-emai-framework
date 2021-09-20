@@ -33,6 +33,7 @@ export class Common extends Observable {
     this.initializeListeners();
     await contextApis.init();
     await simpleNotifications.init();
+    await notificationsManager.listenToNotificationTaps();
     await this.syncStores();
     await this.clearOldData();
   }
