@@ -45,15 +45,13 @@ export function onNavigatedTo(args: NavigatedData) {
     const page = <Page>args.object;
 
     const vm = getHomeViewModel();
-
-    const notification = vm.getLastUnhandledNotification();
-    if (notification) {
+    vm.onNotificationTapped((notification) => {
         if (notification.tapAction.type === TapActionType.OPEN_APP) {
             return;
         }
 
         showNotificationModal(notification, page);
-    }
+    });
 
     vm.onNotificationCleared((notification) => {
         console.log(`Notification with id ${notification.id} cleared`);

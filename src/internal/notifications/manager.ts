@@ -25,7 +25,7 @@ export interface NotificationsManager {
 }
 
 export interface NotificationActionsManager {
-  getLastUnhandledNotification(): Notification;
+  onNotificationTap(tapCallback: NotificationCallback): Promise<void>;
   onNotificationCleared(clearCallback: NotificationCallback): Promise<void>;
   markAsSeen(notificationId: number): Promise<void>;
 }
@@ -35,9 +35,6 @@ const NOTIFICATION_CLEARED_EVENT = "notificationCleared";
 
 class NotificationsManagerImpl
   implements NotificationsManager, NotificationActionsManager {
-  private initialized: boolean;
-  private lastUnhandledNotification: Notification;
-
   private logger: Logger;
 
   constructor(
@@ -82,10 +79,7 @@ class NotificationsManagerImpl
     this.channelName = name;
   }
 
-  public listenToNotificationTaps(): Promise<void> {
-    if (this.initialized) return Promise.resolve();
-    this.initialized = true;
-
+  public onNotificationTap(tapCallback: NotificationCallback): Promise<void> {
     return simpleNotifications.addOnMessageReceivedCallback((received) =>
       this.processReceivedNotification(received)
         .then((notification) => {
@@ -94,17 +88,10 @@ class NotificationsManagerImpl
             NOTIFICATION_TAPPED_EVENT,
             new NotificationTapRecord(id, tapAction)
           );
-          this.lastUnhandledNotification = notification;
+          tapCallback(notification);
         })
         .catch((err) => this.logger.error(err))
     );
-  }
-
-  public getLastUnhandledNotification(): Notification {
-    if (!this.lastUnhandledNotification) return null;
-    const notification = this.lastUnhandledNotification;
-    this.lastUnhandledNotification = undefined;
-    return notification;
   }
 
   public onNotificationCleared(

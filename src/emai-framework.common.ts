@@ -24,6 +24,7 @@ export class Common extends Observable {
     appTaskGraph: TaskGraph,
     config: ConfigParams = {}
   ): Promise<void> {
+    await simpleNotifications.init();
     this.configure(config);
     await taskDispatcher.init(
       [...builtInTasks, ...appTasks],
@@ -32,8 +33,6 @@ export class Common extends Observable {
     );
     this.initializeListeners();
     await contextApis.init();
-    await simpleNotifications.init();
-    await notificationsManager.listenToNotificationTaps();
     await this.syncStores();
     await this.clearOldData();
   }
