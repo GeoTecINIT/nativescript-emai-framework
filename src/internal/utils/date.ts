@@ -17,7 +17,8 @@ export function jsonDateReplacer(key: string, value: any) {
   return value;
 }
 
+const dateISOStringValidator = new RegExp("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}Z$");
+
 function isDateString(value: string): boolean {
-  const possibleDate = Date.parse(value);
-  return !isNaN(possibleDate);
+  return dateISOStringValidator.test(value);
 }

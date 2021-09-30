@@ -6,7 +6,7 @@ describe("Date utils", function () {
         const timestamp = date.getTime();
         const offset = date.getTimezoneOffset();
         const objectToStringify = {
-            attribute1: "someString",
+            attribute1: "someString-1",
             date1: date,
             attribute2: 53,
             attribute3: {
@@ -15,7 +15,7 @@ describe("Date utils", function () {
         }
 
         const stringifiedObject = JSON.stringify(objectToStringify, jsonDateReplacer);
-        const expectedString = `{"attribute1":"someString","date1":{"value":${timestamp},"offset":${offset}},"attribute2":53,"attribute3":{"date":{"value":${timestamp},"offset":${offset}}}}`;
+        const expectedString = `{"attribute1":"someString-1","date1":{"value":${timestamp},"offset":${offset}},"attribute2":53,"attribute3":{"date":{"value":${timestamp},"offset":${offset}}}}`;
 
         expect(stringifiedObject).toEqual(expectedString);
     })
