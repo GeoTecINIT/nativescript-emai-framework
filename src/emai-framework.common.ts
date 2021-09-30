@@ -57,10 +57,12 @@ export class Common extends Observable {
 
   private async syncStores() {
     await syncedRecordsStore.sync();
+    await syncedTracesStore.sync();
   }
 
   private async clearOldData() {
     await syncedRecordsStore.clearOld();
+    await syncedTracesStore.clearOld();
   }
 
   private configure(config: ConfigParams) {
