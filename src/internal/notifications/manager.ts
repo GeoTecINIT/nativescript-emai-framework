@@ -1,7 +1,7 @@
 import {
   LocalNotifications,
   ReceivedNotification,
-} from "nativescript-local-notifications";
+} from "@nativescript/local-notifications";
 import { Application, isAndroid } from "@nativescript/core";
 import { taskDispatcher } from "nativescript-task-dispatcher";
 
