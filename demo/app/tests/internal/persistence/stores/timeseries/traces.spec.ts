@@ -5,8 +5,9 @@ import {
 } from "@geotecinit/emai-framework/internal/tasks/tracing";
 
 import { localTracesStore as store } from "@geotecinit/emai-framework/internal/persistence/stores/timeseries/traces";
-import { first, last, take } from "rxjs/operators";
+import { take } from "rxjs/operators";
 import { uuid } from "nativescript-task-dispatcher/internal/utils/uuid";
+import { firstValueFrom, lastValueFrom } from "rxjs";
 
 describe("Traces store", () => {
     const createFakeTrace = fakeTraceCreator();
@@ -54,7 +55,7 @@ describe("Traces store", () => {
             await store.insert(trace);
         }
 
-        const storedTraces = await store.list().pipe(first()).toPromise();
+        const storedTraces = await firstValueFrom(store.list());
 
         expect(storedTraces.length).toBe(3);
         expect(storedTraces[0]).toEqual(traces[2]);
@@ -66,7 +67,7 @@ describe("Traces store", () => {
         await store.insert(traces[0]);
         await store.insert(traces[1]);
 
-        const lastUpdate = store.list().pipe(take(2), last()).toPromise();
+        const lastUpdate = lastValueFrom(store.list().pipe(take(2)));
         store.insert(traces[2]);
         const storedTraces = await lastUpdate;
 
@@ -78,7 +79,7 @@ describe("Traces store", () => {
         await store.insert(traces[0]);
         await store.insert(traces[1]);
 
-        const lastUpdate = store.list(2).pipe(take(2), last()).toPromise();
+        const lastUpdate = lastValueFrom(store.list(2).pipe(take(2)));
         store.insert(traces[2]);
         const storedTraces = await lastUpdate;
 
