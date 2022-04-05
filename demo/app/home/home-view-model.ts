@@ -103,13 +103,13 @@ export class HomeViewModel extends Observable {
             switchMap(listTraces)
         );
 
-        this._subscription = stream.subscribe(
-            (traces) => {
+        this._subscription = stream.subscribe({
+            next: (traces) => {
                 this._traces = traces;
                 this.notifyPropertyChange("traces", traces);
             },
-            (err) => console.error(`Error loading traces: ${err}`)
-        );
+            error: (err) => console.error(`Error loading traces: ${err}`)
+        });
     }
 
     private toggleExportingTraces(value: boolean) {
