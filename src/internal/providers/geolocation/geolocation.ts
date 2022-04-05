@@ -1,9 +1,10 @@
 import { Record, RecordType } from "../base-record";
 
 import {
-  GeolocationLike,
+  GeolocationLike as GL,
   Geolocation as NativeGeolocation,
 } from "nativescript-context-apis/geolocation";
+export type GeolocationLike = GL;
 
 export class Geolocation extends Record {
   constructor(
@@ -23,5 +24,3 @@ export class Geolocation extends Record {
     return new NativeGeolocation(this).distance(to);
   }
 }
-
-export { GeolocationLike } from "nativescript-context-apis/geolocation";

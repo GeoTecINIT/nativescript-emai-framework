@@ -1,5 +1,5 @@
 import { Folder } from "@nativescript/core";
-import { Exporter, ExportResult, ExportFormats } from "../index";
+import { Exporter, ExportFormats } from "../index";
 import { CSVTracesExporter } from "./csv-exporter";
 import { JSONTracesExporter } from "./json-exporter";
 
@@ -16,4 +16,4 @@ export function createTracesExporter(
   }
 }
 
-export { Exporter, ExportResult };
+export * from "../index";
