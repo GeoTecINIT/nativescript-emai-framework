@@ -55,8 +55,8 @@
 	},
 	"dependencies": {
 		"@nativescript/local-notifications": "^6.0.0",
-		"@turf/distance": "^6.0.1",
-		"@turf/helpers": "^6.1.4",
+		"@turf/distance": "^6.5.0",
+		"@turf/helpers": "^6.5.0",
 		"nativescript-context-apis": "^2.0.0",
 		"nativescript-couchbase-plugin": "^0.9.6",
 		"nativescript-task-dispatcher": "^2.0.1",
