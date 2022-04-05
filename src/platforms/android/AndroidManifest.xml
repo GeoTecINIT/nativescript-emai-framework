@@ -5,4 +5,12 @@
 		To read more about android permissions go to https://developer.android.com/guide/topics/permissions/index.html -->
 	<!--EXAMPLE: uses-permission android:name="android.permission.INTERNET"/> -->
 
+	<!-- Always include this permission -->
+	<!-- This permission is for "approximate" location data -->
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+	<!-- Include only if your app benefits from precise location access. -->
+	<!-- This permission is for "precise" location data -->
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
 </manifest>
