@@ -116,7 +116,7 @@ describe("Batch pull-based provider task", () => {
         );
 
         task.run({}, igniter);
-        await new Promise((resolve) => setTimeout(() => resolve(), 1000));
+        await new Promise<void>((resolve) => setTimeout(() => resolve(), 1000));
         task.cancel();
 
         await done;
@@ -141,7 +141,7 @@ describe("Batch pull-based provider task", () => {
             {},
             createEvent("fake", { expirationTimestamp: Date.now() + 1000 })
         );
-        await new Promise((resolve) => setTimeout(() => resolve(), 300));
+        await new Promise<void>((resolve) => setTimeout(() => resolve(), 300));
         task.cancel();
         await runPromise;
 

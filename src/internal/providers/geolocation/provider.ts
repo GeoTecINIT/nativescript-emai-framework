@@ -12,15 +12,16 @@ import {
   getGeolocationProvider as getNativeProvider,
 } from "nativescript-context-apis/geolocation";
 
-import { from, Observable, of, Subject, throwError } from "rxjs";
 import {
-  map,
-  mergeMap,
-  take,
-  takeUntil,
-  timeoutWith,
-  toArray,
-} from "rxjs/operators";
+  firstValueFrom,
+  from,
+  Observable,
+  of,
+  Subject,
+  throwError,
+  timeout,
+} from "rxjs";
+import { map, mergeMap, take, takeUntil, toArray } from "rxjs/operators";
 
 export class GeolocationProvider implements PullProvider {
   get provides(): RecordType {
@@ -41,7 +42,7 @@ export class GeolocationProvider implements PullProvider {
   }
 
   prepare(): Promise<void> {
-    return this.nativeProvider().prepare(true, true);
+    return this.nativeProvider().prepare(false, true);
   }
 
   next(): [Promise<Geolocation>, ProviderInterruption] {
@@ -57,31 +58,31 @@ export class GeolocationProvider implements PullProvider {
     amount: number,
     interrupter: ProviderInterrupter
   ): Promise<Geolocation> {
-    const interrupted = new Subject();
+    const interrupted = new Subject<void>();
     interrupter.interruption = () => {
       interrupted.next();
       interrupted.complete();
     };
 
-    return this.nativeProvider()
-      .locationStream({
-        highAccuracy: true,
-        stdInterval: 1000,
-        minInterval: 100,
-        maxAge: 60000,
-        allowBackground: true,
-        saveBattery: false,
-      })
-      .pipe(
-        takeUntil(interrupted),
-        take(amount),
-        timeoutWith(this.timeout, of(null)),
-        toArray(),
-        map(pickBest),
-        mergeMap((location) => this.ensureItGetsAtLeastOne(location)),
-        map(toGeolocation)
-      )
-      .toPromise();
+    return firstValueFrom(
+      this.nativeProvider()
+        .locationStream({
+          highAccuracy: true,
+          stdInterval: 1000,
+          minInterval: 100,
+          maxAge: 60000,
+          saveBattery: false,
+        })
+        .pipe(
+          takeUntil(interrupted),
+          take(amount),
+          timeout({ each: this.timeout, with: () => of(null) }),
+          toArray(),
+          map(pickBest),
+          mergeMap((location) => this.ensureItGetsAtLeastOne(location)),
+          map(toGeolocation)
+        )
+    );
   }
 
   private ensureItGetsAtLeastOne(
@@ -94,10 +95,10 @@ export class GeolocationProvider implements PullProvider {
           allowBackground: true,
         })
       ).pipe(
-        timeoutWith(
-          this.timeout,
-          throwError(new Error("Could not acquire location"))
-        )
+        timeout({
+          each: this.timeout,
+          with: () => throwError(() => new Error("Could not acquire location")),
+        })
       );
     }
     return of(location);

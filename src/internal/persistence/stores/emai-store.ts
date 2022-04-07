@@ -6,7 +6,7 @@ export class EMAIStore<T> {
   private readonly _changes: Subject<Array<string>>;
 
   get changes(): Observable<Array<string>> {
-    return this._changes;
+    return this._changes.asObservable();
   }
 
   constructor(

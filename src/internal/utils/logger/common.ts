@@ -1,5 +1,1 @@
-export {
-  Logger,
-  AbstractLogger,
-  LoggerCreator,
-} from "nativescript-task-dispatcher/utils/logger";
+export * from "nativescript-task-dispatcher/utils/logger";

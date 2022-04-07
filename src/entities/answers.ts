@@ -1,4 +1,1 @@
-export {
-  QuestionnaireAnswers,
-  QuestionnaireAnswer,
-} from "../internal/tasks/notifications/questionnaire-answers";
+export * from "../internal/tasks/notifications/questionnaire-answers";

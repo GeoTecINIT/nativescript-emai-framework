@@ -12,7 +12,7 @@ import {
 import { RecordType } from "@geotecinit/emai-framework/internal/providers";
 
 import { from, Observable, of } from "rxjs";
-import { delay } from "rxjs/internal/operators";
+import { delay } from "rxjs/operators";
 
 describe("Geolocation provider", () => {
     const bestLocationOf = 3;
@@ -53,7 +53,7 @@ describe("Geolocation provider", () => {
     it("allows to prepare the underlying system", async () => {
         spyOn(nativeProvider, "prepare").and.returnValue(Promise.resolve());
         await provider.prepare();
-        expect(nativeProvider.prepare).toHaveBeenCalledWith(true, true);
+        expect(nativeProvider.prepare).toHaveBeenCalledWith(false, true);
     });
 
     it("calculates the best location of the specified amount to collect", async () => {
@@ -68,7 +68,7 @@ describe("Geolocation provider", () => {
     });
 
     it("tries to acquire the last location at least if the sensor is unable to get a fix", async () => {
-        spyOn(nativeProvider, "locationStream").and.returnValue(of());
+        spyOn(nativeProvider, "locationStream").and.returnValue(of(null));
         spyOn(nativeProvider, "acquireLocation").and.returnValue(
             Promise.resolve(locations[4])
         );
@@ -81,7 +81,7 @@ describe("Geolocation provider", () => {
 
     it("tries to acquire the last location at least if the sensor is unable to get a fix within the timeout window", async () => {
         spyOn(nativeProvider, "locationStream").and.returnValue(
-            from(locations).pipe(delay(timeout))
+            from(locations).pipe(delay(timeout + 100))
         );
         spyOn(nativeProvider, "acquireLocation").and.returnValue(
             Promise.resolve(locations[4])
@@ -94,7 +94,7 @@ describe("Geolocation provider", () => {
     });
 
     it("throws an error if the sensor is unable to get a fix and no last location is available", async () => {
-        spyOn(nativeProvider, "locationStream").and.returnValue(of());
+        spyOn(nativeProvider, "locationStream").and.returnValue(of(null));
         spyOn(nativeProvider, "acquireLocation").and.returnValue(
             new Promise((resolve) =>
                 setTimeout(() => resolve(locations[0]), timeout + 500)

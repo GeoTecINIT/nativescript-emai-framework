@@ -1,18 +1,22 @@
 import {
-  Couchbase,
-  Query,
+  CouchBase,
+  Query as Q,
   QueryLogicalOperator,
   QueryMeta,
-  QueryWhereItem,
-} from "nativescript-couchbase-plugin";
+  QueryWhereItem as QWI,
+} from "@triniwiz/nativescript-couchbase";
+
+export type Query = Q;
+export type QueryWhereItem = QWI;
+export { QueryLogicalOperator };
 
 const DB_NAME = "emai-framework";
 
 class Database {
-  private db: Couchbase;
+  private db: CouchBase;
 
   constructor() {
-    this.db = new Couchbase(DB_NAME);
+    this.db = new CouchBase(DB_NAME);
   }
 
   async createDocument(
@@ -189,5 +193,3 @@ export class NotUniqueErr extends Error {
     );
   }
 }
-
-export { Query, QueryLogicalOperator, QueryWhereItem };

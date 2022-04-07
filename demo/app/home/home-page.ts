@@ -37,7 +37,11 @@ export function onNavigatingTo(args: NavigatedData) {
             console.log("Start event emitted!");
         })
         .catch((err) => {
-            console.error(`Could not emit start event: ${err}`);
+            console.error(
+                `Could not emit start event: ${
+                    err.stack ? err.stack : JSON.stringify(err)
+                }`
+            );
         });
 }
 
@@ -69,7 +73,9 @@ export function onExportTap() {
         })
         .catch((err) => {
             console.error(
-                `Could not export records: ${err.stack ? err.stack : err}`
+                `Could not export records: ${
+                    err.stack ? err.stack : JSON.stringify(err)
+                }`
             );
         });
 }
@@ -139,7 +145,11 @@ function showNotificationModal(notification: Notification, page: Page) {
             animated,
         });
     } catch (err) {
-        console.error(`Could not show modal: ${err}`);
+        console.error(
+            `Could not show modal: ${
+                err.stack ? err.stack : JSON.stringify(err)
+            }`
+        );
     }
 }
 

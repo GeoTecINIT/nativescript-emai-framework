@@ -21,7 +21,7 @@ export function createNativeGeolocationProviderMock(): NativeProvider {
             return Promise.resolve(null);
         },
         locationStream(options?: StreamOptions): Observable<Geolocation> {
-            return of();
+            return of(null);
         },
     } as NativeProvider;
 }

@@ -1,6 +1,7 @@
-export { Record, RecordType, Change } from "./base-record";
+export * from "./base-record";
 
-export { PullProvider } from "./pull-provider";
-export { PushProvider } from "./push-provider";
+export * from "./pull-provider";
+export * from "./push-provider";
 
-export { ProviderInterruption } from "./provider-interrupter";
+import { ProviderInterruption as PI } from "./provider-interrupter";
+export type ProviderInterruption = PI;

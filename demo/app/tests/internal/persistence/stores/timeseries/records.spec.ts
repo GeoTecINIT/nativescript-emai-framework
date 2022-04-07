@@ -10,11 +10,12 @@ import { Change } from "@geotecinit/emai-framework/internal/providers/base-recor
 import { AoIProximityChange } from "@geotecinit/emai-framework/internal/tasks/geofencing/aoi";
 import { GeofencingProximity } from "@geotecinit/emai-framework/internal/tasks/geofencing/geofencing-state";
 
-import { first, last, take } from "rxjs/operators";
+import { take } from "rxjs/operators";
 import {
     QuestionnaireAnswers,
     QuestionnaireAnswer,
 } from "@geotecinit/emai-framework/internal/tasks/notifications/questionnaire-answers";
+import { firstValueFrom, lastValueFrom } from "rxjs";
 
 describe("Records store", () => {
     const answers: Array<QuestionnaireAnswer> = [
@@ -41,12 +42,7 @@ describe("Records store", () => {
             Change.START,
             nowMinus(2)
         ),
-        new QuestionnaireAnswers(
-            "qs1",
-            answers,
-            53,
-            nowMinus(1)
-        ),
+        new QuestionnaireAnswers("qs1", answers, 53, nowMinus(1)),
     ];
 
     beforeAll(async () => {
@@ -62,7 +58,7 @@ describe("Records store", () => {
             await store.insert(record);
         }
 
-        const storedRecords = await store.list().pipe(first()).toPromise();
+        const storedRecords = await firstValueFrom(store.list());
 
         expect(storedRecords.length).toBe(5);
         expect({ ...storedRecords[0] }).toEqual({ ...records[4] });
@@ -76,7 +72,7 @@ describe("Records store", () => {
         await store.insert(records[0]);
         await store.insert(records[1]);
 
-        const lastUpdate = store.list().pipe(take(2), last()).toPromise();
+        const lastUpdate = lastValueFrom(store.list().pipe(take(2)));
         store.insert(records[2]);
         const storedRecords = await lastUpdate;
 
@@ -88,7 +84,7 @@ describe("Records store", () => {
         await store.insert(records[0]);
         await store.insert(records[1]);
 
-        const lastUpdate = store.list(2).pipe(take(2), last()).toPromise();
+        const lastUpdate = lastValueFrom(store.list(2).pipe(take(2)));
         store.insert(records[2]);
         const storedRecords = await lastUpdate;
 

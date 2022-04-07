@@ -1,9 +1,10 @@
 import {
     Notification,
-    TapActionType
+    TapActionType,
 } from "@geotecinit/emai-framework/internal/notifications";
 import { notificationsStoreDB } from "@geotecinit/emai-framework/internal/persistence/stores/notifications";
-import { first, last, take } from "rxjs/internal/operators";
+import { firstValueFrom, lastValueFrom } from "rxjs";
+import { take } from "rxjs/operators";
 
 describe("Notifications store", () => {
     const notification1Id = 1;
@@ -16,7 +17,7 @@ describe("Notifications store", () => {
             metadata: {
                 param1: "Some config param",
                 param2: false,
-            }
+            },
         },
         body: "Notification body",
         timestamp: new Date(Date.now() - 60000),
@@ -54,33 +55,36 @@ describe("Notifications store", () => {
         );
     });
 
-    it("allows to query all stored notifications" , async () => {
-       await store.insert(expectedNotification1);
-       await store.insert(expectedNotification2);
+    it("allows to query all stored notifications", async () => {
+        await store.insert(expectedNotification1);
+        await store.insert(expectedNotification2);
 
-       const storedNotifications = await store.list().pipe(first()).toPromise();
+        const storedNotifications = await firstValueFrom(store.list());
 
-       expect(storedNotifications.length).toBe(2);
-       expect(storedNotifications[0]).toEqual(expectedNotification2);
-       expect(storedNotifications[1]).toEqual(expectedNotification1);
+        expect(storedNotifications.length).toBe(2);
+        expect(storedNotifications[0]).toEqual(expectedNotification2);
+        expect(storedNotifications[1]).toEqual(expectedNotification1);
     });
 
     it("allows to listen to stored notification changes", async () => {
-       await store.insert(expectedNotification1);
+        await store.insert(expectedNotification1);
 
-       const updates = store.list().pipe(take(2), last()).toPromise();
-       store.insert(expectedNotification2);
-       const storedNotifications = await updates;
+        const updates = lastValueFrom(store.list().pipe(take(2)));
+        store.insert(expectedNotification2);
+        const storedNotifications = await updates;
 
-       expect(storedNotifications.length).toBe(2);
-       expect(storedNotifications[0]).toEqual(expectedNotification2);
+        expect(storedNotifications.length).toBe(2);
+        expect(storedNotifications[0]).toEqual(expectedNotification2);
     });
 
     it("allows to get all the persisted notifications sorted by most recent", async () => {
         await store.insert(expectedNotification1);
         await store.insert(expectedNotification2);
 
-        await expectAsync(store.getAll()).toBeResolvedTo([expectedNotification2, expectedNotification1])
+        await expectAsync(store.getAll()).toBeResolvedTo([
+            expectedNotification2,
+            expectedNotification1,
+        ]);
     });
 
     afterEach(async () => {

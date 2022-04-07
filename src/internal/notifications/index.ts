@@ -1,5 +1,12 @@
-import { Notification, NotificationIdentifiers } from "./notification";
-export { Notification, TapAction, TapActionType } from "./notification";
+import {
+  Notification as N,
+  NotificationIdentifiers,
+  TapAction as TA,
+  TapActionType,
+} from "./notification";
+export type Notification = N;
+export type TapAction = TA;
+export { TapActionType };
 
 export function generateNotificationId(): number {
   // From nativescript-local-notifications

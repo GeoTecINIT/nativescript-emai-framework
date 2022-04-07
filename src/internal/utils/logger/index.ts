@@ -29,4 +29,4 @@ export function getLogger(tag: string): Logger {
   return loggerCreator(tag);
 }
 
-export { Logger, AbstractLogger, LoggerCreator } from "./common";
+export * from "./common";

@@ -1,4 +1,5 @@
 import { Observable } from "@nativescript/core";
+import "@nativescript/local-notifications";
 
 import { ConfigParams as TDConfigParams } from "nativescript-task-dispatcher/task-dispatcher.common";
 import { Task } from "./tasks";
