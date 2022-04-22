@@ -1,6 +1,6 @@
 {
 	"name": "@geotecinit/emai-framework",
-	"version": "3.0.1",
+	"version": "3.0.2",
 	"description": "Easing the development of Ecological Momentary Assessment and Intervention apps",
 	"main": "emai-framework",
 	"typings": "index.d.ts",
