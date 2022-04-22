@@ -20,7 +20,7 @@
     "karma-junit-reporter": "2.0.1",
     "karma-nativescript-launcher": "0.4.0",
     "nativescript-context-apis": "^3.0.1",
-    "nativescript-task-dispatcher": "^3.0.1",
+    "nativescript-task-dispatcher": "^3.1.1",
     "nyc": "15.1.0",
     "typescript": "~4.5.5"
   },

@@ -59,7 +59,7 @@
 		"@turf/distance": "^6.5.0",
 		"@turf/helpers": "^6.5.0",
 		"nativescript-context-apis": "^3.0.1",
-		"nativescript-task-dispatcher": "^3.0.1",
+		"nativescript-task-dispatcher": "^3.1.1",
 		"rxjs": "^7.5.5"
 	},
 	"bootstrapper": "nativescript-plugin-seed"

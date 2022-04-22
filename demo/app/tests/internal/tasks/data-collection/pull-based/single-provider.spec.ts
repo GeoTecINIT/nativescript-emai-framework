@@ -53,8 +53,12 @@ describe("Single pull-based provider task", () => {
         ]);
 
         const runPromise = task.run({}, createEvent("fake"));
-        task.cancel();
+        const cancelPromise = new Promise<void>(resolve => setTimeout(() => {
+            task.cancel();
+            resolve();
+        }));
         await runPromise;
+        await cancelPromise;
 
         expect(interrupter).toHaveBeenCalled();
     });
